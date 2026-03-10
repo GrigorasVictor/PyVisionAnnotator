@@ -1,0 +1,564 @@
+<!DOCTYPE html><html><head>
+      <title>ollama_vlm_rez</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      
+      <link rel="stylesheet" href="file:///c:\Users\VALORANT\.vscode\extensions\shd101wyy.markdown-preview-enhanced-0.8.18\crossnote\dependencies\katex\katex.min.css">
+      
+      
+      
+      
+      
+      <style>
+      code[class*=language-],pre[class*=language-]{color:#333;background:0 0;font-family:Consolas,"Liberation Mono",Menlo,Courier,monospace;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.4;-moz-tab-size:8;-o-tab-size:8;tab-size:8;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none}pre[class*=language-]{padding:.8em;overflow:auto;border-radius:3px;background:#f5f5f5}:not(pre)>code[class*=language-]{padding:.1em;border-radius:.3em;white-space:normal;background:#f5f5f5}.token.blockquote,.token.comment{color:#969896}.token.cdata{color:#183691}.token.doctype,.token.macro.property,.token.punctuation,.token.variable{color:#333}.token.builtin,.token.important,.token.keyword,.token.operator,.token.rule{color:#a71d5d}.token.attr-value,.token.regex,.token.string,.token.url{color:#183691}.token.atrule,.token.boolean,.token.code,.token.command,.token.constant,.token.entity,.token.number,.token.property,.token.symbol{color:#0086b3}.token.prolog,.token.selector,.token.tag{color:#63a35c}.token.attr-name,.token.class,.token.class-name,.token.function,.token.id,.token.namespace,.token.pseudo-class,.token.pseudo-element,.token.url-reference .token.variable{color:#795da3}.token.entity{cursor:help}.token.title,.token.title .token.punctuation{font-weight:700;color:#1d3e81}.token.list{color:#ed6a43}.token.inserted{background-color:#eaffea;color:#55a532}.token.deleted{background-color:#ffecec;color:#bd2c00}.token.bold{font-weight:700}.token.italic{font-style:italic}.language-json .token.property{color:#183691}.language-markup .token.tag .token.punctuation{color:#333}.language-css .token.function,code.language-css{color:#0086b3}.language-yaml .token.atrule{color:#63a35c}code.language-yaml{color:#183691}.language-ruby .token.function{color:#333}.language-markdown .token.url{color:#795da3}.language-makefile .token.symbol{color:#795da3}.language-makefile .token.variable{color:#183691}.language-makefile .token.builtin{color:#0086b3}.language-bash .token.keyword{color:#0086b3}pre[data-line]{position:relative;padding:1em 0 1em 3em}pre[data-line] .line-highlight-wrapper{position:absolute;top:0;left:0;background-color:transparent;display:block;width:100%}pre[data-line] .line-highlight{position:absolute;left:0;right:0;padding:inherit 0;margin-top:1em;background:hsla(24,20%,50%,.08);background:linear-gradient(to right,hsla(24,20%,50%,.1) 70%,hsla(24,20%,50%,0));pointer-events:none;line-height:inherit;white-space:pre}pre[data-line] .line-highlight:before,pre[data-line] .line-highlight[data-end]:after{content:attr(data-start);position:absolute;top:.4em;left:.6em;min-width:1em;padding:0 .5em;background-color:hsla(24,20%,50%,.4);color:#f4f1ef;font:bold 65%/1.5 sans-serif;text-align:center;vertical-align:.3em;border-radius:999px;text-shadow:none;box-shadow:0 1px #fff}pre[data-line] .line-highlight[data-end]:after{content:attr(data-end);top:auto;bottom:.4em}html body{font-family:'Helvetica Neue',Helvetica,'Segoe UI',Arial,freesans,sans-serif;font-size:16px;line-height:1.6;color:#333;background-color:#fff;overflow:initial;box-sizing:border-box;word-wrap:break-word}html body>:first-child{margin-top:0}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{line-height:1.2;margin-top:1em;margin-bottom:16px;color:#000}html body h1{font-size:2.25em;font-weight:300;padding-bottom:.3em}html body h2{font-size:1.75em;font-weight:400;padding-bottom:.3em}html body h3{font-size:1.5em;font-weight:500}html body h4{font-size:1.25em;font-weight:600}html body h5{font-size:1.1em;font-weight:600}html body h6{font-size:1em;font-weight:600}html body h1,html body h2,html body h3,html body h4,html body h5{font-weight:600}html body h5{font-size:1em}html body h6{color:#5c5c5c}html body strong{color:#000}html body del{color:#5c5c5c}html body a:not([href]){color:inherit;text-decoration:none}html body a{color:#08c;text-decoration:none}html body a:hover{color:#00a3f5;text-decoration:none}html body img{max-width:100%}html body>p{margin-top:0;margin-bottom:16px;word-wrap:break-word}html body>ol,html body>ul{margin-bottom:16px}html body ol,html body ul{padding-left:2em}html body ol.no-list,html body ul.no-list{padding:0;list-style-type:none}html body ol ol,html body ol ul,html body ul ol,html body ul ul{margin-top:0;margin-bottom:0}html body li{margin-bottom:0}html body li.task-list-item{list-style:none}html body li>p{margin-top:0;margin-bottom:0}html body .task-list-item-checkbox{margin:0 .2em .25em -1.8em;vertical-align:middle}html body .task-list-item-checkbox:hover{cursor:pointer}html body blockquote{margin:16px 0;font-size:inherit;padding:0 15px;color:#5c5c5c;background-color:#f0f0f0;border-left:4px solid #d6d6d6}html body blockquote>:first-child{margin-top:0}html body blockquote>:last-child{margin-bottom:0}html body hr{height:4px;margin:32px 0;background-color:#d6d6d6;border:0 none}html body table{margin:10px 0 15px 0;border-collapse:collapse;border-spacing:0;display:block;width:100%;overflow:auto;word-break:normal;word-break:keep-all}html body table th{font-weight:700;color:#000}html body table td,html body table th{border:1px solid #d6d6d6;padding:6px 13px}html body dl{padding:0}html body dl dt{padding:0;margin-top:16px;font-size:1em;font-style:italic;font-weight:700}html body dl dd{padding:0 16px;margin-bottom:16px}html body code{font-family:Menlo,Monaco,Consolas,'Courier New',monospace;font-size:.85em;color:#000;background-color:#f0f0f0;border-radius:3px;padding:.2em 0}html body code::after,html body code::before{letter-spacing:-.2em;content:'\00a0'}html body pre>code{padding:0;margin:0;word-break:normal;white-space:pre;background:0 0;border:0}html body .highlight{margin-bottom:16px}html body .highlight pre,html body pre{padding:1em;overflow:auto;line-height:1.45;border:#d6d6d6;border-radius:3px}html body .highlight pre{margin-bottom:0;word-break:normal}html body pre code,html body pre tt{display:inline;max-width:initial;padding:0;margin:0;overflow:initial;line-height:inherit;word-wrap:normal;background-color:transparent;border:0}html body pre code:after,html body pre code:before,html body pre tt:after,html body pre tt:before{content:normal}html body blockquote,html body dl,html body ol,html body p,html body pre,html body ul{margin-top:0;margin-bottom:16px}html body kbd{color:#000;border:1px solid #d6d6d6;border-bottom:2px solid #c7c7c7;padding:2px 4px;background-color:#f0f0f0;border-radius:3px}@media print{html body{background-color:#fff}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{color:#000;page-break-after:avoid}html body blockquote{color:#5c5c5c}html body pre{page-break-inside:avoid}html body table{display:table}html body img{display:block;max-width:100%;max-height:100%}html body code,html body pre{word-wrap:break-word;white-space:pre}}.markdown-preview{width:100%;height:100%;box-sizing:border-box}.markdown-preview ul{list-style:disc}.markdown-preview ul ul{list-style:circle}.markdown-preview ul ul ul{list-style:square}.markdown-preview ol{list-style:decimal}.markdown-preview ol ol,.markdown-preview ul ol{list-style-type:lower-roman}.markdown-preview ol ol ol,.markdown-preview ol ul ol,.markdown-preview ul ol ol,.markdown-preview ul ul ol{list-style-type:lower-alpha}.markdown-preview .newpage,.markdown-preview .pagebreak{page-break-before:always}.markdown-preview pre.line-numbers{position:relative;padding-left:3.8em;counter-reset:linenumber}.markdown-preview pre.line-numbers>code{position:relative}.markdown-preview pre.line-numbers .line-numbers-rows{position:absolute;pointer-events:none;top:1em;font-size:100%;left:0;width:3em;letter-spacing:-1px;border-right:1px solid #999;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.markdown-preview pre.line-numbers .line-numbers-rows>span{pointer-events:none;display:block;counter-increment:linenumber}.markdown-preview pre.line-numbers .line-numbers-rows>span:before{content:counter(linenumber);color:#999;display:block;padding-right:.8em;text-align:right}.markdown-preview .mathjax-exps .MathJax_Display{text-align:center!important}.markdown-preview:not([data-for=preview]) .code-chunk .code-chunk-btn-group{display:none}.markdown-preview:not([data-for=preview]) .code-chunk .status{display:none}.markdown-preview:not([data-for=preview]) .code-chunk .output-div{margin-bottom:16px}.markdown-preview .md-toc{padding:0}.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link{display:inline;padding:.25rem 0}.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link div,.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link p{display:inline}.markdown-preview .md-toc .md-toc-link-wrapper.highlighted .md-toc-link{font-weight:800}.scrollbar-style::-webkit-scrollbar{width:8px}.scrollbar-style::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}.scrollbar-style::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,.66);border:4px solid rgba(150,150,150,.66);background-clip:content-box}html body[for=html-export]:not([data-presentation-mode]){position:relative;width:100%;height:100%;top:0;left:0;margin:0;padding:0;overflow:auto}html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{position:relative;top:0;min-height:100vh}@media screen and (min-width:914px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{padding:2em calc(50% - 457px + 2em)}}@media screen and (max-width:914px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{font-size:14px!important;padding:1em}}@media print{html body[for=html-export]:not([data-presentation-mode]) #sidebar-toc-btn{display:none}}html body[for=html-export]:not([data-presentation-mode]) #sidebar-toc-btn{position:fixed;bottom:8px;left:8px;font-size:28px;cursor:pointer;color:inherit;z-index:99;width:32px;text-align:center;opacity:.4}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] #sidebar-toc-btn{opacity:1}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc{position:fixed;top:0;left:0;width:300px;height:100%;padding:32px 0 48px 0;font-size:14px;box-shadow:0 0 4px rgba(150,150,150,.33);box-sizing:border-box;overflow:auto;background-color:inherit}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar{width:8px}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,.66);border:4px solid rgba(150,150,150,.66);background-clip:content-box}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc a{text-decoration:none}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc{padding:0 16px}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link{display:inline;padding:.25rem 0}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link div,html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link p{display:inline}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper.highlighted .md-toc-link{font-weight:800}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{left:300px;width:calc(100% - 300px);padding:2em calc(50% - 457px - 300px / 2);margin:0;box-sizing:border-box}@media screen and (max-width:1274px){html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{width:100%}}html body[for=html-export]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .markdown-preview{left:50%;transform:translateX(-50%)}html body[for=html-export]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .md-sidebar-toc{display:none}
+/* Please visit the URL below for more information: */
+/*   https://shd101wyy.github.io/markdown-preview-enhanced/#/customize-css */
+
+      </style>
+      <!-- The content below will be included at the end of the <head> element. --><script type="text/javascript">
+  document.addEventListener("DOMContentLoaded", function () {
+    // your code here
+  });
+</script></head><body for="html-export">
+    
+    
+      <div class="crossnote markdown-preview  ">
+      
+<h1 id="vlm-benchmark-results">VLM Benchmark Results </h1>
+<h2 id="analysis-of-sample_1jpg">Analysis of <code>sample_1.jpg</code> </h2>
+<p><img src="export-doc/sample_1.jpg" alt="sample_1.jpg"></p>
+<h3 id="response-from-gemma312b">Response from <code>gemma3:12b</code> </h3>
+<ul>
+<li>
+<p><strong>What is happening in this image?</strong><br>
+A man, holding a white cane, is standing on a cobblestone street.</p>
+</li>
+<li>
+<p><strong>Describe the relationships between the objects.</strong><br>
+The man is positioned on the street between sidewalks, near a pedestrian crossing sign. Trees line both sides of the street, and a building is visible in the distance. The street appears to be wider than the sidewalks.</p>
+</li>
+<li>
+<p><strong>Where is the person located?</strong><br>
+The person is located on a cobblestone street, likely in a European city.</p>
+</li>
+<li>
+<p><strong>What time of day is it?</strong><br>
+It appears to be morning or early afternoon, based on the lighting.</p>
+</li>
+<li>
+<p><strong>What might happen next in the scene?</strong><br>
+The man may begin to cross the street, or continue walking along the sidewalk.</p>
+</li>
+</ul>
+<h3 id="response-from-qwen25vl7b">Response from <code>qwen2.5vl:7b</code> </h3>
+<ul>
+<li>
+<p><strong>What is happening in this image?</strong><br>
+A person is walking on a cobblestone street, using a white cane with a red tip, which is a common tool for visually impaired individuals to navigate safely. The person appears to be moving forward, possibly approaching a pedestrian crossing sign.</p>
+</li>
+<li>
+<p><strong>Describe the relationships between the objects.</strong><br>
+The person is walking on the street, and the white cane is extended forward, indicating they are using it to detect obstacles or navigate. The pedestrian crossing sign is positioned on the left side of the street, and the person is moving away from it. The trees and buildings in the background suggest an urban environment.</p>
+</li>
+<li>
+<p><strong>Where is the person located?</strong><br>
+The person is located on a street in an urban area, as indicated by the presence of buildings, trees, and a pedestrian crossing sign. The cobblestone street and the style of the buildings suggest a European city.</p>
+</li>
+<li>
+<p><strong>What time of day is it?</strong><br>
+The lighting in the image suggests it is daytime, with sunlight illuminating the scene. The shadows cast by the trees and the person indicate that it is likely midday or early afternoon.</p>
+</li>
+<li>
+<p><strong>What might happen next in the scene?</strong><br>
+The person might continue walking down the street, potentially approaching the pedestrian crossing sign. They could be heading towards a destination, such as a building or a specific location, and might interact with other pedestrians or vehicles if the street is not deserted.</p>
+</li>
+</ul>
+<h3 id="response-from-llava13b">Response from <code>llava:13b</code> </h3>
+<ul>
+<li>
+<p><strong>What is happening in this image?</strong><br>
+In the image, a man wearing a red shirt and jeans is standing on a street corner. He is looking down at the ground and appears to be using a cane or crutch for support as he walks along the sidewalk. The setting looks like a city street with buildings in the background.</p>
+</li>
+<li>
+<p><strong>Describe the relationships between the objects.</strong><br>
+The man, who is wearing a red shirt, is standing on the sidewalk next to a cane or crutch. There are several buildings in the background that provide context for the urban environment.</p>
+</li>
+<li>
+<p><strong>Where is the person located?</strong><br>
+The person is located on a city street corner.</p>
+</li>
+<li>
+<p><strong>What time of day is it?</strong><br>
+It appears to be either dawn or dusk, as the lighting suggests an early or late hour when sunlight is diffused and shadows are more pronounced.</p>
+</li>
+<li>
+<p><strong>What might happen next in the scene?</strong><br>
+In the next moments, the man could continue walking along the sidewalk, using his cane or crutch for support. Alternatively, he may cross the street if there is a pedestrian crossing available at the corner where he stands. The exact actions will depend on the man's destination and the flow of traffic in the area.</p>
+</li>
+</ul>
+<h3 id="response-from-minicpm-v8b">Response from <code>minicpm-v:8b</code> </h3>
+<ul>
+<li>
+<p><strong>What is happening in this image?</strong><br>
+The man with a visual impairment is walking down an empty street, using his white cane and guide dog to navigate.</p>
+</li>
+<li>
+<p><strong>Describe the relationships between the objects.</strong><br>
+The pedestrian crossing sign indicates that it's safe for pedestrians to cross. The red trees line both sides of the road, creating symmetry in the scene. The person with a visual impairment is walking alongside these elements, indicating an urban setting designed for accessibility and pedestrian safety.</p>
+</li>
+<li>
+<p><strong>Where is the person located?</strong><br>
+The man is on the left side of the street near the curb, using his guide dog to navigate through this empty area.</p>
+</li>
+<li>
+<p><strong>What time of day is it?</strong><br>
+It appears to be daytime with bright sunlight casting shadows on the ground.</p>
+</li>
+</ul>
+<h3 id="response-from-llama32-vision11b">Response from <code>llama3.2-vision:11b</code> </h3>
+<ul>
+<li>
+<p><strong>What is happening in this image?</strong><br>
+A man with a visual impairment is using a white cane to navigate a street.</p>
+</li>
+<li>
+<p><strong>Describe the relationships between the objects.</strong><br>
+The man is standing on the sidewalk, holding the white cane in his right hand. The white cane is extended in front of him, and it appears to be touching the ground.</p>
+</li>
+<li>
+<p><strong>Where is the person located?</strong><br>
+The man is located on a street in an urban area.</p>
+</li>
+<li>
+<p><strong>What time of day is it?</strong><br>
+It appears to be daytime, as there is sunlight illuminating the scene.</p>
+</li>
+</ul>
+<h2 id="analysis-of-sample_2jpg">Analysis of <code>sample_2.jpg</code> </h2>
+<p><img src="export-doc/sample_2.jpg" alt="sample_2.jpg"></p>
+<h3 id="response-from-gemma312b-1">Response from <code>gemma3:12b</code> </h3>
+<ul>
+<li>
+<p><strong>What is happening in this image?</strong><br>
+Two people are shaking hands on a street.</p>
+</li>
+<li>
+<p><strong>Describe the relationships between the objects.</strong><br>
+The people are centered in the foreground, with cars and traffic lights in the background. The buildings form a backdrop behind the street. The people are facing each other, connected through the handshake.</p>
+</li>
+<li>
+<p><strong>Where is the person located?</strong><br>
+The people are located on a street, likely in an urban area.</p>
+</li>
+<li>
+<p><strong>What time of day is it?</strong><br>
+It appears to be dusk or early evening, judging by the fading light and illuminated buildings.</p>
+</li>
+<li>
+<p><strong>What might happen next in the scene?</strong><br>
+They might part ways, continue a conversation, or one person might lead the other somewhere.</p>
+</li>
+</ul>
+<h3 id="response-from-qwen25vl7b-1">Response from <code>qwen2.5vl:7b</code> </h3>
+<ul>
+<li>
+<p><strong>What is happening in this image?</strong><br>
+Two individuals are shaking hands in an urban setting, likely indicating a business or formal agreement.</p>
+</li>
+<li>
+<p><strong>Describe the relationships between the objects.</strong><br>
+The objects in the image include two people shaking hands, a cityscape with buildings, a street with cars, and a traffic light. The people are the main focus, with the urban environment serving as the backdrop.</p>
+</li>
+<li>
+<p><strong>Where is the person located?</strong><br>
+The person is located in an urban environment, likely a city street, as indicated by the buildings, cars, and traffic light.</p>
+</li>
+<li>
+<p><strong>What time of day is it?</strong><br>
+The time of day appears to be dusk, as the sky is dim and the streetlights are on, but the sky still has some light.</p>
+</li>
+<li>
+<p><strong>What might happen next in the scene?</strong><br>
+After the handshake, the individuals might continue their conversation, walk away, or proceed to their next destination. The scene could also transition to a different activity, such as entering a building or getting into a vehicle.</p>
+</li>
+</ul>
+<h3 id="response-from-llava13b-1">Response from <code>llava:13b</code> </h3>
+<ul>
+<li>
+<p><strong>What is happening in this image?</strong><br>
+In this image, a man and a woman are shaking hands with each other at night on a city street. The man appears to be offering or exchanging something to the woman. They are both standing on a sidewalk near a crosswalk.</p>
+</li>
+<li>
+<p><strong>Describe the relationships between the objects.</strong><br>
+In this image, we can observe several relationships between different objects: - A human interaction, specifically between two individuals shaking hands; - The man and woman are positioned relatively to each other, with their hands connected through a handshake; - They stand on the sidewalk next to a crosswalk, which suggests a typical urban setting with pedestrian infrastructure.</p>
+</li>
+<li>
+<p><strong>Where is the person located?</strong><br>
+The person in the image is located on a city street at night, standing on a sidewalk near a crosswalk. This indicates an urban environment during evening or nighttime hours.</p>
+</li>
+<li>
+<p><strong>What time of day is it?</strong><br>
+It is nighttime based on the illuminated surroundings and the darkness in the sky. The exact hour cannot be determined from this single image, but it's clear that we are observing a scene at night.</p>
+</li>
+<li>
+<p><strong>What might happen next in the scene?</strong><br>
+Given that both individuals are engaging in a handshake, it is likely that they have just completed a transaction, exchange of information, or conclusion to a conversation. The exact nature of their interaction cannot be determined from the image alone, but it appears to be amicable and professional. After the handshake concludes, both individuals might continue on their separate ways or perhaps engage in further discussion if needed.</p>
+</li>
+</ul>
+<h3 id="response-from-minicpm-v8b-1">Response from <code>minicpm-v:8b</code> </h3>
+<ul>
+<li>
+<p><strong>What is happening in this image?</strong><br>
+Two individuals are shaking hands on a city street at dusk.</p>
+</li>
+<li>
+<p><strong>Describe the relationships between the objects.</strong><br>
+The two people standing opposite each other have their arms extended towards one another, engaged in a handshake. In the background, vehicles and buildings indicate an urban environment with active traffic flow.</p>
+</li>
+<li>
+<p><strong>Where is the person located?</strong><br>
+One individual stands on what appears to be a pedestrian crossing or median of a city street, while the other person faces them from across the road.</p>
+</li>
+<li>
+<p><strong>What time of day is it?</strong><br>
+Based on the lighting and position of shadows, it seems like evening during sunset or twilight hours.</p>
+</li>
+<li>
+<p><strong>What might happen next in the scene?</strong><br>
+The handshake may signify an agreement reached between the two individuals, potentially marking a conclusion to their discussion or meeting for that moment.</p>
+</li>
+</ul>
+<h3 id="response-from-llama32-vision11b-1">Response from <code>llama3.2-vision:11b</code> </h3>
+<ul>
+<li>
+<p><strong>What is happening in this image?</strong><br>
+A man and woman are shaking hands on a city street at dusk.</p>
+</li>
+<li>
+<p><strong>Describe the relationships between the objects.</strong><br>
+The man and woman are facing each other, with their arms extended to shake hands. The city street is visible in the background, with a car driving by and a building in the distance.</p>
+</li>
+<li>
+<p><strong>Where is the person located?</strong><br>
+The man and woman are standing on a city street, likely in a business district or downtown area.</p>
+</li>
+<li>
+<p><strong>What time of day is it?</strong><br>
+It appears to be dusk, as the sky is a light gray color and the streetlights are on.</p>
+</li>
+</ul>
+<h2 id="analysis-of-sample_3jpg">Analysis of <code>sample_3.jpg</code> </h2>
+<p><img src="export-doc/sample_3.jpg" alt="sample_3.jpg"></p>
+<h3 id="response-from-gemma312b-2">Response from <code>gemma3:12b</code> </h3>
+<ul>
+<li>
+<p><strong>What is happening in this image?</strong><br>
+A man is walking across a crosswalk.</p>
+</li>
+<li>
+<p><strong>Describe the relationships between the objects.</strong><br>
+The man is walking on a paved walkway that intersects with a crosswalk. Trees, hedges, and lampposts line the walkway. A gate and building are in the background.</p>
+</li>
+<li>
+<p><strong>Where is the person located?</strong><br>
+The person is located on a crosswalk, likely near a street or park entrance.</p>
+</li>
+<li>
+<p><strong>What time of day is it?</strong><br>
+It appears to be daytime, likely mid-morning or mid-afternoon based on the lighting.</p>
+</li>
+<li>
+<p><strong>What might happen next in the scene?</strong><br>
+The man might continue crossing the street or enter the gate/building in the background.</p>
+</li>
+</ul>
+<h3 id="response-from-qwen25vl7b-2">Response from <code>qwen2.5vl:7b</code> </h3>
+<ul>
+<li>
+<p><strong>What is happening in this image?</strong><br>
+A person is walking on a pedestrian path in an urban setting.</p>
+</li>
+<li>
+<p><strong>Describe the relationships between the objects.</strong><br>
+The person is walking on a paved path with a zebra crossing in the foreground. There are lampposts lining the path, and a large gate and building are in the background. The person is carrying a backpack and appears to be in motion.</p>
+</li>
+<li>
+<p><strong>Where is the person located?</strong><br>
+The person is located on a pedestrian path in an urban area, likely a city or town, given the architecture and the presence of a gate and building in the background.</p>
+</li>
+<li>
+<p><strong>What time of day is it?</strong><br>
+The image appears to be taken during the daytime, as indicated by the shadows and the brightness of the scene.</p>
+</li>
+<li>
+<p><strong>What might happen next in the scene?</strong><br>
+The person might continue walking across the pedestrian path, potentially crossing the zebra crossing. They might stop, turn around, or interact with someone or something off-camera.</p>
+</li>
+</ul>
+<h3 id="response-from-llava13b-2">Response from <code>llava:13b</code> </h3>
+<ul>
+<li>
+<p><strong>What is happening in this image?</strong><br>
+The image shows a man walking on a sidewalk during the daytime, likely near an official building or a public space.</p>
+</li>
+<li>
+<p><strong>Describe the relationships between the objects.</strong><br>
+In the image, there are at least two main objects: the person (a man) and the environment he is walking through. The environment includes the sidewalk, a fence, lampposts, and possibly some vegetation or buildings in the background. The relationship between these objects suggests that the man is moving from one point to another within an urban setting, likely going about his daily activities such as commuting, running errands, or enjoying leisure time outdoors.</p>
+</li>
+<li>
+<p><strong>Where is the person located?</strong><br>
+The person (a man) is walking on a sidewalk in what appears to be an urban area, possibly near a park or a government building. The exact location cannot be determined from this image alone.</p>
+</li>
+<li>
+<p><strong>What time of day is it?</strong><br>
+It is daytime as indicated by the bright lighting and visible shadows.</p>
+</li>
+<li>
+<p><strong>What might happen next in the scene?</strong><br>
+Given that we only see a snapshot of the man's activity, it is impossible to predict exactly what will happen next. However, some plausible scenarios could include him continuing his walk along the sidewalk, potentially arriving at a destination, or engaging with someone else nearby (like a friend or colleague). The image does not provide enough information to make more specific predictions about his actions or intentions beyond this immediate moment of walking.</p>
+</li>
+</ul>
+<h3 id="response-from-minicpm-v8b-2">Response from <code>minicpm-v:8b</code> </h3>
+<ul>
+<li>
+<p><strong>What is happening in this image?</strong><br>
+The man appears to be crossing a pedestrian crosswalk.</p>
+</li>
+<li>
+<p><strong>Describe the relationships between the objects.</strong><br>
+The street lamps are positioned on either side, with the fence and gate providing boundaries. The trees add greenery alongside the walkway, while the building stands prominently behind it all.</p>
+</li>
+<li>
+<p><strong>Where is the person located?</strong><br>
+The man is walking across a pedestrian crosswalk in an urban setting.</p>
+</li>
+<li>
+<p><strong>What time of day is it?</strong><br>
+It seems to be daytime with clear skies and bright sunlight casting shadows on the ground.</p>
+</li>
+<li>
+<p><strong>What might happen next in the scene?</strong><br>
+After crossing, he may continue his walk towards another destination or perhaps enter the building behind him.</p>
+</li>
+</ul>
+<h3 id="response-from-llama32-vision11b-2">Response from <code>llama3.2-vision:11b</code> </h3>
+<p>A: The image shows a man walking across a crosswalk, likely on his way to work or school.<br>
+B: The man is in the foreground, with a large building behind him. There are also streetlights and bushes on either side of the crosswalk.<br>
+C: The image was likely taken during the morning or early afternoon, as the man is wearing a backpack, which suggests he is heading to school or work.<br>
+D: The man is likely going to cross the street and continue on his way to his destination.</p>
+<h2 id="analysis-of-sample_4jpg">Analysis of <code>sample_4.jpg</code> </h2>
+<p><img src="export-doc/sample_4.jpg" alt="sample_4.jpg"></p>
+<h3 id="response-from-gemma312b-3">Response from <code>gemma3:12b</code> </h3>
+<ul>
+<li>
+<p><strong>What is happening in this image?</strong><br>
+A white car is driving on a winding road through a hilly landscape.</p>
+</li>
+<li>
+<p><strong>Describe the relationships between the objects.</strong><br>
+The car is on the road, which is situated between hills. The hills frame the car and road. The guardrail runs alongside the road.</p>
+</li>
+<li>
+<p><strong>Where is the person located?</strong><br>
+The person is inside the car, driving.</p>
+</li>
+<li>
+<p><strong>What time of day is it?</strong><br>
+It appears to be daytime, likely overcast or slightly hazy.</p>
+</li>
+<li>
+<p><strong>What might happen next in the scene?</strong><br>
+The car might continue driving around the bend in the road.</p>
+</li>
+</ul>
+<h3 id="response-from-qwen25vl7b-3">Response from <code>qwen2.5vl:7b</code> </h3>
+<ul>
+<li>
+<p><strong>What is happening in this image?</strong><br>
+A person is riding a motorcycle on a winding road, following a white car. The motorcycle is positioned behind the car, and both are moving along the road.</p>
+</li>
+<li>
+<p><strong>Describe the relationships between the objects.</strong><br>
+The white car is in front of the motorcycle, indicating that the motorcycle is following the car. The road curves to the left, and both the car and the motorcycle are navigating this curve.</p>
+</li>
+<li>
+<p><strong>Where is the person located?</strong><br>
+The person is located on a motorcycle, which is on a road. The road is surrounded by hills and vegetation, suggesting a rural or mountainous area.</p>
+</li>
+<li>
+<p><strong>What time of day is it?</strong><br>
+The lighting in the image suggests it is daytime, but the exact time cannot be determined from the image alone.</p>
+</li>
+<li>
+<p><strong>What might happen next in the scene?</strong><br>
+The motorcycle might continue to follow the car as it navigates the curve in the road. The person on the motorcycle could either maintain their current speed or adjust their speed to match the car's pace. The car might slow down or speed up, and the motorcycle might need to adjust accordingly to maintain a safe distance.</p>
+</li>
+</ul>
+<h3 id="response-from-llava13b-3">Response from <code>llava:13b</code> </h3>
+<ul>
+<li>
+<p><strong>What is happening in this image?</strong><br>
+In the image, there is a car driving down a road with mountainous terrain in the background. The road curves to the left and has lane markings visible on the asphalt surface.</p>
+</li>
+<li>
+<p><strong>Describe the relationships between the objects.</strong><br>
+The car is the main subject of the image, moving along the curve of the road while being surrounded by a natural environment with hills or mountains in the background. There are no other objects directly interacting with the car, but the lane markings on the road indicate its position and orientation relative to the curves ahead.</p>
+</li>
+<li>
+<p><strong>Where is the person located?</strong><br>
+The person appears to be inside the car, driving along the road as the driver or a passenger. Their location is inside the vehicle, traveling down the mountainous stretch of the highway.</p>
+</li>
+<li>
+<p><strong>What time of day is it?</strong><br>
+Based on the image's lighting and shadows, it is not possible to definitively determine the exact time of day. However, since there are no strong sun angles that suggest either dawn or dusk, it could be inferred that it might be a regular daytime period when visibility is good enough for driving.</p>
+</li>
+<li>
+<p><strong>What might happen next in the scene?</strong><br>
+The most likely event to occur next would be the car continuing along its path around the left curve of the road. Depending on the driver's speed and intentions, they may either accelerate, maintain their current speed, or slow down as they approach or round the turn. The surrounding landscape remains relatively unchanged, suggesting a calm and undisturbed journey.</p>
+</li>
+</ul>
+<h3 id="response-from-minicpm-v8b-3">Response from <code>minicpm-v:8b</code> </h3>
+<ul>
+<li>
+<p><strong>What is happening in this image?</strong><br>
+The white BMW car, specifically a convertible model with its top down, is being driven on an uphill road bend.</p>
+</li>
+<li>
+<p><strong>Describe the relationships between the objects.</strong><br>
+In the foreground, we see a vehicle traveling along the curved road. Behind it are rolling hills and vegetation that appear to be part of a rural or mountainous area. The car's position suggests movement as it navigates through the turn.</p>
+</li>
+<li>
+<p><strong>Where is the person located?</strong><br>
+There isn't any visible driver in this image; therefore, no specific location can be determined for them within the scene.</p>
+</li>
+<li>
+<p><strong>What time of day is it?</strong><br>
+It appears to be daytime due to natural lighting and visibility. However, a precise time cannot be established without further context or shadows' directionality.</p>
+</li>
+<li>
+<p><strong>What might happen next in the scene?</strong><br>
+The car may continue its ascent along the road bend, possibly passing through more curves depending on how far it travels beyond what is visible within this frame.</p>
+</li>
+</ul>
+<h3 id="response-from-llama32-vision11b-3">Response from <code>llama3.2-vision:11b</code> </h3>
+<p>The image depicts a white car driving on a winding road, with a mountainous landscape in the background.</p>
+<p>The car is the central object in the image.<br>
+The road is curved and has a yellow line down the middle.<br>
+The mountain in the background is green and rocky.<br>
+There is no person visible in the image.</p>
+<p>It appears to be daytime, as the sun is shining and there are no streetlights or other signs of nighttime.</p>
+<p>The car is driving on the road, and it is likely that the driver is navigating the curve.<br>
+The mountain in the background is a natural feature that is not directly related to the car or the road.<br>
+There are no other objects or people visible in the image, so it is not possible to predict what might happen next.</p>
+<h2 id="analysis-of-sample_5jpg">Analysis of <code>sample_5.jpg</code> </h2>
+<p><img src="export-doc/sample_5.jpg" alt="sample_5.jpg"></p>
+<h3 id="response-from-gemma312b-4">Response from <code>gemma3:12b</code> </h3>
+<ul>
+<li>
+<p><strong>What is happening in this image?</strong><br>
+A small dog, wearing a black and red plaid shirt and devil horns, is sitting amidst fallen leaves.</p>
+</li>
+<li>
+<p><strong>Describe the relationships between the objects.</strong><br>
+The dog is the central object, surrounded by fallen leaves that cover the ground. The shirt is worn by the dog. The devil horns are attached to the dog's head.</p>
+</li>
+<li>
+<p><strong>Where is the person located?</strong><br>
+A person's hand is partially visible, appearing to be holding the dog or nearby.</p>
+</li>
+<li>
+<p><strong>What time of day is it?</strong><br>
+It appears to be daytime, based on the lighting.</p>
+</li>
+<li>
+<p><strong>What might happen next in the scene?</strong><br>
+The person might continue to interact with the dog, or the dog might move or look at something else.</p>
+</li>
+</ul>
+<h3 id="response-from-qwen25vl7b-4">Response from <code>qwen2.5vl:7b</code> </h3>
+<ul>
+<li>
+<p><strong>What is happening in this image?</strong><br>
+A dog is dressed in a devil costume, standing on a bed of fallen leaves. The dog appears to be posing for the photo.</p>
+</li>
+<li>
+<p><strong>Describe the relationships between the objects.</strong><br>
+The dog is the central object, wearing a devil costume with red horns and a black outfit. The fallen leaves are scattered around the dog, creating a natural and autumnal setting. The background is blurred, suggesting the focus is on the dog and the leaves.</p>
+</li>
+<li>
+<p><strong>Where is the person located?</strong><br>
+There is no person visible in the image. The focus is solely on the dog and the surrounding environment.</p>
+</li>
+<li>
+<p><strong>What time of day is it?</strong><br>
+The lighting in the image suggests it could be daytime, possibly late afternoon or early evening, given the softness of the light and the presence of shadows.</p>
+</li>
+<li>
+<p><strong>What might happen next in the scene?</strong><br>
+The dog might continue to pose for more photos, or someone might approach to interact with the dog. The scene could also be part of a photoshoot or a casual outdoor activity.</p>
+</li>
+</ul>
+<h3 id="response-from-llava13b-4">Response from <code>llava:13b</code> </h3>
+<ul>
+<li>
+<p><strong>What is happening in this image?</strong><br>
+The image shows a small dog wearing horns on its head and possibly a costume, standing amidst fallen leaves.</p>
+</li>
+<li>
+<p><strong>Describe the relationships between the objects.</strong><br>
+In the image, there is a dog as the main subject, positioned in front of some scattered autumn leaves that are at the base of a tree trunk. The dog appears to be wearing horns and possibly a costume, adding a playful or decorative element to its appearance.</p>
+</li>
+<li>
+<p><strong>Where is the person located?</strong><br>
+The image does not provide enough context to determine the exact location where the person might be, but it suggests an outdoor setting with autumn leaves on the ground.</p>
+</li>
+<li>
+<p><strong>What time of day is it?</strong><br>
+Based on the lighting and shadows in the image, it appears to be daytime. However, without specific details or indicators like the position of the sun, it's not possible to determine the exact time of day with certainty.</p>
+</li>
+<li>
+<p><strong>What might happen next in the scene?</strong><br>
+Since this is a single-frame snapshot and does not provide any ongoing action, it is not possible to predict what will happen next in the scene. It could be that someone is about to pose the dog for a photo or let it play and move around freely among the leaves.</p>
+</li>
+</ul>
+<h3 id="response-from-minicpm-v8b-4">Response from <code>minicpm-v:8b</code> </h3>
+<ul>
+<li>
+<p><strong>What is happening in this image?</strong><br>
+In this image, a small dog with white fur and large red horns appears to be wearing clothing. It seems like someone has dressed up or posed the dog for a photograph.</p>
+</li>
+<li>
+<p><strong>Describe the relationships between the objects.</strong><br>
+The relationship between the primary subject (the dog) and secondary elements is that of an animal being anthropomorphized, given human-like attributes such as dressing in clothes with horns on its head. These added accessories create a playful or humorous scene where the pet takes on characteristics beyond typical canine behavior.</p>
+</li>
+<li>
+<p><strong>Where is the person located?</strong><br>
+The person appears to be standing behind and slightly above the dog's level of view, suggesting they are likely off-camera holding up the camera for this shot.</p>
+</li>
+<li>
+<p><strong>What time of day is it?</strong><br>
+While there isn't a direct indication of the exact time of day from the image alone, given that outdoor photos with warm lighting can be taken during various times but often associated with late afternoon or early evening when sunlight has softer tones and longer shadows. However, without additional context such as shadow direction or artificial light sources visible in this photo, an accurate assessment cannot be made.</p>
+</li>
+<li>
+<p><strong>What might happen next in the scene?</strong><br>
+The owner may continue to take photos of their pet dressed up for fun, perhaps changing poses or adding more props related to a theme. Alternatively, they could move on with other activities after having captured these playful moments.</p>
+</li>
+</ul>
+<h3 id="response-from-llama32-vision11b-4">Response from <code>llama3.2-vision:11b</code> </h3>
+<p>Image Description</p>
+<p>The scene features a small dog, likely a Chihuahua or similar breed, wearing a black shirt and red devil horns.<br>
+The dog is positioned in the center of the image, surrounded by fallen brown leaves, and appears to be sitting on the ground.<br>
+The atmosphere suggests a playful and lighthearted mood, with the dog's attire and the autumnal setting contributing to the overall tone.<br>
+The image is likely intended to be humorous or entertaining, rather than serious or dramatic.</p>
+
+      </div>
+      
+      
+    
+    
+    
+    
+    
+    
+  
+    </body></html>

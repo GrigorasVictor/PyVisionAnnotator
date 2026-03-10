@@ -1,0 +1,15 @@
+# User requested excludes
+coco-panoptic/
+yolov8x*
+build/
+dist/
+
+# Python generated files
+__pycache__/
+*.spec
+*.pyc
+
+.venv/
+.idea/
+
+

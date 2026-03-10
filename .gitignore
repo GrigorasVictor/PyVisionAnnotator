@@ -1,0 +1,11 @@
+sample/
+
+# Virtual Environment
+.venv/
+env/
+venv/
+
+# Editor settings
+.idea/
+.vscode/
+

@@ -1,0 +1,20 @@
+# Distribution / Build artifacts
+dist/
+build/
+build_output/
+*.spec
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+.venv/
+env/
+venv/
+
+# Editor settings
+.idea/
+.vscode/
+

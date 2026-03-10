@@ -1,0 +1,8 @@
+sample_dir: "C:/Stuff/Scoala/Licienta/research/open_voc_benchmarks/sample"
+device: "cuda"
+
+models:
+  yolo: "yolov8x-worldv2.pt"
+  llmdet: "iSEE-Laboratory/llmdet_large"
+
+classes: ["guitar", "maracas", "bongo", "violin", "microphone", "piano", "saxophone", "horse", "flag", "numbers"]

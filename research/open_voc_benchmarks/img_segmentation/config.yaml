@@ -1,0 +1,12 @@
+sample_dir: "C:/Stuff/Scoala/Licienta/research/open_voc_benchmarks/sample"
+device: "cuda"
+
+models:
+  facebook:
+    model1: "facebook/mask2former-swin-large-coco-panoptic"
+    model2: "facebook/maskformer-swin-large-coco"
+    model3: "facebook/sam2-hiera-large"
+  briaai:
+    model1: "briaai/RMBG-2.0"
+
+classes: ["guitar", "maracas", "bongo", "violin", "microphone", "piano", "saxophone", "person", "horse", "flag", "numbers"]
