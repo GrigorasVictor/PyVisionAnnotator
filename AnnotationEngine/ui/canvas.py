@@ -52,6 +52,12 @@ class AnnotationCanvas(QGraphicsView):
         self._autoseg_busy: bool = False
         self._autoseg_marker: Optional[QGraphicsRectItem] = None
 
+        # Brush / spray / eraser state
+        self._brush_size: int = 20          # diameter in scene pixels
+        self._spray_density: int = 30
+        self._painting: bool = False
+        self._paint_target: Optional[MaskItem] = None
+
         # Scene
         self._scene = QGraphicsScene(self)
         self.setScene(self._scene)
@@ -199,28 +205,47 @@ class AnnotationCanvas(QGraphicsView):
         self.viewport().update()
 
     def drawForeground(self, painter: QPainter, rect: QRectF) -> None:
-        """Draw the crosshair on top of everything in viewport coordinates."""
+        """Draw crosshair + brush-cursor circle on top in viewport space."""
         super().drawForeground(painter, rect)
 
-        if not self._crosshair_enabled or self._mouse_pos_viewport is None:
+        if self._mouse_pos_viewport is None:
             return
 
         painter.save()
-        # Reset transform so we draw in viewport (pixel) space
         painter.resetTransform()
 
-        vp = self.viewport()
-        x = self._mouse_pos_viewport.x()
-        y = self._mouse_pos_viewport.y()
-        w = vp.width()
-        h = vp.height()
+        vp   = self.viewport()
+        mx   = self._mouse_pos_viewport.x()
+        my   = self._mouse_pos_viewport.y()
 
-        pen = QPen(QColor(0, 255, 128, 180), 1, Qt.PenStyle.SolidLine)
-        painter.setPen(pen)
-        # Horizontal line
-        painter.drawLine(int(0), int(y), int(w), int(y))
-        # Vertical line
-        painter.drawLine(int(x), int(0), int(x), int(h))
+        # ---- brush / spray / eraser circle cursor -------------------- #
+        if self._current_tool in ("brush", "spray", "eraser") and not self._space_held:
+            radius_scene = self._brush_size / 2.0
+            scale        = self.transform().m11()          # pixels-per-scene-unit
+            radius_vp    = radius_scene * scale
+
+            if self._current_tool == "eraser":
+                pen_col = QColor(255, 80, 80)
+            elif self._current_tool == "spray":
+                pen_col = QColor(80, 200, 255)
+            else:
+                pen_col = QColor(255, 255, 255)
+
+            painter.setPen(QPen(pen_col, 1, Qt.PenStyle.SolidLine))
+            painter.setBrush(Qt.BrushStyle.NoBrush)
+            from PyQt6.QtCore import QPointF as _QPointF
+            painter.drawEllipse(_QPointF(mx, my), radius_vp, radius_vp)
+
+            # small centre dot
+            painter.setPen(QPen(pen_col, 2))
+            painter.drawPoint(int(mx), int(my))
+
+        # ---- crosshair ----------------------------------------------- #
+        if self._crosshair_enabled:
+            pen = QPen(QColor(0, 255, 128, 180), 1, Qt.PenStyle.SolidLine)
+            painter.setPen(pen)
+            painter.drawLine(0, int(my), vp.width(), int(my))
+            painter.drawLine(int(mx), 0, int(mx), vp.height())
 
         painter.restore()
 
@@ -229,6 +254,8 @@ class AnnotationCanvas(QGraphicsView):
     # ------------------------------------------------------------------ #
     def set_tool(self, tool_mode: str) -> None:
         self._current_tool = tool_mode
+        self._painting = False
+        self._paint_target = None
         self._drawing = False
         self._poly_points = []
         if self._rubber_band:
@@ -244,6 +271,14 @@ class AnnotationCanvas(QGraphicsView):
             if self._rubber_poly.scene() == self._scene:
                 self._scene.removeItem(self._rubber_poly)
             self._rubber_poly = None
+
+    def set_brush_size(self, size: int) -> None:
+        """Set the brush / spray / eraser diameter in scene pixels."""
+        self._brush_size = max(1, size)
+
+    def set_spray_density(self, density: int) -> None:
+        """Set how many random dots the spray tool places per event."""
+        self._spray_density = max(1, density)
 
     # ------------------------------------------------------------------ #
     #  Zoom
@@ -316,6 +351,23 @@ class AnnotationCanvas(QGraphicsView):
         if btn == Qt.MouseButton.LeftButton and not self._space_held:
             scene_pos: QPointF = self.mapToScene(event.pos())
 
+            # ---- brush / spray / eraser -------------------------------- #
+            if self._current_tool in ("brush", "spray", "eraser"):
+                target = self._find_selected_mask()
+                if target is None:
+                    # Try clicking directly on a MaskItem
+                    item_under = self.itemAt(event.pos())
+                    if isinstance(item_under, MaskItem):
+                        self._scene.clearSelection()
+                        item_under.setSelected(True)
+                        target = item_under
+                if target is not None:
+                    self._painting = True
+                    self._paint_target = target
+                    self._apply_paint(target, scene_pos)
+                event.accept()
+                return
+
             if self._current_tool == "autoseg":
                 if self._autoseg_busy:
                     event.accept()
@@ -380,21 +432,31 @@ class AnnotationCanvas(QGraphicsView):
         super().mousePressEvent(event)
 
     def mouseMoveEvent(self, event: QMouseEvent) -> None:
-        # Update crosshair position
+        # Update crosshair / brush cursor
         self._mouse_pos_viewport = event.position()
-        self.viewport().update()  # trigger repaint for crosshair
+        self.viewport().update()
 
         scene_pos = self.mapToScene(event.pos())
+
+        # ---- painting tools ------------------------------------------ #
+        if self._painting and self._paint_target is not None:
+            self._apply_paint(self._paint_target, scene_pos)
+            event.accept()
+            return
 
         if self._panning and self._pan_start is not None:
             delta = event.position() - self._pan_start
             self._pan_start = event.position()
-            self.horizontalScrollBar().setValue(int(self.horizontalScrollBar().value() - delta.x()))
-            self.verticalScrollBar().setValue(int(self.verticalScrollBar().value() - delta.y()))
+            self.horizontalScrollBar().setValue(
+                int(self.horizontalScrollBar().value() - delta.x()))
+            self.verticalScrollBar().setValue(
+                int(self.verticalScrollBar().value() - delta.y()))
             event.accept()
             return
 
-        if self._current_tool == "rectangle" and self._drawing and self._draw_origin is not None and self._rubber_band is not None:
+        if (self._current_tool == "rectangle" and self._drawing
+                and self._draw_origin is not None
+                and self._rubber_band is not None):
             rect = QRectF(self._draw_origin, scene_pos).normalized()
             self._rubber_band.setRect(rect)
             event.accept()
@@ -411,7 +473,8 @@ class AnnotationCanvas(QGraphicsView):
                 li.setZValue(20)
                 self._rubber_lines.append(li)
             last = self._poly_points[-1]
-            li = self._scene.addLine(last.x(), last.y(), scene_pos.x(), scene_pos.y(), pen)
+            li = self._scene.addLine(
+                last.x(), last.y(), scene_pos.x(), scene_pos.y(), pen)
             li.setZValue(20)
             self._rubber_lines.append(li)
             event.accept()
@@ -421,6 +484,13 @@ class AnnotationCanvas(QGraphicsView):
 
     def mouseReleaseEvent(self, event: QMouseEvent) -> None:
         btn = event.button()
+
+        # Stop painting
+        if self._painting and btn == Qt.MouseButton.LeftButton:
+            self._painting = False
+            self._paint_target = None
+            event.accept()
+            return
 
         if self._panning and (btn == Qt.MouseButton.MiddleButton or btn == Qt.MouseButton.LeftButton):
             self._panning = False
@@ -507,6 +577,26 @@ class AnnotationCanvas(QGraphicsView):
         if self._rubber_poly:
             self._scene.removeItem(self._rubber_poly)
             self._rubber_poly = None
+
+    # ------------------------------------------------------------------ #
+    #  Mask-painting helpers
+    # ------------------------------------------------------------------ #
+    def _find_selected_mask(self) -> Optional[MaskItem]:
+        """Return the first selected MaskItem, or None."""
+        for item in self._scene.selectedItems():
+            if isinstance(item, MaskItem):
+                return item
+        return None
+
+    def _apply_paint(self, target: MaskItem, scene_pos: QPointF) -> None:
+        """Dispatch a single paint stroke to the target MaskItem."""
+        radius = self._brush_size / 2.0
+        if self._current_tool == "brush":
+            target.paint_brush(scene_pos, radius)
+        elif self._current_tool == "spray":
+            target.paint_spray(scene_pos, radius, density=self._spray_density)
+        elif self._current_tool == "eraser":
+            target.erase_brush(scene_pos, radius)
 
     # ------------------------------------------------------------------ #
     #  Helpers

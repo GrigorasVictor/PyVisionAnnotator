@@ -104,6 +104,7 @@ class MainWindow(QMainWindow):
         # ---- Right panel ----
         self._right.status_message.connect(self._status.showMessage)
         self._right.tool_changed.connect(self._canvas.set_tool)
+        self._right.brush_size_changed.connect(self._canvas.set_brush_size)
         self._right.crosshair_toggled.connect(self._canvas.set_crosshair)
         self._right.canvas_brightness.connect(self._canvas.set_brightness)
         self._right.canvas_contrast.connect(self._canvas.set_contrast)

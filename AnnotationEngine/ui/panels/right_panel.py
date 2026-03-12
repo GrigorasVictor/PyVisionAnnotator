@@ -46,17 +46,21 @@ class RightPanel(QWidget):
     """
 
     status_message = pyqtSignal(str)
-    tool_changed = pyqtSignal(str)       # ToolMode string
+    tool_changed = pyqtSignal(str)
+    brush_size_changed = pyqtSignal(int)
     crosshair_toggled = pyqtSignal(bool)
     canvas_brightness = pyqtSignal(int)
     canvas_contrast = pyqtSignal(float)
     canvas_gamma = pyqtSignal(float)
-    autoseg_config_requested = pyqtSignal()  # open AutoSeg settings dialog
+    autoseg_config_requested = pyqtSignal()
 
     # ToolMode constants
     TOOL_RECT    = "rectangle"
     TOOL_POLY    = "polygon"
     TOOL_AUTOSEG = "autoseg"
+    TOOL_BRUSH   = "brush"
+    TOOL_SPRAY   = "spray"
+    TOOL_ERASER  = "eraser"
 
     def __init__(
         self,
@@ -153,34 +157,63 @@ class RightPanel(QWidget):
         layout.addWidget(grp)
 
     def _build_tools_group(self, layout: QVBoxLayout) -> None:
+        from PyQt6.QtWidgets import QGridLayout, QSpinBox
         grp = QGroupBox("Tools")
-        row = QHBoxLayout(grp)
+        vbox = QVBoxLayout(grp)
+        vbox.setSpacing(4)
 
-        self.btn_tool_rect = QPushButton("Rect")
-        self.btn_tool_rect.setCheckable(True)
+        grid = QGridLayout()
+        grid.setSpacing(4)
+
+        def _tool_btn(text: str, tip: str = "") -> QPushButton:
+            b = QPushButton(text)
+            b.setCheckable(True)
+            b.setFixedSize(62, 52)
+            b.setToolTip(tip)
+            return b
+
+        self.btn_tool_rect    = _tool_btn("⬜ Rect",   "Draw bounding box")
+        self.btn_tool_poly    = _tool_btn("🔷 Poly",   "Draw polygon")
+        self.btn_tool_autoseg = _tool_btn("🤖 AutoSeg","Auto-segment at click")
+        self.btn_tool_brush   = _tool_btn("🖌 Brush",  "Paint on mask (select mask first)")
+        self.btn_tool_spray   = _tool_btn("💨 Spray",  "Spray dots on mask (select mask first)")
+        self.btn_tool_eraser  = _tool_btn("🧹 Erase",  "Erase from mask (select mask first)")
+
         self.btn_tool_rect.setChecked(True)
-        self.btn_tool_rect.setFixedSize(60, 60)
-        self.btn_tool_rect.setStyleSheet("font-weight: bold;")
-
-        self.btn_tool_poly = QPushButton("Poly")
-        self.btn_tool_poly.setCheckable(True)
-        self.btn_tool_poly.setFixedSize(60, 60)
-        self.btn_tool_poly.setStyleSheet("font-weight: bold;")
-
-        self.btn_tool_autoseg = QPushButton("AutoSeg")
-        self.btn_tool_autoseg.setCheckable(True)
-        self.btn_tool_autoseg.setFixedSize(60, 60)
-        self.btn_tool_autoseg.setToolTip("Click on an object to auto-segment it")
 
         self.tools_btn_group = QButtonGroup(self)
-        self.tools_btn_group.addButton(self.btn_tool_rect)
-        self.tools_btn_group.addButton(self.btn_tool_poly)
-        self.tools_btn_group.addButton(self.btn_tool_autoseg)
+        for b in (self.btn_tool_rect, self.btn_tool_poly, self.btn_tool_autoseg,
+                  self.btn_tool_brush, self.btn_tool_spray, self.btn_tool_eraser):
+            self.tools_btn_group.addButton(b)
 
-        row.addWidget(self.btn_tool_rect)
-        row.addWidget(self.btn_tool_poly)
-        row.addWidget(self.btn_tool_autoseg)
-        row.addStretch()
+        grid.addWidget(self.btn_tool_rect,    0, 0)
+        grid.addWidget(self.btn_tool_poly,    0, 1)
+        grid.addWidget(self.btn_tool_autoseg, 0, 2)
+        grid.addWidget(self.btn_tool_brush,   1, 0)
+        grid.addWidget(self.btn_tool_spray,   1, 1)
+        grid.addWidget(self.btn_tool_eraser,  1, 2)
+        vbox.addLayout(grid)
+
+        # Brush size row (visible for brush/spray/eraser)
+        self._brush_size_row = QWidget()
+        sz_lay = QHBoxLayout(self._brush_size_row)
+        sz_lay.setContentsMargins(0, 0, 0, 0)
+        sz_lay.addWidget(QLabel("Size:"))
+        self.sld_brush_size = QSlider(Qt.Orientation.Horizontal)
+        self.sld_brush_size.setRange(2, 120)
+        self.sld_brush_size.setValue(20)
+        self.lbl_brush_size = QLabel("20 px")
+        self.lbl_brush_size.setFixedWidth(38)
+        sz_lay.addWidget(self.sld_brush_size)
+        sz_lay.addWidget(self.lbl_brush_size)
+        vbox.addWidget(self._brush_size_row)
+        self._brush_size_row.setVisible(False)
+
+        # Hint label
+        self._mask_hint = QLabel("⚠ Select a mask first")
+        self._mask_hint.setStyleSheet("color: #aaa; font-size: 10px;")
+        vbox.addWidget(self._mask_hint)
+        self._mask_hint.setVisible(False)
 
         layout.addWidget(grp)
 
@@ -249,6 +282,9 @@ class RightPanel(QWidget):
 
         # Tool buttons
         self.tools_btn_group.buttonClicked.connect(self._on_tool_btn_clicked)
+
+        # Brush size slider
+        self.sld_brush_size.valueChanged.connect(self._on_brush_size_changed)
 
         # Annotations list
         self.annotation_list.currentItemChanged.connect(self._on_annotation_list_clicked)
@@ -355,6 +391,10 @@ class RightPanel(QWidget):
     #  Business-logic slots — Tool buttons
     # ================================================================== #
     def _on_tool_btn_clicked(self, btn) -> None:
+        is_paint = btn in (self.btn_tool_brush, self.btn_tool_spray, self.btn_tool_eraser)
+        self._brush_size_row.setVisible(is_paint)
+        self._mask_hint.setVisible(is_paint)
+
         if btn is self.btn_tool_autoseg:
             from ui.autoseg_settings_dialog import AutoSegSettingsDialog
             if not AutoSegSettingsDialog.is_configured():
@@ -367,17 +407,26 @@ class RightPanel(QWidget):
                 self.tool_changed.emit(self.TOOL_RECT)
                 return
             self.tool_changed.emit(self.TOOL_AUTOSEG)
-            self.status_message.emit(
-                "Tool: AutoSeg — Left-click on an object to auto-segment it."
-            )
+            self.status_message.emit("Tool: AutoSeg — Left-click on an object to auto-segment it.")
         elif btn is self.btn_tool_poly:
             self.tool_changed.emit(self.TOOL_POLY)
-            self.status_message.emit(
-                "Tool: Polygon — Left-click to add points, Right-click (or Enter) to close."
-            )
+            self.status_message.emit("Tool: Polygon — Left-click to add points, Right-click to close.")
+        elif btn is self.btn_tool_brush:
+            self.tool_changed.emit(self.TOOL_BRUSH)
+            self.status_message.emit("Tool: Brush — Select a mask then paint to expand it.")
+        elif btn is self.btn_tool_spray:
+            self.tool_changed.emit(self.TOOL_SPRAY)
+            self.status_message.emit("Tool: Spray — Select a mask then spray random dots onto it.")
+        elif btn is self.btn_tool_eraser:
+            self.tool_changed.emit(self.TOOL_ERASER)
+            self.status_message.emit("Tool: Eraser — Select a mask then erase parts of it.")
         else:
             self.tool_changed.emit(self.TOOL_RECT)
             self.status_message.emit("Tool: Rectangle — Click and drag to create box.")
+
+    def _on_brush_size_changed(self, value: int) -> None:
+        self.lbl_brush_size.setText(f"{value} px")
+        self.brush_size_changed.emit(value)
 
     # ================================================================== #
     #  Business-logic slots — Annotations list

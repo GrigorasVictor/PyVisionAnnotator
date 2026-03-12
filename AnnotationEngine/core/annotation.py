@@ -9,8 +9,10 @@ import uuid
 from enum import Enum, auto
 from typing import Optional
 
+import random
+
 from PyQt6.QtCore import QRectF, QPointF, Qt
-from PyQt6.QtGui import QBrush, QColor, QPen, QPainter, QFont, QPolygonF, QPixmap, QPainterPath
+from PyQt6.QtGui import QBrush, QColor, QPen, QPainter, QFont, QPolygonF, QPixmap, QPainterPath, QImage
 from PyQt6.QtWidgets import (
     QGraphicsRectItem,
     QGraphicsPolygonItem,
@@ -231,8 +233,128 @@ class MaskItem(QGraphicsPixmapItem):
         from utils.geometry import rasterize_points
 
         pm, ox, oy = rasterize_points(self._points, self._color, fill_alpha=80)
+        self._img: QImage = pm.toImage().convertToFormat(QImage.Format.Format_ARGB32)
+        self._img_offset = QPointF(ox, oy)
         self.setPixmap(pm)
         self.setOffset(ox, oy)
+
+    # ---- pixel editing (brush / spray / eraser) ----------------------- #
+    def _ensure_image(self) -> None:
+        """Make sure _img / _img_offset exist (created lazily if needed)."""
+        if not hasattr(self, "_img") or self._img is None or self._img.isNull():
+            self._rebuild_pixmap()
+
+    def _expand_image_to_cover(self, scene_rect: QRectF) -> None:
+        """Grow the backing QImage so *scene_rect* is fully inside it."""
+        self._ensure_image()
+        ox, oy = self._img_offset.x(), self._img_offset.y()
+        cur = QRectF(ox, oy, self._img.width(), self._img.height())
+        united = cur.united(scene_rect).adjusted(-2, -2, 2, 2)  # small padding
+        if united == cur:
+            return  # no growth needed
+
+        nx, ny = int(united.x()), int(united.y())
+        nw, nh = int(united.width()) + 1, int(united.height()) + 1
+        new_img = QImage(nw, nh, QImage.Format.Format_ARGB32)
+        new_img.fill(Qt.GlobalColor.transparent)
+        p = QPainter(new_img)
+        p.drawImage(int(ox - nx), int(oy - ny), self._img)
+        p.end()
+        self._img = new_img
+        self._img_offset = QPointF(nx, ny)
+        self.setOffset(nx, ny)
+
+    def _flush_image(self) -> None:
+        """Push the backing QImage to the QPixmap so the scene redraws."""
+        self.prepareGeometryChange()
+        self.setPixmap(QPixmap.fromImage(self._img))
+        # Sync bbox to image bounds
+        ox, oy = self._img_offset.x(), self._img_offset.y()
+        self._min_x = ox
+        self._min_y = oy
+        self._max_x = ox + self._img.width()
+        self._max_y = oy + self._img.height()
+
+    def paint_brush(self, scene_pos: QPointF, radius: float) -> None:
+        """Paint a solid filled circle of the mask colour at *scene_pos*."""
+        brush_rect = QRectF(
+            scene_pos.x() - radius, scene_pos.y() - radius,
+            radius * 2 + 1, radius * 2 + 1,
+        )
+        self._expand_image_to_cover(brush_rect)
+        ox, oy = self._img_offset.x(), self._img_offset.y()
+
+        p = QPainter(self._img)
+        p.setRenderHint(QPainter.RenderHint.Antialiasing)
+        c = QColor(self._color)
+        c.setAlpha(180)
+        p.setPen(Qt.PenStyle.NoPen)
+        p.setBrush(QBrush(c))
+        p.drawEllipse(
+            QPointF(scene_pos.x() - ox, scene_pos.y() - oy),
+            radius, radius,
+        )
+        p.end()
+        self._flush_image()
+
+    def paint_spray(self, scene_pos: QPointF, radius: float, density: int = 30) -> None:
+        """Spray random dots inside a circle of *radius* around *scene_pos*."""
+        brush_rect = QRectF(
+            scene_pos.x() - radius, scene_pos.y() - radius,
+            radius * 2 + 1, radius * 2 + 1,
+        )
+        self._expand_image_to_cover(brush_rect)
+        ox, oy = self._img_offset.x(), self._img_offset.y()
+        iw, ih = self._img.width(), self._img.height()
+
+        c = QColor(self._color)
+        c.setAlpha(200)
+        rgba = c.rgba()
+        r2 = radius * radius
+        for _ in range(density):
+            dx = random.uniform(-radius, radius)
+            dy = random.uniform(-radius, radius)
+            if dx * dx + dy * dy > r2:
+                continue
+            ix = int(scene_pos.x() + dx - ox)
+            iy = int(scene_pos.y() + dy - oy)
+            if 0 <= ix < iw and 0 <= iy < ih:
+                self._img.setPixel(ix, iy, rgba)
+
+        self._flush_image()
+
+    def erase_brush(self, scene_pos: QPointF, radius: float) -> None:
+        """Erase a circular area from the mask."""
+        self._ensure_image()
+        ox, oy = self._img_offset.x(), self._img_offset.y()
+        cur = QRectF(ox, oy, self._img.width(), self._img.height())
+        brush_rect = QRectF(
+            scene_pos.x() - radius, scene_pos.y() - radius,
+            radius * 2 + 1, radius * 2 + 1,
+        )
+        if not cur.intersects(brush_rect):
+            return
+
+        p = QPainter(self._img)
+        p.setRenderHint(QPainter.RenderHint.Antialiasing)
+        p.setCompositionMode(QPainter.CompositionMode.CompositionMode_Clear)
+        p.setPen(Qt.PenStyle.NoPen)
+        p.setBrush(QBrush(Qt.GlobalColor.transparent))
+        p.drawEllipse(
+            QPointF(scene_pos.x() - ox, scene_pos.y() - oy),
+            radius, radius,
+        )
+        p.end()
+        self._flush_image()
+
+    # ---- serialisation helper ----------------------------------------- #
+    def _current_points(self) -> list[list[float]]:
+        """Return live pixel coordinates from _img (used for to_dict)."""
+        if hasattr(self, "_img") and self._img is not None and not self._img.isNull():
+            from utils.geometry import pixels_to_points
+            ox, oy = self._img_offset.x(), self._img_offset.y()
+            return pixels_to_points(self._img, ox, oy)
+        return [[p[0], p[1]] for p in self._points]
 
     # ---- shape (accurate click hit-test) ------------------------------ #
     def shape(self) -> QPainterPath:
@@ -323,7 +445,12 @@ class MaskItem(QGraphicsPixmapItem):
 
     # ---- serialisation ------------------------------------------------ #
     def to_dict(self) -> dict:
-        points = [[round(p[0], 2), round(p[1], 2)] for p in self._points]
+        pts = self._current_points() if (hasattr(self, "_img") and self._img is not None) else self._points
+        points = [[round(p[0], 2), round(p[1], 2)] for p in pts]
+        if points:
+            xs = [p[0] for p in points]; ys = [p[1] for p in points]
+            self._min_x, self._max_x = min(xs), max(xs)
+            self._min_y, self._max_y = min(ys), max(ys)
         return {
             "id": self.annotation_id, "type": "mask", "label": self.label,
             "color": self._color.name(), "points": points,

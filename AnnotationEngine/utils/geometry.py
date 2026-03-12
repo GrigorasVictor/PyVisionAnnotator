@@ -162,3 +162,23 @@ def rasterize_points(
 
     return QPixmap.fromImage(img), ox, oy
 
+
+def pixels_to_points(
+    image: QImage,
+    offset_x: float,
+    offset_y: float,
+) -> list[list[float]]:
+    """Return scene-space ``[x, y]`` pairs for every non-transparent pixel in *image*."""
+    if image is None or image.isNull():
+        return []
+    if image.format() != QImage.Format.Format_ARGB32:
+        image = image.convertToFormat(QImage.Format.Format_ARGB32)
+    w, h = image.width(), image.height()
+    points: list[list[float]] = []
+    for y in range(h):
+        for x in range(w):
+            if (image.pixel(x, y) >> 24) & 0xFF:
+                points.append([offset_x + x, offset_y + y])
+    return points
+
+
