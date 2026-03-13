@@ -28,7 +28,6 @@ from ui.canvas import AnnotationCanvas
 from ui.panels.left_panel import LeftPanel
 from ui.panels.toolbar_panel import ToolbarPanel
 from ui.panels.right_panel import RightPanel
-from ui.autoseg_settings_dialog import AutoSegSettingsDialog
 
 
 class MainWindow(QMainWindow):
@@ -99,7 +98,6 @@ class MainWindow(QMainWindow):
         self._toolbar.status_message.connect(self._status.showMessage)
         self._toolbar.unsaved_cleared.connect(self._clear_unsaved)
         self._toolbar.annotations_loaded.connect(self._load_process)
-        self._toolbar.autoseg_config_requested.connect(self._on_autoseg_config)
 
         # ---- Right panel ----
         self._right.status_message.connect(self._status.showMessage)
@@ -192,16 +190,23 @@ class MainWindow(QMainWindow):
     #  AutoSeg integration
     # ================================================================== #
     def _on_autoseg_config(self) -> None:
-        """Open the AutoSeg settings dialog."""
-        dlg = AutoSegSettingsDialog(self)
-        dlg.exec()
+        """Open the AutoSeg settings dialog (Merged into main Settings)."""
+        # This slot is no longer called by toolbar, but might be called if we didn't fully clean up.
+        # The toolbar now handles its own settings dialog which includes AutoSeg.
+        pass
 
     def _on_autoseg_requested(self, scene_pos) -> None:
         """Canvas emitted an AutoSeg click — launch the segmentation subprocess."""
-        exe, script, timeout = AutoSegSettingsDialog.get_config()
+        from PyQt6.QtCore import QSettings
+        settings = QSettings("PyVisionAnnotator", "PyVisionAnnotator")
+        exe = settings.value("autoseg/model_path", "")
+        timeout = int(settings.value("autoseg/timeout", 120))
+        # script is always None as we run executable directly
+        script = None
+
         if not exe:
             self._canvas.autoseg_error_received("AutoSeg not configured.")
-            self._status.showMessage("AutoSeg not configured — open Settings first.")
+            self._status.showMessage("AutoMask not configured — open Settings first.")
             return
 
         image_path = self._manager.image_path
@@ -212,13 +217,13 @@ class MainWindow(QMainWindow):
         px = int(round(scene_pos.x()))
         py = int(round(scene_pos.y()))
 
-        self._status.showMessage(f"AutoSeg: segmenting at ({px}, {py}) — please wait …")
+        self._status.showMessage(f"AutoMask: segmenting at ({px}, {py}) — please wait …")
 
         # Progress dialog (indeterminate)
         self._autoseg_progress = QProgressDialog(
             "Running segmentation model …", "Cancel", 0, 0, self
         )
-        self._autoseg_progress.setWindowTitle("AutoSeg")
+        self._autoseg_progress.setWindowTitle("AutoMask")
         self._autoseg_progress.setMinimumDuration(0)
         self._autoseg_progress.canceled.connect(self._on_autoseg_cancelled)
         self._autoseg_progress.show()
@@ -243,15 +248,15 @@ class MainWindow(QMainWindow):
         label = data.get("label", "")
         n_pts = len(data.get("coordinates", []))
         self._status.showMessage(
-            f"AutoSeg: segmented \"{label}\" — {n_pts} boundary points → polygon created."
+            f"AutoMask: segmented \"{label}\" — {n_pts} boundary points → mask created."
         )
         self._canvas.autoseg_result_received(data)
 
     def _on_autoseg_error(self, message: str) -> None:
         """AutoSegWorker failed."""
         self._canvas.autoseg_error_received(message)
-        self._status.showMessage("AutoSeg: segmentation failed.")
-        QMessageBox.warning(self, "AutoSeg Error", message)
+        self._status.showMessage("AutoMask: segmentation failed.")
+        QMessageBox.warning(self, "AutoMask Error", message)
 
     def _on_autoseg_cancelled(self) -> None:
         """User pressed Cancel on the progress dialog."""
@@ -259,7 +264,7 @@ class MainWindow(QMainWindow):
             self._autoseg_worker.cancel()       # kill the OS process
             self._autoseg_worker.wait(3000)     # wait for thread to exit naturally
         self._canvas._autoseg_reset()
-        self._status.showMessage("AutoSeg: cancelled.")
+        self._status.showMessage("AutoMask: cancelled.")
 
     def _on_autoseg_worker_finished(self) -> None:
         """Clean up progress dialog when the worker thread finishes."""

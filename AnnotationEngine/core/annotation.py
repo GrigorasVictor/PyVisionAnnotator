@@ -249,6 +249,12 @@ class MaskItem(QGraphicsPixmapItem):
         self._ensure_image()
         ox, oy = self._img_offset.x(), self._img_offset.y()
         cur = QRectF(ox, oy, self._img.width(), self._img.height())
+
+        # FIX: Only expand if the brush rect actually exceeds current bounds.
+        # Previously, unconditional .adjusted() caused the box to grow indefinitely.
+        if cur.contains(scene_rect):
+            return
+
         united = cur.united(scene_rect).adjusted(-2, -2, 2, 2)  # small padding
         if united == cur:
             return  # no growth needed
@@ -281,13 +287,19 @@ class MaskItem(QGraphicsPixmapItem):
             scene_pos.x() - radius, scene_pos.y() - radius,
             radius * 2 + 1, radius * 2 + 1,
         )
+        
+        # Always allow expansion (reverted logic), but reliance on _expand_image_to_cover's
+        # internal check ensures we don't grow unnecessarily when painting inside.
         self._expand_image_to_cover(brush_rect)
+        
         ox, oy = self._img_offset.x(), self._img_offset.y()
 
         p = QPainter(self._img)
+        # Use Source mode to replace pixels (no alpha stacking = consistent color)
+        p.setCompositionMode(QPainter.CompositionMode.CompositionMode_Source)
         p.setRenderHint(QPainter.RenderHint.Antialiasing)
         c = QColor(self._color)
-        c.setAlpha(180)
+        c.setAlpha(80)  # Match default rasterization alpha (was 180)
         p.setPen(Qt.PenStyle.NoPen)
         p.setBrush(QBrush(c))
         p.drawEllipse(
@@ -295,32 +307,6 @@ class MaskItem(QGraphicsPixmapItem):
             radius, radius,
         )
         p.end()
-        self._flush_image()
-
-    def paint_spray(self, scene_pos: QPointF, radius: float, density: int = 30) -> None:
-        """Spray random dots inside a circle of *radius* around *scene_pos*."""
-        brush_rect = QRectF(
-            scene_pos.x() - radius, scene_pos.y() - radius,
-            radius * 2 + 1, radius * 2 + 1,
-        )
-        self._expand_image_to_cover(brush_rect)
-        ox, oy = self._img_offset.x(), self._img_offset.y()
-        iw, ih = self._img.width(), self._img.height()
-
-        c = QColor(self._color)
-        c.setAlpha(200)
-        rgba = c.rgba()
-        r2 = radius * radius
-        for _ in range(density):
-            dx = random.uniform(-radius, radius)
-            dy = random.uniform(-radius, radius)
-            if dx * dx + dy * dy > r2:
-                continue
-            ix = int(scene_pos.x() + dx - ox)
-            iy = int(scene_pos.y() + dy - oy)
-            if 0 <= ix < iw and 0 <= iy < ih:
-                self._img.setPixel(ix, iy, rgba)
-
         self._flush_image()
 
     def erase_brush(self, scene_pos: QPointF, radius: float) -> None:

@@ -54,7 +54,6 @@ class AnnotationCanvas(QGraphicsView):
 
         # Brush / spray / eraser state
         self._brush_size: int = 20          # diameter in scene pixels
-        self._spray_density: int = 30
         self._painting: bool = False
         self._paint_target: Optional[MaskItem] = None
 
@@ -218,16 +217,14 @@ class AnnotationCanvas(QGraphicsView):
         mx   = self._mouse_pos_viewport.x()
         my   = self._mouse_pos_viewport.y()
 
-        # ---- brush / spray / eraser circle cursor -------------------- #
-        if self._current_tool in ("brush", "spray", "eraser") and not self._space_held:
+        # ---- brush / eraser circle cursor -------------------- #
+        if self._current_tool in ("brush", "eraser") and not self._space_held:
             radius_scene = self._brush_size / 2.0
             scale        = self.transform().m11()          # pixels-per-scene-unit
             radius_vp    = radius_scene * scale
 
             if self._current_tool == "eraser":
                 pen_col = QColor(255, 80, 80)
-            elif self._current_tool == "spray":
-                pen_col = QColor(80, 200, 255)
             else:
                 pen_col = QColor(255, 255, 255)
 
@@ -273,12 +270,8 @@ class AnnotationCanvas(QGraphicsView):
             self._rubber_poly = None
 
     def set_brush_size(self, size: int) -> None:
-        """Set the brush / spray / eraser diameter in scene pixels."""
+        """Set the brush / eraser diameter in scene pixels."""
         self._brush_size = max(1, size)
-
-    def set_spray_density(self, density: int) -> None:
-        """Set how many random dots the spray tool places per event."""
-        self._spray_density = max(1, density)
 
     # ------------------------------------------------------------------ #
     #  Zoom
@@ -351,8 +344,8 @@ class AnnotationCanvas(QGraphicsView):
         if btn == Qt.MouseButton.LeftButton and not self._space_held:
             scene_pos: QPointF = self.mapToScene(event.pos())
 
-            # ---- brush / spray / eraser -------------------------------- #
-            if self._current_tool in ("brush", "spray", "eraser"):
+            # ---- brush / eraser -------------------------------- #
+            if self._current_tool in ("brush", "eraser"):
                 target = self._find_selected_mask()
                 if target is None:
                     # Try clicking directly on a MaskItem
@@ -593,8 +586,6 @@ class AnnotationCanvas(QGraphicsView):
         radius = self._brush_size / 2.0
         if self._current_tool == "brush":
             target.paint_brush(scene_pos, radius)
-        elif self._current_tool == "spray":
-            target.paint_spray(scene_pos, radius, density=self._spray_density)
         elif self._current_tool == "eraser":
             target.erase_brush(scene_pos, radius)
 

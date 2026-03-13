@@ -59,7 +59,6 @@ class RightPanel(QWidget):
     TOOL_POLY    = "polygon"
     TOOL_AUTOSEG = "autoseg"
     TOOL_BRUSH   = "brush"
-    TOOL_SPRAY   = "spray"
     TOOL_ERASER  = "eraser"
 
     def __init__(
@@ -174,27 +173,25 @@ class RightPanel(QWidget):
 
         self.btn_tool_rect    = _tool_btn("⬜ Rect",   "Draw bounding box")
         self.btn_tool_poly    = _tool_btn("🔷 Poly",   "Draw polygon")
-        self.btn_tool_autoseg = _tool_btn("🤖 AutoSeg","Auto-segment at click")
+        self.btn_tool_autoseg = _tool_btn("🤖 AutoMask","Auto-segment at click")
         self.btn_tool_brush   = _tool_btn("🖌 Brush",  "Paint on mask (select mask first)")
-        self.btn_tool_spray   = _tool_btn("💨 Spray",  "Spray dots on mask (select mask first)")
         self.btn_tool_eraser  = _tool_btn("🧹 Erase",  "Erase from mask (select mask first)")
 
         self.btn_tool_rect.setChecked(True)
 
         self.tools_btn_group = QButtonGroup(self)
         for b in (self.btn_tool_rect, self.btn_tool_poly, self.btn_tool_autoseg,
-                  self.btn_tool_brush, self.btn_tool_spray, self.btn_tool_eraser):
+                  self.btn_tool_brush, self.btn_tool_eraser):
             self.tools_btn_group.addButton(b)
 
         grid.addWidget(self.btn_tool_rect,    0, 0)
         grid.addWidget(self.btn_tool_poly,    0, 1)
         grid.addWidget(self.btn_tool_autoseg, 0, 2)
         grid.addWidget(self.btn_tool_brush,   1, 0)
-        grid.addWidget(self.btn_tool_spray,   1, 1)
-        grid.addWidget(self.btn_tool_eraser,  1, 2)
+        grid.addWidget(self.btn_tool_eraser,  1, 1)
         vbox.addLayout(grid)
 
-        # Brush size row (visible for brush/spray/eraser)
+        # Brush size row (visible for brush/eraser)
         self._brush_size_row = QWidget()
         sz_lay = QHBoxLayout(self._brush_size_row)
         sz_lay.setContentsMargins(0, 0, 0, 0)
@@ -391,32 +388,32 @@ class RightPanel(QWidget):
     #  Business-logic slots — Tool buttons
     # ================================================================== #
     def _on_tool_btn_clicked(self, btn) -> None:
-        is_paint = btn in (self.btn_tool_brush, self.btn_tool_spray, self.btn_tool_eraser)
+        is_paint = btn in (self.btn_tool_brush, self.btn_tool_eraser)
         self._brush_size_row.setVisible(is_paint)
         self._mask_hint.setVisible(is_paint)
 
         if btn is self.btn_tool_autoseg:
-            from ui.autoseg_settings_dialog import AutoSegSettingsDialog
-            if not AutoSegSettingsDialog.is_configured():
+            from PyQt6.QtCore import QSettings
+            settings = QSettings("PyVisionAnnotator", "PyVisionAnnotator")
+            model_path = settings.value("autoseg/model_path", "")
+
+            if not model_path:
                 QMessageBox.warning(
-                    self, "AutoSeg Not Configured",
-                    "Please configure the AutoSeg model path first.\n"
-                    "Go to the toolbar → ⚙ AutoSeg to set it up.",
+                    self, "AutoMask Not Configured",
+                    "Please configure the AutoMask model path first.\n"
+                    "Go to the toolbar → Settings to set it up.",
                 )
                 self.btn_tool_rect.setChecked(True)
                 self.tool_changed.emit(self.TOOL_RECT)
                 return
             self.tool_changed.emit(self.TOOL_AUTOSEG)
-            self.status_message.emit("Tool: AutoSeg — Left-click on an object to auto-segment it.")
+            self.status_message.emit("Tool: AutoMask — Left-click on an object to auto-segment it.")
         elif btn is self.btn_tool_poly:
             self.tool_changed.emit(self.TOOL_POLY)
             self.status_message.emit("Tool: Polygon — Left-click to add points, Right-click to close.")
         elif btn is self.btn_tool_brush:
             self.tool_changed.emit(self.TOOL_BRUSH)
             self.status_message.emit("Tool: Brush — Select a mask then paint to expand it.")
-        elif btn is self.btn_tool_spray:
-            self.tool_changed.emit(self.TOOL_SPRAY)
-            self.status_message.emit("Tool: Spray — Select a mask then spray random dots onto it.")
         elif btn is self.btn_tool_eraser:
             self.tool_changed.emit(self.TOOL_ERASER)
             self.status_message.emit("Tool: Eraser — Select a mask then erase parts of it.")

@@ -9,7 +9,7 @@ import os
 from pathlib import Path
 from typing import Optional, Callable
 
-from PyQt6.QtCore import QSize, pyqtSignal
+from PyQt6.QtCore import QSize, pyqtSignal, QSettings
 from PyQt6.QtGui import QAction
 from PyQt6.QtWidgets import (
     QToolBar,
@@ -21,11 +21,21 @@ from PyQt6.QtWidgets import (
     QMainWindow,
     QFileDialog,
     QMessageBox,
+    QTabWidget,
+    QLineEdit,
+    QPushButton,
+    QHBoxLayout,
+    QLabel,
+    QVBoxLayout
 )
 
+from core.subprocess_handler import SubprocessHandler
+
+_ORG = "PyVisionAnnotator"
+_APP = "PyVisionAnnotator"
 
 class SettingsDialog(QDialog):
-    """Modal dialog for adjusting global annotation style settings."""
+    """Modal dialog for application settings (Style & AutoMask)."""
 
     def __init__(
         self,
@@ -35,32 +45,116 @@ class SettingsDialog(QDialog):
         initial_height: int = 18,
     ) -> None:
         super().__init__(parent)
-        self.setWindowTitle("Annotation Settings")
-        self.resize(300, 150)
+        self.setWindowTitle("Settings")
+        self.resize(500, 300)
 
-        layout = QFormLayout(self)
+        self.tabs = QTabWidget()
+        
+        # --- Tab 1: Visual Style ---
+        self.tab_visual = QWidget()
+        layout_visual = QFormLayout(self.tab_visual)
 
         self.spin_width = QSpinBox()
         self.spin_width.setRange(1, 20)
         self.spin_width.setValue(initial_width)
-        layout.addRow("Line Thickness (px):", self.spin_width)
+        layout_visual.addRow("Line Thickness (px):", self.spin_width)
 
         self.spin_font = QSpinBox()
         self.spin_font.setRange(6, 72)
         self.spin_font.setValue(initial_font)
-        layout.addRow("Label Font Size (pt):", self.spin_font)
+        layout_visual.addRow("Label Font Size (pt):", self.spin_font)
 
         self.spin_height = QSpinBox()
         self.spin_height.setRange(10, 100)
         self.spin_height.setValue(initial_height)
-        layout.addRow("Label Badge Height (px):", self.spin_height)
+        layout_visual.addRow("Label Badge Height (px):", self.spin_height)
+        
+        self.tabs.addTab(self.tab_visual, "Visual Style")
+
+        # --- Tab 2: AutoMask ---
+        self.tab_automask = QWidget()
+        layout_automask = QFormLayout(self.tab_automask)
+        
+        settings = QSettings(_ORG, _APP)
+        
+        self.edit_model = QLineEdit()
+        self.edit_model.setPlaceholderText(r"e.g. C:\models\segmenter.exe")
+        self.edit_model.setText(settings.value("autoseg/model_path", ""))
+        
+        btn_browse = QPushButton("Browse …")
+        btn_browse.clicked.connect(self._browse_model)
+        
+        row_model = QHBoxLayout()
+        row_model.addWidget(self.edit_model)
+        row_model.addWidget(btn_browse)
+        layout_automask.addRow("Model Executable:", row_model)
+        
+        self.spin_timeout = QSpinBox()
+        self.spin_timeout.setRange(5, 600)
+        self.spin_timeout.setSuffix(" s")
+        self.spin_timeout.setValue(int(settings.value("autoseg/timeout", 120)))
+        layout_automask.addRow("Timeout:", self.spin_timeout)
+
+        info = QLabel(
+            "<i>The subprocess will be called as:<br>"
+            "• <code>model.exe --image &lt;path&gt; --point x,y</code><br>"
+            "and must return JSON with a <b>\"coordinates\"</b> key.</i>"
+        )
+        info.setWordWrap(True)
+        layout_automask.addRow(info)
+        
+        self.btn_test = QPushButton("🧪 Test Connection …")
+        self.btn_test.clicked.connect(self._on_test_connection)
+        layout_automask.addRow(self.btn_test)
+
+        self.tabs.addTab(self.tab_automask, "AutoMask")
+
+        # --- Main Layout ---
+        main_layout = QVBoxLayout(self)
+        main_layout.addWidget(self.tabs)
 
         btns = QDialogButtonBox(
             QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
         )
         btns.accepted.connect(self.accept)
         btns.rejected.connect(self.reject)
-        layout.addRow(btns)
+        main_layout.addWidget(btns)
+
+    def _browse_model(self) -> None:
+        path, _ = QFileDialog.getOpenFileName(
+            self,
+            "Select Model Executable",
+            self.edit_model.text() or "",
+            "Executables (*.exe);;All Files (*)",
+        )
+        if path:
+            self.edit_model.setText(path)
+
+    def _on_test_connection(self) -> None:
+        model = self.edit_model.text().strip()
+        if not model:
+            QMessageBox.warning(self, "Missing", "Please set the model file path first.")
+            return
+        if not os.path.isfile(model):
+            QMessageBox.warning(self, "Not Found", f"Model file not found:\n{model}")
+            return
+            
+        args = ["--help"]
+        success, data, error = SubprocessHandler.run_command(
+            executable=model, script=None, args=args, timeout=10
+        )
+        
+        if success or (not success and data):
+            QMessageBox.information(self, "Test Passed ✅", f"Process started.\nStdout:\n{str(data)[:300]}")
+        else:
+            QMessageBox.critical(self, "Test Failed ❌", f"Process failed.\nError:\n{error}")
+
+    def accept(self) -> None:
+        # Save AutoMask settings immediately
+        settings = QSettings(_ORG, _APP)
+        settings.setValue("autoseg/model_path", self.edit_model.text().strip())
+        settings.setValue("autoseg/timeout", self.spin_timeout.value())
+        super().accept()
 
     def get_values(self) -> tuple[int, int, int]:
         """Return (pen_width, font_size, label_height)."""
@@ -81,7 +175,6 @@ class ToolbarPanel(QToolBar):
     settings_applied = pyqtSignal(int, int, int)   # pen_width, font_size, label_height
     unsaved_cleared = pyqtSignal()
     annotations_loaded = pyqtSignal(str, list)     # image_path, annotation dicts
-    autoseg_config_requested = pyqtSignal()        # open AutoSeg settings dialog
 
     def __init__(
         self,
@@ -103,7 +196,6 @@ class ToolbarPanel(QToolBar):
         self._act_load_csv: QAction  = self.addAction("📊 Load CSV")
         self.addSeparator()
         self._act_settings: QAction   = self.addAction("⚙ Settings")
-        self._act_autoseg: QAction    = self.addAction("🤖 AutoSeg")
         self._act_help: QAction       = self.addAction("❓ Help")
 
         self._act_save_json.triggered.connect(self._on_save_json)
@@ -111,7 +203,6 @@ class ToolbarPanel(QToolBar):
         self._act_load_json.triggered.connect(self._on_load_json)
         self._act_load_csv.triggered.connect(self._on_load_csv)
         self._act_settings.triggered.connect(self._on_settings)
-        self._act_autoseg.triggered.connect(self._on_autoseg_config)
         self._act_help.triggered.connect(self._on_help)
 
     # ------------------------------------------------------------------ #
@@ -253,13 +344,12 @@ class ToolbarPanel(QToolBar):
         )
         if dlg.exec():
             w, f, h = dlg.get_values()
-            self._manager.update_global_settings(w, f, h)
             self.settings_applied.emit(w, f, h)
-            self.status_message.emit(f"Settings: Width={w}px, Font={f}pt, Height={h}px")
 
     def _on_autoseg_config(self) -> None:
-        """Open the AutoSeg model configuration dialog."""
-        self.autoseg_config_requested.emit()
+        # Deprecated/Removed, but keeping method if accidentally called?
+        # Better to remove it, but I'm replacing the button.
+        pass
 
     def _on_help(self) -> None:
         QMessageBox.information(
