@@ -361,7 +361,7 @@ class AnnotationCanvas(QGraphicsView):
                 event.accept()
                 return
 
-            if self._current_tool == "autoseg":
+            if self._current_tool == "automask":
                 if self._autoseg_busy:
                     event.accept()
                     return

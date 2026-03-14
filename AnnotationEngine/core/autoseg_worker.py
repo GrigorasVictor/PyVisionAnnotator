@@ -1,13 +1,13 @@
 """
-core/autoseg_worker.py — Background worker for AutoSeg subprocess calls.
+core/autoseg_worker.py — Background worker for YOLO-based AutoSeg subprocess calls.
 
-Runs the external segmentation model in a QThread so the GUI stays responsive.
-Emits ``result_ready(dict)`` on success or ``error_occurred(str)`` on failure.
-The underlying OS process can be force-killed via ``cancel()`` from any thread.
+Runs the external YOLO segmentation model in a QThread.
+Emits ``result_ready(list)`` on success or ``error_occurred(str)`` on failure.
 """
 from __future__ import annotations
 
-from typing import Optional
+import json
+from typing import Optional, List
 
 from PyQt6.QtCore import QThread, pyqtSignal
 
@@ -15,54 +15,56 @@ from core.subprocess_handler import SubprocessHandler, ManagedProcess
 
 
 class AutoSegWorker(QThread):
-    """Execute an external segmentation model in a background thread.
+    """Execute an external YOLO segmentation model in a background thread.
 
     Signals:
-        result_ready(dict)  — parsed JSON response from the subprocess.
+        result_ready(list)  — parsed JSON list of detections from the subprocess.
         error_occurred(str) — human-readable error message.
     """
 
-    result_ready = pyqtSignal(dict)
+    result_ready = pyqtSignal(list)
     error_occurred = pyqtSignal(str)
 
     def __init__(
         self,
-        executable: str,
-        script: Optional[str],
+        executable: str,        # executable path
+        script: Optional[str],  # optional script path (e.g. for python)
         image_path: str,
-        point_x: int,
-        point_y: int,
-        timeout: int = 120,
+        labels: str,            # comma-separated labels
+        conf_threshold: float = 0.32,
+        device: str = "cuda",
+        timeout: int = 300,
+        mode: List[str] = None, # new parameter
         parent=None,
     ) -> None:
         super().__init__(parent)
         self._executable = executable
         self._script = script
         self._image_path = image_path
-        self._point_x = point_x
-        self._point_y = point_y
+        self._labels = labels
+        self._conf = conf_threshold
+        self._device = device
         self._timeout = timeout
+        self._mode = mode if mode else ["bbox", "segment"]
         self._managed: Optional[ManagedProcess] = None
 
-    # ---- public: safe cancel ----------------------------------------- #
     def cancel(self) -> None:
-        """Kill the running subprocess immediately (safe from any thread).
-
-        The thread will exit naturally once ``ManagedProcess.wait()``
-        returns with the "cancelled" status — no need for QThread.terminate().
-        """
         if self._managed is not None:
             self._managed.kill()
 
-    # ---- thread entry point ------------------------------------------ #
     def run(self) -> None:
-        """Called automatically by QThread.start() — runs in the worker thread."""
-        point_str = f"{self._point_x},{self._point_y}"
+        args = [
+            "--image", self._image_path,
+            "--labels", self._labels,
+            "--conf", str(self._conf),
+            "--device", self._device,
+            "--mode", *self._mode
+        ]
 
         self._managed, err = SubprocessHandler.start_process(
             executable=self._executable,
             script=self._script,
-            args=["--image", self._image_path, "--point", point_str, "--device", "cuda"],
+            args=args,
             timeout=self._timeout,
         )
 
@@ -72,7 +74,6 @@ class AutoSegWorker(QThread):
 
         success, data, error = self._managed.wait()
 
-        # If the user cancelled, exit silently (no error popup)
         if self._managed.killed:
             return
 
@@ -80,17 +81,18 @@ class AutoSegWorker(QThread):
             self.error_occurred.emit(f"AutoSeg subprocess failed:\n{error}")
             return
 
-        if not isinstance(data, dict):
-            self.error_occurred.emit(
-                f"AutoSeg subprocess returned unexpected output:\n{data}"
-            )
-            return
-
-        if "coordinates" not in data:
-            self.error_occurred.emit(
-                f"AutoSeg response missing 'coordinates' key.\nKeys: {list(data.keys())}"
-            )
-            return
+        if not isinstance(data, list):
+             # Maybe it returned a single dict? User's snippet showed one detection dict.
+             # If the script outputs just one JSON object representing a list, fine.
+             # If it outputs multiple JSON logic lines, SubprocessHandler might need adjustment.
+             # Assuming SubprocessHandler.parse_json_output handles standard JSON.
+             if isinstance(data, dict):
+                 data = [data]
+             else:
+                self.error_occurred.emit(
+                    f"AutoSeg subprocess returned unexpected output format:\n{type(data)}"
+                )
+                return
 
         self.result_ready.emit(data)
 

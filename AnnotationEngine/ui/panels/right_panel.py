@@ -53,13 +53,14 @@ class RightPanel(QWidget):
     canvas_contrast = pyqtSignal(float)
     canvas_gamma = pyqtSignal(float)
     autoseg_config_requested = pyqtSignal()
+    autoseg_run_requested = pyqtSignal()
 
     # ToolMode constants
-    TOOL_RECT    = "rectangle"
-    TOOL_POLY    = "polygon"
-    TOOL_AUTOSEG = "autoseg"
-    TOOL_BRUSH   = "brush"
-    TOOL_ERASER  = "eraser"
+    TOOL_RECT     = "rectangle"
+    TOOL_POLY     = "polygon"
+    TOOL_AUTOMASK = "automask"
+    TOOL_BRUSH    = "brush"
+    TOOL_ERASER   = "eraser"
 
     def __init__(
         self,
@@ -171,24 +172,24 @@ class RightPanel(QWidget):
             b.setToolTip(tip)
             return b
 
-        self.btn_tool_rect    = _tool_btn("⬜ Rect",   "Draw bounding box")
-        self.btn_tool_poly    = _tool_btn("🔷 Poly",   "Draw polygon")
-        self.btn_tool_autoseg = _tool_btn("🤖 AutoMask","Auto-segment at click")
-        self.btn_tool_brush   = _tool_btn("🖌 Brush",  "Paint on mask (select mask first)")
-        self.btn_tool_eraser  = _tool_btn("🧹 Erase",  "Erase from mask (select mask first)")
+        self.btn_tool_rect     = _tool_btn("Rect",   "Draw bounding box")
+        self.btn_tool_poly     = _tool_btn("Poly",   "Draw polygon")
+        self.btn_tool_automask = _tool_btn("AutoMask","Auto-segment at click (Point)")
+        self.btn_tool_autoseg  = _tool_btn("AutoSeg", "Run YOLO AutoSeg (Full Image)")
+        self.btn_tool_brush    = _tool_btn("Brush",  "Paint on mask (select mask first)")
 
         self.btn_tool_rect.setChecked(True)
 
         self.tools_btn_group = QButtonGroup(self)
-        for b in (self.btn_tool_rect, self.btn_tool_poly, self.btn_tool_autoseg,
-                  self.btn_tool_brush, self.btn_tool_eraser):
+        for b in (self.btn_tool_rect, self.btn_tool_poly, self.btn_tool_automask,
+                  self.btn_tool_brush):
             self.tools_btn_group.addButton(b)
 
-        grid.addWidget(self.btn_tool_rect,    0, 0)
-        grid.addWidget(self.btn_tool_poly,    0, 1)
-        grid.addWidget(self.btn_tool_autoseg, 0, 2)
-        grid.addWidget(self.btn_tool_brush,   1, 0)
-        grid.addWidget(self.btn_tool_eraser,  1, 1)
+        grid.addWidget(self.btn_tool_rect,     0, 0)
+        grid.addWidget(self.btn_tool_poly,     0, 1)
+        grid.addWidget(self.btn_tool_automask, 0, 2)
+        grid.addWidget(self.btn_tool_autoseg,  1, 0)
+        grid.addWidget(self.btn_tool_brush,    1, 1)
         vbox.addLayout(grid)
 
         # Brush size row (visible for brush/eraser)
@@ -279,6 +280,7 @@ class RightPanel(QWidget):
 
         # Tool buttons
         self.tools_btn_group.buttonClicked.connect(self._on_tool_btn_clicked)
+        self.btn_tool_autoseg.clicked.connect(self._on_autoseg_btn_clicked) # Connect new button
 
         # Brush size slider
         self.sld_brush_size.valueChanged.connect(self._on_brush_size_changed)
@@ -388,11 +390,11 @@ class RightPanel(QWidget):
     #  Business-logic slots — Tool buttons
     # ================================================================== #
     def _on_tool_btn_clicked(self, btn) -> None:
-        is_paint = btn in (self.btn_tool_brush, self.btn_tool_eraser)
+        is_paint = btn is self.btn_tool_brush
         self._brush_size_row.setVisible(is_paint)
         self._mask_hint.setVisible(is_paint)
 
-        if btn is self.btn_tool_autoseg:
+        if btn is self.btn_tool_automask:
             from PyQt6.QtCore import QSettings
             settings = QSettings("PyVisionAnnotator", "PyVisionAnnotator")
             model_path = settings.value("autoseg/model_path", "")
@@ -406,7 +408,7 @@ class RightPanel(QWidget):
                 self.btn_tool_rect.setChecked(True)
                 self.tool_changed.emit(self.TOOL_RECT)
                 return
-            self.tool_changed.emit(self.TOOL_AUTOSEG)
+            self.tool_changed.emit(self.TOOL_AUTOMASK)
             self.status_message.emit("Tool: AutoMask — Left-click on an object to auto-segment it.")
         elif btn is self.btn_tool_poly:
             self.tool_changed.emit(self.TOOL_POLY)
@@ -414,12 +416,14 @@ class RightPanel(QWidget):
         elif btn is self.btn_tool_brush:
             self.tool_changed.emit(self.TOOL_BRUSH)
             self.status_message.emit("Tool: Brush — Select a mask then paint to expand it.")
-        elif btn is self.btn_tool_eraser:
-            self.tool_changed.emit(self.TOOL_ERASER)
-            self.status_message.emit("Tool: Eraser — Select a mask then erase parts of it.")
         else:
             self.tool_changed.emit(self.TOOL_RECT)
             self.status_message.emit("Tool: Rectangle — Click and drag to create box.")
+
+    def _on_autoseg_btn_clicked(self) -> None:
+        """Handler for the YOLO AutoSeg button."""
+        self.autoseg_run_requested.emit()
+        self.status_message.emit("Running AutoSeg (YOLO)...")
 
     def _on_brush_size_changed(self, value: int) -> None:
         self.lbl_brush_size.setText(f"{value} px")
@@ -547,4 +551,3 @@ class RightPanel(QWidget):
         self.sld_brightness.setValue(0)
         self.sld_contrast.setValue(100)
         self.sld_gamma.setValue(100)
-

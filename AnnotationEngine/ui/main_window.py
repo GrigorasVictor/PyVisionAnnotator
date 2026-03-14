@@ -11,8 +11,8 @@ import os
 from pathlib import Path
 from typing import Optional
 
-from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QKeySequence, QShortcut
+from PyQt6.QtCore import Qt, QPointF
+from PyQt6.QtGui import QKeySequence, QShortcut, QPolygonF
 from PyQt6.QtWidgets import (
     QMainWindow,
     QWidget,
@@ -23,11 +23,13 @@ from PyQt6.QtWidgets import (
 )
 
 from core.annotation_manager import AnnotationManager
-from core.autoseg_worker import AutoSegWorker
+from core.autoseg_worker import AutoSegWorker as AutoSegYoloWorker
+from core.automask_worker import AutoMaskWorker
 from ui.canvas import AnnotationCanvas
 from ui.panels.left_panel import LeftPanel
 from ui.panels.toolbar_panel import ToolbarPanel
 from ui.panels.right_panel import RightPanel
+from ui.autoseg_run_dialog import AutoSegRunDialog
 
 
 class MainWindow(QMainWindow):
@@ -39,7 +41,8 @@ class MainWindow(QMainWindow):
         self._manager = AnnotationManager(self)
         self._unsaved_changes: bool = False
         self._ignore_changes: bool = False
-        self._autoseg_worker: Optional[AutoSegWorker] = None
+        self._automask_worker: Optional[AutoMaskWorker] = None
+        self._autoseg_worker: Optional[AutoSegYoloWorker] = None
         self._autoseg_progress: Optional[QProgressDialog] = None
 
         self._build_ui()
@@ -107,6 +110,7 @@ class MainWindow(QMainWindow):
         self._right.canvas_brightness.connect(self._canvas.set_brightness)
         self._right.canvas_contrast.connect(self._canvas.set_contrast)
         self._right.canvas_gamma.connect(self._canvas.set_gamma)
+        self._right.autoseg_run_requested.connect(self._on_autoseg_yolo_run)
 
         # ---- Canvas ----
         self._canvas.image_loaded.connect(self._on_image_loaded)
@@ -229,7 +233,7 @@ class MainWindow(QMainWindow):
         self._autoseg_progress.show()
 
         # Launch worker thread
-        self._autoseg_worker = AutoSegWorker(
+        self._automask_worker = AutoMaskWorker(
             executable=exe,
             script=script,
             image_path=image_path,
@@ -238,10 +242,10 @@ class MainWindow(QMainWindow):
             timeout=timeout,
             parent=self,
         )
-        self._autoseg_worker.result_ready.connect(self._on_autoseg_result)
-        self._autoseg_worker.error_occurred.connect(self._on_autoseg_error)
-        self._autoseg_worker.finished.connect(self._on_autoseg_worker_finished)
-        self._autoseg_worker.start()
+        self._automask_worker.result_ready.connect(self._on_autoseg_result)
+        self._automask_worker.error_occurred.connect(self._on_autoseg_error)
+        self._automask_worker.finished.connect(self._on_autoseg_worker_finished)
+        self._automask_worker.start()
 
     def _on_autoseg_result(self, data: dict) -> None:
         """AutoSegWorker succeeded — forward result to canvas."""
@@ -260,9 +264,9 @@ class MainWindow(QMainWindow):
 
     def _on_autoseg_cancelled(self) -> None:
         """User pressed Cancel on the progress dialog."""
-        if self._autoseg_worker and self._autoseg_worker.isRunning():
-            self._autoseg_worker.cancel()       # kill the OS process
-            self._autoseg_worker.wait(3000)     # wait for thread to exit naturally
+        if self._automask_worker and self._automask_worker.isRunning():
+            self._automask_worker.cancel()       # kill the OS process
+            self._automask_worker.wait(3000)     # wait for thread to exit naturally
         self._canvas._autoseg_reset()
         self._status.showMessage("AutoMask: cancelled.")
 
@@ -271,4 +275,151 @@ class MainWindow(QMainWindow):
         if self._autoseg_progress:
             self._autoseg_progress.close()
             self._autoseg_progress = None
+        self._automask_worker = None
+
+    # ================================================================== #
+    #  AutoSeg (YOLO) integration
+    # ================================================================== #
+    def _on_autoseg_yolo_run(self) -> None:
+        """Run YOLO segmentation on the full image."""
+        from PyQt6.QtCore import QSettings
+        settings = QSettings("PyVisionAnnotator", "PyVisionAnnotator")
+
+        # Use configured executable, no python script wrapper
+        executable = settings.value("autoseg_yolo/executable", "")
+        # If blank, fallback? Or warn?
+        
+        image_path = self._manager.image_path
+        if not image_path:
+             QMessageBox.warning(self, "No Image", "Please load an image first.")
+             return
+             
+        # Optional weights path (e.g. .pt file) if the executable requires it
+        model_path = settings.value("autoseg_yolo/model_path", "")
+        conf = float(settings.value("autoseg_yolo/conf", 0.32))
+        device = settings.value("autoseg_yolo/device", "cpu")
+
+        if not executable:
+             QMessageBox.warning(self, "Not Configured", "Please set the YOLO Executable path in Settings.")
+             return
+
+        # Prompt for labels and mode
+        dlg = AutoSegRunDialog(self)
+        if not dlg.exec():
+            return
+            
+        labels, mode = dlg.get_values()
+        
+        if not labels:
+            QMessageBox.warning(self, "No Labels", "Please enter at least one label.")
+            return
+            
+        if not mode:
+            QMessageBox.warning(self, "No Mode", "Please select at least one output mode (BBox or Segment).")
+            return
+
+        self._status.showMessage("Running AutoSeg (YOLO)...")
+        
+        self._autoseg_progress = QProgressDialog(
+            "Running YOLO segmentation...", "Cancel", 0, 0, self
+        )
+        self._autoseg_progress.setWindowTitle("AutoSeg (YOLO)")
+        self._autoseg_progress.setMinimumDuration(0)
+        self._autoseg_progress.canceled.connect(self._on_autoseg_yolo_cancelled)
+        self._autoseg_progress.show()
+        
+        self._autoseg_worker = AutoSegYoloWorker(
+            executable=executable,
+            script=None,  # No script, running exe directly
+            image_path=image_path,
+            labels=labels,
+            conf_threshold=conf,
+            device=device,
+            mode=mode, # Pass the selected mode(s)
+            parent=self
+        )
+        self._autoseg_worker.result_ready.connect(self._on_autoseg_yolo_result)
+        self._autoseg_worker.error_occurred.connect(self._on_autoseg_yolo_error)
+        self._autoseg_worker.finished.connect(self._on_autoseg_yolo_finished)
+        self._autoseg_worker.start()
+
+    def _add_polygon(self, coords: list, label: str) -> None:
+        """Helper to convert [ [x,y], ... ] into a vector PolygonItem (visual figure)."""
+        poly = QPolygonF()
+        for p in coords:
+            if isinstance(p, list) and len(p) >= 2:
+                poly.append(QPointF(float(p[0]), float(p[1])))
+        
+        if not poly.isEmpty():
+            item = self._manager.add_poly(poly, label=label, color=self._manager.default_color)
+            self._canvas.add_annotation_item(item)
+
+    def _on_autoseg_yolo_result(self, detections: list) -> None:
+        """Process results from YOLO."""
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.info(f"AutoSeg received {len(detections)} detections: {detections}")
+
+        count = 0
+        self._ignore_changes = True
+        for det in detections:
+            label = det.get("label", "Object")
+            
+            # 1. Coordinates -> Polygon (Vector figure)
+            if "coordinates" in det:
+                 coords = det["coordinates"]
+                 if isinstance(coords, list) and len(coords) > 2:
+                     self._add_polygon(coords, label)
+                     count += 1
+
+            # 2. Mask Coords -> Pixel Mask (Fallback / specific key)
+            elif "mask_coords" in det:
+                 coords = det["mask_coords"]
+                 if isinstance(coords, list) and len(coords) > 2:
+                     item = self._manager.add_mask(coords, label=label, color=self._manager.default_color)
+                     self._canvas.add_annotation_item(item)
+                     count += 1
+
+            # 3. BBox
+            if "box" in det:
+                if isinstance(det["box"], list) and len(det["box"]) == 4:
+                    x1, y1, x2, y2 = det["box"]
+                    w = x2 - x1
+                    h = y2 - y1
+                    item = self._manager.add_rect(x1, y1, w, h, label=label, color=self._manager.default_color)
+                    self._canvas.add_annotation_item(item)
+                    count += 1
+
+        self._ignore_changes = False
+        
+        if count == 0 and len(detections) > 0:
+            # Debugging helper: Parsing matched nothing, but we got data.
+            keys = list(detections[0].keys())
+            msg = f"Received {len(detections)} detections but added 0.\nFirst item keys: {keys}\nExpected: 'box' or 'coordinates'"
+            self._status.showMessage(f"AutoSeg: Added 0 annotations. (Keys mismatch?)")
+            QMessageBox.warning(self, "AutoSeg Debug", msg)
+        elif count == 0:
+             self._status.showMessage("AutoSeg: No objects detected (0 returned).")
+        else:
+            self._status.showMessage(f"AutoSeg: Added {count} annotations.")
+        
+    def _on_autoseg_yolo_error(self, message: str) -> None:
+        self._status.showMessage(f"AutoSeg Error: {message}")
+        QMessageBox.warning(self, "AutoSeg Error", message)
+        
+    def _on_autoseg_yolo_cancelled(self) -> None:
+        if self._autoseg_worker and self._autoseg_worker.isRunning():
+            self._autoseg_worker.cancel()
+            self._autoseg_worker.wait(2000)
+        self._status.showMessage("AutoSeg cancelled.")
+        
+    def _on_autoseg_yolo_finished(self) -> None:
+        if self._autoseg_progress:
+            try:
+                self._autoseg_progress.canceled.disconnect(self._on_autoseg_yolo_cancelled)
+            except (TypeError, RuntimeError):
+                pass
+            self._autoseg_progress.close()
+            self._autoseg_progress = None
         self._autoseg_worker = None
+

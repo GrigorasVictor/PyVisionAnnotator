@@ -1,6 +1,1 @@
 PyQt6>=6.5
-# --- Future SAM integration ---
-# segment-anything
-# torch
-# opencv-python
-

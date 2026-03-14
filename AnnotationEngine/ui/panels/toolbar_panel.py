@@ -26,7 +26,8 @@ from PyQt6.QtWidgets import (
     QPushButton,
     QHBoxLayout,
     QLabel,
-    QVBoxLayout
+    QVBoxLayout,
+    QDoubleSpinBox
 )
 
 from core.subprocess_handler import SubprocessHandler
@@ -92,7 +93,13 @@ class SettingsDialog(QDialog):
         self.spin_timeout = QSpinBox()
         self.spin_timeout.setRange(5, 600)
         self.spin_timeout.setSuffix(" s")
-        self.spin_timeout.setValue(int(settings.value("autoseg/timeout", 120)))
+        # Use safe conversion
+        val_timeout = settings.value("autoseg/timeout", 120)
+        try:
+            val_timeout = int(val_timeout)
+        except (ValueError, TypeError):
+            val_timeout = 120
+        self.spin_timeout.setValue(val_timeout)
         layout_automask.addRow("Timeout:", self.spin_timeout)
 
         info = QLabel(
@@ -107,7 +114,56 @@ class SettingsDialog(QDialog):
         self.btn_test.clicked.connect(self._on_test_connection)
         layout_automask.addRow(self.btn_test)
 
-        self.tabs.addTab(self.tab_automask, "AutoMask")
+        self.tabs.addTab(self.tab_automask, "AutoMask (Point)")
+
+        # --- Tab 3: AutoSeg (YOLO) ---
+        self.tab_autoseg = QWidget()
+        layout_autoseg = QFormLayout(self.tab_autoseg)
+
+        self.edit_yolo_exe = QLineEdit()
+        self.edit_yolo_exe.setPlaceholderText(r"e.g. C:\dist\yolo_segment.exe")
+        self.edit_yolo_exe.setText(settings.value("autoseg_yolo/executable", ""))
+
+        btn_browse_exe = QPushButton("Browse Exe…")
+        btn_browse_exe.clicked.connect(self._browse_yolo_exe)
+
+        row_exe = QHBoxLayout()
+        row_exe.addWidget(self.edit_yolo_exe)
+        row_exe.addWidget(btn_browse_exe)
+        layout_autoseg.addRow("YOLO Executable:", row_exe)
+
+        self.edit_yolo_model = QLineEdit()
+        self.edit_yolo_model.setPlaceholderText(r"e.g. yoloe-26m-seg.pt")
+        self.edit_yolo_model.setText(settings.value("autoseg_yolo/model_path", ""))
+        
+        btn_browse_yolo = QPushButton("Browse Weights…")
+        btn_browse_yolo.clicked.connect(self._browse_yolo_model)
+        
+        row_yolo = QHBoxLayout()
+        row_yolo.addWidget(self.edit_yolo_model)
+        row_yolo.addWidget(btn_browse_yolo)
+        layout_autoseg.addRow("Model Weights (.pt):", row_yolo)
+
+        self.spin_yolo_conf = QDoubleSpinBox()
+        self.spin_yolo_conf.setRange(0.01, 1.0)
+        self.spin_yolo_conf.setSingleStep(0.05)
+        
+        # Use safe conversion for float
+        val_conf = settings.value("autoseg_yolo/conf", 0.32)
+        try:
+            val_conf = float(val_conf)
+        except (ValueError, TypeError):
+            val_conf = 0.32
+        self.spin_yolo_conf.setValue(val_conf)
+        layout_autoseg.addRow("Confidence Threshold:", self.spin_yolo_conf)
+
+        self.edit_yolo_device = QLineEdit()
+        self.edit_yolo_device.setText(settings.value("autoseg_yolo/device", "cuda" if self._has_cuda() else "cpu"))
+        layout_autoseg.addRow("Device (cuda/cpu):", self.edit_yolo_device)
+
+        layout_autoseg.addRow(QLabel("<i>Runs 'bbox' and 'segment' modes automatically.</i>"))
+
+        self.tabs.addTab(self.tab_autoseg, "AutoSeg (YOLO)")
 
         # --- Main Layout ---
         main_layout = QVBoxLayout(self)
@@ -120,6 +176,16 @@ class SettingsDialog(QDialog):
         btns.rejected.connect(self.reject)
         main_layout.addWidget(btns)
 
+    def _has_cuda(self) -> bool:
+        """Check if CUDA is available via torch (if installed)."""
+        try:
+            import torch
+            return torch.cuda.is_available()
+        except ImportError:
+            return False
+        except Exception:
+            return False
+
     def _browse_model(self) -> None:
         path, _ = QFileDialog.getOpenFileName(
             self,
@@ -129,6 +195,26 @@ class SettingsDialog(QDialog):
         )
         if path:
             self.edit_model.setText(path)
+
+    def _browse_yolo_exe(self) -> None:
+        path, _ = QFileDialog.getOpenFileName(
+            self,
+            "Select YOLO Executable",
+            self.edit_yolo_exe.text() or "",
+            "Executables (*.exe);;All Files (*)",
+        )
+        if path:
+            self.edit_yolo_exe.setText(path)
+
+    def _browse_yolo_model(self) -> None:
+        path, _ = QFileDialog.getOpenFileName(
+            self,
+            "Select YOLO Model File",
+            self.edit_yolo_model.text() or "",
+            "PyTorch Models (*.pt);;All Files (*)",
+        )
+        if path:
+            self.edit_yolo_model.setText(path)
 
     def _on_test_connection(self) -> None:
         model = self.edit_model.text().strip()
@@ -154,6 +240,12 @@ class SettingsDialog(QDialog):
         settings = QSettings(_ORG, _APP)
         settings.setValue("autoseg/model_path", self.edit_model.text().strip())
         settings.setValue("autoseg/timeout", self.spin_timeout.value())
+        
+        # Save AutoSeg (YOLO) settings
+        settings.setValue("autoseg_yolo/executable", self.edit_yolo_exe.text().strip())
+        settings.setValue("autoseg_yolo/conf", self.spin_yolo_conf.value())
+        settings.setValue("autoseg_yolo/device", self.edit_yolo_device.text().strip())
+        
         super().accept()
 
     def get_values(self) -> tuple[int, int, int]:

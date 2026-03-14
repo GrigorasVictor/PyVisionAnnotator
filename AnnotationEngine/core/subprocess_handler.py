@@ -9,7 +9,11 @@ import subprocess
 import json
 import os
 import shutil
+import logging
+import ast
 from typing import List, Optional, Dict, Any, Tuple
+
+logger = logging.getLogger(__name__)
 
 class ManagedProcess:
     """Wraps ``subprocess.Popen`` so it can be waited on **or** killed
@@ -37,6 +41,11 @@ class ManagedProcess:
 
         stdout = str(stdout or "").strip()
         stderr = str(stderr or "").strip()
+
+        if logger.isEnabledFor(logging.DEBUG):
+             logger.debug(f"Subprocess STDOUT:\n{stdout}")
+        if stderr:
+             logger.warning(f"Subprocess STDERR:\n{stderr}")
 
         if self._killed:
             return False, None, "Process was cancelled."
@@ -97,17 +106,45 @@ class SubprocessHandler:
     @staticmethod
     def parse_json_output(stdout: str) -> Any:
         """Best-effort JSON extraction from stdout."""
-        json_start = stdout.find("{")
-        json_end = stdout.rfind("}")
-        if json_start != -1 and json_end >= json_start:
-            try:
-                return json.loads(stdout[json_start : json_end + 1])
-            except json.JSONDecodeError:
-                pass
+        # 1. Try parsing the whole string
         try:
             return json.loads(stdout)
         except (json.JSONDecodeError, ValueError):
             pass
+
+        # 2. Try parsing as Python literal (handles single quotes)
+        try:
+            return ast.literal_eval(stdout)
+        except (ValueError, SyntaxError):
+            pass
+
+        # 3. Look for JSON array [...]
+        start = stdout.find("[")
+        end = stdout.rfind("]")
+        if start != -1 and end > start:
+            candidate = stdout[start : end + 1]
+            try:
+                return json.loads(candidate)
+            except (json.JSONDecodeError, ValueError):
+                try:
+                    return ast.literal_eval(candidate)
+                except (ValueError, SyntaxError):
+                    pass
+
+        # 4. Look for JSON object {...}
+        start = stdout.find("{")
+        end = stdout.rfind("}")
+        if start != -1 and end > start:
+            candidate = stdout[start : end + 1]
+            # If this is part of a list (e.g. key1}, {key2), this might fail or return just one obj.
+            try:
+                return json.loads(candidate)
+            except (json.JSONDecodeError, ValueError):
+                try:
+                    return ast.literal_eval(candidate)
+                except (ValueError, SyntaxError):
+                    pass
+
         return stdout
 
     @staticmethod

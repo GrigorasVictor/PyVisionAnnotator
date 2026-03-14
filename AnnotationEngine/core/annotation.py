@@ -255,7 +255,7 @@ class MaskItem(QGraphicsPixmapItem):
         if cur.contains(scene_rect):
             return
 
-        united = cur.united(scene_rect).adjusted(-2, -2, 2, 2)  # small padding
+        united = cur.united(scene_rect) # Removed padding adjusted(-2, -2, 2, 2)
         if united == cur:
             return  # no growth needed
 
