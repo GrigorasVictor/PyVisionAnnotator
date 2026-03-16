@@ -1,7 +1,8 @@
 """
 utils/io_handler.py — Export / Import helpers
 
-Functions for persisting annotations as JSON and CSV files.
+Functions for persisting annotations as JSON and exporting template formats
+such as COCO and YOLO.
 
 JSON schema::
 
@@ -15,13 +16,9 @@ JSON schema::
       ]
     }
 
-CSV columns::
-
-    filename, id, x, y, w, h
 """
 from __future__ import annotations
 
-import csv
 import json
 from pathlib import Path
 from typing import Any
@@ -72,71 +69,125 @@ def import_json(load_path: str | Path) -> tuple[str, int, int, list[dict[str, An
     )
 
 
-# -------------------------------------------------------------------- #
-#  CSV
-# -------------------------------------------------------------------- #
-def export_csv(
+def _normalise_label(label: str) -> str:
+    text = (label or "").strip()
+    return text if text else "object"
+
+
+def _build_categories(annotations: list[dict[str, Any]]) -> tuple[dict[str, int], list[dict[str, Any]]]:
+    labels = sorted({_normalise_label(a.get("label", "")) for a in annotations})
+    cat_to_id = {name: idx + 1 for idx, name in enumerate(labels)}
+    categories = [{"id": cid, "name": name, "supercategory": "object"} for name, cid in cat_to_id.items()]
+    return cat_to_id, categories
+
+
+def export_coco_template(
     save_path: str | Path,
-    image_filename: str,
+    image_full_path: str,
+    width: int,
+    height: int,
     annotations: list[dict[str, Any]],
 ) -> None:
-    """Write annotations to a CSV file.
+    """Write a minimal single-image COCO annotation template."""
+    cat_to_id, categories = _build_categories(annotations)
+    coco_annotations: list[dict[str, Any]] = []
 
-    Columns: ``filename, id, type, label, color, x, y, w, h, points``
+    for idx, a in enumerate(annotations, start=1):
+        x = float(a.get("x", 0.0))
+        y = float(a.get("y", 0.0))
+        w = max(0.0, float(a.get("w", 0.0)))
+        h = max(0.0, float(a.get("h", 0.0)))
 
-    Args:
-        save_path:      Destination CSV path.
-        image_filename: Image file name repeated on every row.
-        annotations:    List of dicts.
-    """
-    path = Path(save_path)
-    with path.open("w", newline="", encoding="utf-8") as fh:
-        writer = csv.writer(fh)
-        writer.writerow(["filename", "id", "type", "label", "color", "x", "y", "w", "h", "points"])
-        for a in annotations:
-            points_str = json.dumps(a.get("points", [])) if "points" in a else ""
-            writer.writerow([
-                image_filename,
-                a.get("id", ""),
-                a.get("type", "rect"),
-                a.get("label", ""),
-                a.get("color", "#ff3232"),
-                a["x"],
-                a["y"],
-                a["w"],
-                a["h"],
-                points_str,
-            ])
+        item: dict[str, Any] = {
+            "id": idx,
+            "image_id": 1,
+            "category_id": cat_to_id[_normalise_label(a.get("label", ""))],
+            "bbox": [round(x, 2), round(y, 2), round(w, 2), round(h, 2)],
+            "area": round(w * h, 2),
+            "iscrowd": 0,
+        }
+
+        points = a.get("points")
+        if isinstance(points, list) and points:
+            flat: list[float] = []
+            for p in points:
+                if isinstance(p, (list, tuple)) and len(p) >= 2:
+                    flat.extend([float(p[0]), float(p[1])])
+            if len(flat) >= 6:
+                item["segmentation"] = [[round(v, 2) for v in flat]]
+
+        coco_annotations.append(item)
+
+    payload = {
+        "images": [{
+            "id": 1,
+            "file_name": Path(image_full_path).name,
+            "width": int(width),
+            "height": int(height),
+        }],
+        "annotations": coco_annotations,
+        "categories": categories,
+    }
+    Path(save_path).write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
 
 
-def import_csv(load_path: str | Path) -> dict[str, list[dict[str, Any]]]:
-    """Read annotations from a CSV file, grouped by filename.
+def export_yolo_template(
+    labels_path: str | Path,
+    classes_path: str | Path,
+    width: int,
+    height: int,
+    annotations: list[dict[str, Any]],
+) -> None:
+    """Write YOLO bbox labels and a classes template file."""
+    w_img = max(1.0, float(width))
+    h_img = max(1.0, float(height))
+    cat_to_id, categories = _build_categories(annotations)
 
-    Returns:
-        ``{filename: [{"id", "type", "x", "y", "w", "h", "points"}, ...]}``
-    """
-    path = Path(load_path)
-    result: dict[str, list[dict[str, Any]]] = {}
-    with path.open("r", encoding="utf-8") as fh:
-        reader = csv.DictReader(fh)
-        for row in reader:
-            fname = row["filename"]
-            points_str = row.get("points", "")
-            points = json.loads(points_str) if points_str else []
+    lines: list[str] = []
+    for a in annotations:
+        x = float(a.get("x", 0.0))
+        y = float(a.get("y", 0.0))
+        w = max(0.0, float(a.get("w", 0.0)))
+        h = max(0.0, float(a.get("h", 0.0)))
 
-            entry = {
-                "id": row.get("id", ""),
-                "type": row.get("type", "rect"),
-                "label": row.get("label", ""),
-                "color": row.get("color", "#ff3232"),
-                "x": float(row["x"]),
-                "y": float(row["y"]),
-                "w": float(row["w"]),
-                "h": float(row["h"]),
-                "points": points,
-            }
-            result.setdefault(fname, []).append(entry)
-    return result
+        x_center = (x + w / 2.0) / w_img
+        y_center = (y + h / 2.0) / h_img
+        w_norm = w / w_img
+        h_norm = h / h_img
+        cls = cat_to_id[_normalise_label(a.get("label", ""))] - 1
+        lines.append(f"{cls} {x_center:.6f} {y_center:.6f} {w_norm:.6f} {h_norm:.6f}")
+
+    Path(labels_path).write_text("\n".join(lines) + ("\n" if lines else ""), encoding="utf-8")
+    class_lines = [c["name"] for c in sorted(categories, key=lambda e: e["id"])]
+    Path(classes_path).write_text("\n".join(class_lines) + ("\n" if class_lines else ""), encoding="utf-8")
+
+
+def export_template_structure(
+    output_dir: str | Path,
+    image_full_path: str,
+    width: int,
+    height: int,
+    annotations: list[dict[str, Any]],
+    template: str,
+) -> list[str]:
+    """Export annotations to a template format (currently COCO and YOLO)."""
+    out = Path(output_dir)
+    out.mkdir(parents=True, exist_ok=True)
+    base_name = Path(image_full_path).stem
+    key = template.strip().lower()
+
+    if key == "coco":
+        path = out / f"{base_name}.coco.json"
+        export_coco_template(path, image_full_path, width, height, annotations)
+        return [str(path)]
+
+    if key == "yolo":
+        labels_path = out / f"{base_name}.txt"
+        classes_path = out / "classes.txt"
+        export_yolo_template(labels_path, classes_path, width, height, annotations)
+        return [str(labels_path), str(classes_path)]
+
+    raise ValueError(f"Unsupported export template: {template}")
 
 
 def save_dataset_structure(
@@ -155,7 +206,7 @@ def save_dataset_structure(
         width: Image width.
         height: Image height.
         annotations: List of annotation dicts.
-        format: "json" or "csv".
+        format: only "json" is supported.
 
     Returns:
         List of saved file paths.
@@ -168,7 +219,10 @@ def save_dataset_structure(
     base_name = Path(image_full_path).stem  # e.g. "photo" (no extension)
 
 
-    filename_for_save = base_name + "." + format
+    if format != "json":
+        raise ValueError("save_dataset_structure supports only JSON exports")
+
+    filename_for_save = base_name + ".json"
 
     out = Path(output_dir)
 
@@ -178,10 +232,7 @@ def save_dataset_structure(
         folder.mkdir(parents=True, exist_ok=True)
         save_path = folder / filename_for_save
 
-        if format == "json":
-            export_json(save_path, image_full_path, width, height, rects)
-        else:
-            export_csv(save_path, image_full_path, rects)
+        export_json(save_path, image_full_path, width, height, rects)
         saved_files.append(str(save_path))
 
     # 2. Handle Polygons
@@ -190,10 +241,7 @@ def save_dataset_structure(
         folder.mkdir(parents=True, exist_ok=True)
         save_path = folder / filename_for_save
 
-        if format == "json":
-            export_json(save_path, image_full_path, width, height, polys)
-        else:
-            export_csv(save_path, image_full_path, polys)
+        export_json(save_path, image_full_path, width, height, polys)
         saved_files.append(str(save_path))
 
     # 3. Handle Masks (AutoSeg)
@@ -202,10 +250,7 @@ def save_dataset_structure(
         folder.mkdir(parents=True, exist_ok=True)
         save_path = folder / filename_for_save
 
-        if format == "json":
-            export_json(save_path, image_full_path, width, height, masks)
-        else:
-            export_csv(save_path, image_full_path, masks)
+        export_json(save_path, image_full_path, width, height, masks)
         saved_files.append(str(save_path))
 
     return saved_files

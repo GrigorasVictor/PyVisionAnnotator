@@ -178,7 +178,7 @@ class MainWindow(QMainWindow):
     #  Import / load-process  (cross-cutting: touches canvas + left panel)
     # ================================================================== #
     def _load_process(self, image_path: str, annotations: list) -> None:
-        """Called by toolbar after a successful JSON/CSV import."""
+        """Called by toolbar after a successful JSON import."""
         current_norm = os.path.normcase(os.path.abspath(self._manager.image_path or ""))
         new_norm     = os.path.normcase(os.path.abspath(image_path or ""))
 

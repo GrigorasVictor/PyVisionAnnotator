@@ -116,7 +116,7 @@ This folder contains a complete, standalone installation of PyVisionAnnotator.
 
 - Image annotation with bounding boxes and polygons
 - AutoSeg integration for automatic object segmentation
-- JSON/CSV export of annotations
+- JSON export + COCO/YOLO template export of annotations
 - Image brightness/contrast/gamma adjustments
 - Crosshair cursor for precise alignment
 

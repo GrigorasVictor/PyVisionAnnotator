@@ -19,7 +19,7 @@ from typing import Optional
 from PyQt6.QtCore import Qt, QPointF, QRectF, pyqtSignal
 from PyQt6.QtGui import (
     QMouseEvent, QWheelEvent, QKeyEvent, QPixmap,
-    QPen, QColor, QBrush, QPainter,
+    QColor, QBrush, QPainter,
 )
 from PyQt6.QtWidgets import (
     QGraphicsView,
@@ -30,7 +30,7 @@ from PyQt6.QtWidgets import (
 )
 
 from core.annotation import BoundingBoxItem, PolygonItem, MaskItem
-from ui.canvas_helpers import (
+from utils.canvas_helpers.canvas_helpers import (
     load_image as _load_image,
     set_brightness as _set_brightness,
     set_contrast as _set_contrast,
@@ -47,7 +47,7 @@ from ui.canvas_helpers import (
     autoseg_reset as _autoseg_reset,
     remove_autoseg_marker as _remove_autoseg_marker,
 )
-from ui.canvas_events import (
+from utils.canvas_helpers.canvas_events import (
     wheel_event as _wheel_event,
     key_press_event as _key_press_event,
     key_release_event as _key_release_event,
@@ -57,6 +57,8 @@ from ui.canvas_events import (
     mouse_double_click_event as _mouse_double_click_event,
     leave_event as _leave_event,
 )
+from utils.canvas_helpers.canvas_render import draw_foreground as _draw_foreground
+from utils.canvas_helpers.canvas_tools import set_tool as _set_tool
 
 
 class AnnotationCanvas(QGraphicsView):
@@ -171,69 +173,13 @@ class AnnotationCanvas(QGraphicsView):
 
     def drawForeground(self, painter: QPainter, rect: QRectF) -> None:
         """Draw crosshair + brush-cursor circle on top in viewport space."""
-        super().drawForeground(painter, rect)
-
-        if self._mouse_pos_viewport is None:
-            return
-
-        painter.save()
-        painter.resetTransform()
-
-        vp   = self.viewport()
-        mx   = self._mouse_pos_viewport.x()
-        my   = self._mouse_pos_viewport.y()
-
-        # ---- brush / eraser circle cursor -------------------- #
-        if self._current_tool in ("brush", "eraser") and not self._space_held:
-            radius_scene = self._brush_size / 2.0
-            scale        = self.transform().m11()          # pixels-per-scene-unit
-            radius_vp    = radius_scene * scale
-
-            if self._current_tool == "eraser":
-                pen_col = QColor(255, 80, 80)
-            else:
-                pen_col = QColor(255, 255, 255)
-
-            painter.setPen(QPen(pen_col, 1, Qt.PenStyle.SolidLine))
-            painter.setBrush(Qt.BrushStyle.NoBrush)
-            from PyQt6.QtCore import QPointF as _QPointF
-            painter.drawEllipse(_QPointF(mx, my), radius_vp, radius_vp)
-
-            # small centre dot
-            painter.setPen(QPen(pen_col, 2))
-            painter.drawPoint(int(mx), int(my))
-
-        # ---- crosshair ----------------------------------------------- #
-        if self._crosshair_enabled:
-            pen = QPen(QColor(0, 255, 128, 180), 1, Qt.PenStyle.SolidLine)
-            painter.setPen(pen)
-            painter.drawLine(0, int(my), vp.width(), int(my))
-            painter.drawLine(int(mx), 0, int(mx), vp.height())
-
-        painter.restore()
+        _draw_foreground(self, painter, rect)
 
     # ------------------------------------------------------------------ #
     #  Tools
     # ------------------------------------------------------------------ #
     def set_tool(self, tool_mode: str) -> None:
-        self._current_tool = tool_mode
-        self._painting = False
-        self._paint_target = None
-        self._drawing = False
-        self._poly_points = []
-        if self._rubber_band:
-            if self._rubber_band.scene() == self._scene:
-                self._scene.removeItem(self._rubber_band)
-            self._rubber_band = None
-        if hasattr(self, '_rubber_lines'):
-            for line in self._rubber_lines:
-                if line.scene() == self._scene:
-                    self._scene.removeItem(line)
-            self._rubber_lines.clear()
-        if self._rubber_poly:
-            if self._rubber_poly.scene() == self._scene:
-                self._scene.removeItem(self._rubber_poly)
-            self._rubber_poly = None
+        _set_tool(self, tool_mode)
 
     def set_brush_size(self, size: int) -> None:
         """Set the brush / eraser diameter in scene pixels."""

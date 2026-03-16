@@ -6,7 +6,6 @@ Top toolbar — owns all save/load/help/settings logic.
 from __future__ import annotations
 
 import os
-from pathlib import Path
 from typing import Optional, Callable
 
 from PyQt6.QtCore import QSize, pyqtSignal, QSettings
@@ -283,17 +282,17 @@ class ToolbarPanel(QToolBar):
         self.setIconSize(QSize(20, 20))
 
         self._act_save_json: QAction = self.addAction("💾 Save JSON")
-        self._act_save_csv: QAction  = self.addAction("📄 Save CSV")
+        self._act_export_coco: QAction = self.addAction("🧩 Export COCO Template")
+        self._act_export_yolo: QAction = self.addAction("🧩 Export YOLO Template")
         self._act_load_json: QAction = self.addAction("📥 Load JSON")
-        self._act_load_csv: QAction  = self.addAction("📊 Load CSV")
         self.addSeparator()
         self._act_settings: QAction   = self.addAction("⚙ Settings")
         self._act_help: QAction       = self.addAction("❓ Help")
 
         self._act_save_json.triggered.connect(self._on_save_json)
-        self._act_save_csv.triggered.connect(self._on_save_csv)
+        self._act_export_coco.triggered.connect(self._on_export_coco_template)
+        self._act_export_yolo.triggered.connect(self._on_export_yolo_template)
         self._act_load_json.triggered.connect(self._on_load_json)
-        self._act_load_csv.triggered.connect(self._on_load_csv)
         self._act_settings.triggered.connect(self._on_settings)
         self._act_help.triggered.connect(self._on_help)
 
@@ -340,7 +339,7 @@ class ToolbarPanel(QToolBar):
             QMessageBox.critical(self.parent(), "Save Error", f"Failed to save JSON:\n{exc}")
             return False
 
-    def _on_save_csv(self) -> None:
+    def _on_export_coco_template(self) -> None:
         if not self._manager.image_path:
             QMessageBox.warning(self.parent(), "No image", "Load an image first.")
             return
@@ -353,18 +352,44 @@ class ToolbarPanel(QToolBar):
                 return
             self._export_root = chosen
         try:
-            from utils.io_handler import save_dataset_structure
-            saved = save_dataset_structure(
+            from utils.io_handler import export_template_structure
+            saved = export_template_structure(
                 output_dir=self._export_root,
                 image_full_path=self._manager.image_path,
                 width=self._manager.image_width,
                 height=self._manager.image_height,
                 annotations=self._manager.get_all_dicts(),
-                format="csv",
+                template="coco",
             )
             self.status_message.emit(f"Saved {len(saved)} file(s) to {self._export_root}")
         except Exception as exc:
-            QMessageBox.critical(self.parent(), "Save Error", f"Failed to save CSV:\n{exc}")
+            QMessageBox.critical(self.parent(), "Export Error", f"Failed to export COCO template:\n{exc}")
+
+    def _on_export_yolo_template(self) -> None:
+        if not self._manager.image_path:
+            QMessageBox.warning(self.parent(), "No image", "Load an image first.")
+            return
+        if self._export_root is None:
+            chosen = QFileDialog.getExistingDirectory(
+                self.parent(), "Select Directory to Save Annotations",
+                os.path.dirname(self._manager.image_path),
+            )
+            if not chosen:
+                return
+            self._export_root = chosen
+        try:
+            from utils.io_handler import export_template_structure
+            saved = export_template_structure(
+                output_dir=self._export_root,
+                image_full_path=self._manager.image_path,
+                width=self._manager.image_width,
+                height=self._manager.image_height,
+                annotations=self._manager.get_all_dicts(),
+                template="yolo",
+            )
+            self.status_message.emit(f"Saved {len(saved)} file(s) to {self._export_root}")
+        except Exception as exc:
+            QMessageBox.critical(self.parent(), "Export Error", f"Failed to export YOLO template:\n{exc}")
 
     # ------------------------------------------------------------------ #
     #  Load
@@ -403,27 +428,6 @@ class ToolbarPanel(QToolBar):
         img_path = self._resolve_image_path(path, filename) or ""
         self.annotations_loaded.emit(img_path, ann_list)
 
-    def _on_load_csv(self) -> None:
-        path, _ = QFileDialog.getOpenFileName(
-            self.parent(), "Load Annotations (CSV)",
-            self._get_folder_path() or "", "CSV Files (*.csv)",
-        )
-        if not path:
-            return
-        try:
-            from utils.io_handler import import_csv
-            data = import_csv(path)
-        except Exception as exc:
-            QMessageBox.critical(self.parent(), "Load error", str(exc))
-            return
-        if not data:
-            QMessageBox.warning(self.parent(), "Empty CSV", "No data found in CSV.")
-            return
-        filename = next(iter(data))
-        ann_list = data[filename]
-        img_path = self._resolve_image_path(path, filename) or ""
-        self.annotations_loaded.emit(img_path, ann_list)
-
     # ------------------------------------------------------------------ #
     #  Settings & Help
     # ------------------------------------------------------------------ #
@@ -452,6 +456,7 @@ class ToolbarPanel(QToolBar):
                 "• <b>Ctrl+O</b>: Open Image Folder<br>"
                 "• <b>Ctrl+S</b>: Save JSON<br>"
                 "• <b>Delete</b>: Remove selected annotation<br>"
+                "• <b>Toolbar</b>: Export COCO / YOLO templates<br>"
                 "<br>"
                 "<b>Mouse Controls:</b><br>"
                 "• <b>Wheel</b>: Zoom In/Out<br>"
@@ -460,11 +465,5 @@ class ToolbarPanel(QToolBar):
                 "• <b>Left Click</b>: Add polygon point (Poly tool)<br>"
                 "• <b>Right Click / Enter</b>: Close polygon<br>"
                 "• <b>Click annotation</b>: Select<br>"
-                "<br>"
-                "<b>AutoSeg Tool:</b><br>"
-                "• Configure model via toolbar → <i>🤖 AutoSeg</i><br>"
-                "• Accepts a <b>.py</b> script or standalone <b>.exe</b><br>"
-                "• <b>Left Click</b> on object: Run auto-segmentation<br>"
-                "• Result is added as a polygon annotation<br>"
             ),
         )

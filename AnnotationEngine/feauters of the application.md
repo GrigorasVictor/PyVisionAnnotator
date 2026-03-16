@@ -30,11 +30,14 @@
 - [x] **Ștergere**: Tasta Delete sau buton dedicat
 
 ## 4. Export & Import Inteligent
-- [x] **Formate**: JSON și CSV
+- [x] **Formate disponibile**:
+  - Save/Load intern: **JSON**
+  - Export template dataset: **COCO**, **YOLO** (și extensibil pentru alte template-uri)
 - [x] **Structură Dataset Automată**:
-  - Salvează automat în subfoldere `/rectangle` sau `/poly` în directorul imaginii
-  - Numește fișierul după numele imaginii
-- [x] **Smart Load**: La încărcarea unui JSON/CSV, aplicația găsește și deschide automat imaginea aferentă
+  - JSON: salvează automat în subfoldere `/rectangle`, `/poly`, `/mask`
+  - COCO: exportă un template `.coco.json`
+  - YOLO: exportă `.txt` + `classes.txt`
+- [x] **Smart Load**: La încărcarea unui JSON, aplicația găsește și deschide automat imaginea aferentă
 - [x] **Protecție Date**: Prompt de confirmare "Save changes?" la schimbarea imaginii dacă există modificări nesalvate
 
 ## 5. Configurare (Settings)
@@ -42,6 +45,20 @@
   - Grosime linie contur (px)
   - Dimensiune font etichetă (pt)
   - Înălțime fundal etichetă (Badge Height px)
+
+## 6. Modele AI — Ce pot face în aplicație
+- [x] **AutoMask (Point Prompt)**:
+  - Rulează un model extern (executabil/script) pe baza unui click în imagine
+  - Primește coordonate de segmentare și creează adnotare de tip mască/poligon
+  - Are timeout + test conexiune din Settings
+- [x] **AutoSeg (YOLO)**:
+  - Configurare executabil YOLO + weights `.pt`
+  - Suport prag de confidență și device (`cuda`/`cpu`)
+  - Generează automat rezultate de segmentare (și bbox asociat), apoi le adaugă pe canvas
+- [x] **Execuție sigură și fluidă**:
+  - Rulează asincron (GUI rămâne responsiv)
+  - Progress dialog cu opțiune Cancel
+  - Validare căi + timeout pentru procese externe
 
 ## 7. Ajustări Imagine (Visual Only)
 - [x] Slider Brightness (-100 la +100)
@@ -55,22 +72,11 @@
 - [x] Desenat deasupra oricărei adnotări (viewport overlay), fără a interfera cu scena
 - [x] Toggle ON/OFF printr-un checkbox în sidebar
 
-## 9. AutoSeg — Segmentare Automată (Model Extern)
-- [x] **Configurare persistentă** (QSettings): un singur fișier model (.py sau .exe standalone)
-  - Dacă .py: se cere și calea către interpretorul Python (auto-detectat dacă e gol)
-  - Dacă .exe: se rulează direct, fără interpret
-- [x] **Dialog dedicat** (🤖 AutoSeg în toolbar) cu:
-  - Browse model file + Browse Python interpreter
-  - Spinner timeout (5–600 s)
-  - Buton 🧪 Test Connection
-- [x] **Execuție asincronă** în QThread (AutoSegWorker) — GUI rămâne responsiv
-- [x] **Progress dialog** cu buton Cancel (termină procesul)
-- [x] **Marker vizual** pe canvas (cerc verde) la click, dispare după rezultat
-- [x] **Conversie automată** coordonate mască → poligon simplificat:
-  - Sortare angulară de la centroid
-  - Simplificare Douglas-Peucker (epsilon = 2px)
-  - Suport convex hull opțional
-- [x] **Subprocess securizat** (shell=False, validare căi, timeout, argument list)
+## 9. AutoSeg — Detalii Tehnice
+- [x] Configurare persistentă (QSettings) pentru AutoMask și AutoSeg YOLO
+- [x] Marker vizual pe canvas la click, eliminat după finalizare
+- [x] Conversie/normalizare date mască pentru randare și editare eficientă
+- [x] Subprocess securizat (`shell=False`, validare căi, timeout, argument list)
 
 ## 10. SubprocessHandler — Execuție Securizată Procese Externe
 - [x] `shell=False` — previne injecția de comenzi
