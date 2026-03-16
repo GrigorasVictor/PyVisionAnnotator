@@ -111,6 +111,7 @@ class MainWindow(QMainWindow):
         self._right.canvas_contrast.connect(self._canvas.set_contrast)
         self._right.canvas_gamma.connect(self._canvas.set_gamma)
         self._right.autoseg_run_requested.connect(self._on_autoseg_yolo_run)
+        self._right.automask_all_requested.connect(self._on_automask_all_requested)
 
         # ---- Canvas ----
         self._canvas.image_loaded.connect(self._on_image_loaded)
@@ -240,21 +241,85 @@ class MainWindow(QMainWindow):
             point_x=px,
             point_y=py,
             timeout=timeout,
+            all_segments=False, # Standard automask is never --all now
             parent=self,
         )
         self._automask_worker.result_ready.connect(self._on_autoseg_result)
         self._automask_worker.error_occurred.connect(self._on_autoseg_error)
-        self._automask_worker.finished.connect(self._on_autoseg_worker_finished)
-        self._automask_worker.start()
 
-    def _on_autoseg_result(self, data: dict) -> None:
+    def _on_autoseg_result(self, data: dict | list) -> None:
         """AutoSegWorker succeeded — forward result to canvas."""
+        # Handle list output (e.g. from --all mode)
+        if isinstance(data, list):
+            # Treat all items in the list as MaskItems (standard for AutoMask/SAM)
+            count = 0
+            self._ignore_changes = True
+            for det in data:
+                label = det.get("label", "Object")
+                coords = det.get("coordinates", [])
+                if coords and len(coords) > 2:
+                     color = self._manager.get_color_for_label(label)
+                     item = self._manager.add_mask(coords, label=label, color=color)
+                     self._canvas.add_annotation_item(item)
+                     count += 1
+            self._ignore_changes = False
+            
+            self._status.showMessage(f"AutoMask (--all): Added {count} masks.")
+            # Reset the canvas busy state
+            self._canvas.autoseg_result_received({}) 
+            return
+
         label = data.get("label", "")
         n_pts = len(data.get("coordinates", []))
         self._status.showMessage(
             f"AutoMask: segmented \"{label}\" — {n_pts} boundary points → mask created."
         )
         self._canvas.autoseg_result_received(data)
+
+    def _on_automask_all_requested(self) -> None:
+        """Run AutoMask with --all (Segment Everything) triggered by RightPanel button."""
+        from PyQt6.QtCore import QSettings
+        settings = QSettings("PyVisionAnnotator", "PyVisionAnnotator")
+        exe = settings.value("autoseg/model_path", "")
+        timeout = int(settings.value("autoseg/timeout", 120))
+        script = None
+
+        if not exe:
+            self._status.showMessage("AutoMask not configured — open Settings first.")
+            QMessageBox.warning(self, "AutoMask Not Configured", "Please configure the AutoMask model path first.")
+            return
+
+        image_path = self._manager.image_path
+        if not image_path:
+            self._status.showMessage("No image loaded.")
+            return
+
+        self._status.showMessage(f"AutoMask: segmenting everything — please wait …")
+
+        # Progress dialog (indeterminate)
+        self._autoseg_progress = QProgressDialog(
+            "Running AutoMask (Segment Everything) …", "Cancel", 0, 0, self
+        )
+        self._autoseg_progress.setWindowTitle("AutoMask --all")
+        self._autoseg_progress.setMinimumDuration(0)
+        self._autoseg_progress.canceled.connect(self._on_autoseg_cancelled)
+        self._autoseg_progress.show()
+
+        # Launch worker thread
+        self._automask_worker = AutoMaskWorker(
+            executable=exe,
+            script=script,
+            image_path=image_path,
+            point_x=0, # Dummy, ignored in --all mode
+            point_y=0, # Dummy
+            timeout=timeout,
+            all_segments=True, # Force True
+            parent=self,
+        )
+        self._automask_worker.result_ready.connect(self._on_autoseg_result)
+        self._automask_worker.error_occurred.connect(self._on_autoseg_error)
+        self._automask_worker.finished.connect(self._on_autoseg_worker_finished)
+        self._automask_worker.start()
 
     def _on_autoseg_error(self, message: str) -> None:
         """AutoSegWorker failed."""
@@ -351,7 +416,8 @@ class MainWindow(QMainWindow):
                 poly.append(QPointF(float(p[0]), float(p[1])))
         
         if not poly.isEmpty():
-            item = self._manager.add_poly(poly, label=label, color=self._manager.default_color)
+            color = self._manager.get_color_for_label(label)
+            item = self._manager.add_poly(poly, label=label, color=color)
             self._canvas.add_annotation_item(item)
 
     def _on_autoseg_yolo_result(self, detections: list) -> None:
@@ -364,6 +430,7 @@ class MainWindow(QMainWindow):
         self._ignore_changes = True
         for det in detections:
             label = det.get("label", "Object")
+            color = self._manager.get_color_for_label(label)
             
             # 1. Coordinates -> Polygon (Vector figure)
             if "coordinates" in det:
@@ -376,7 +443,7 @@ class MainWindow(QMainWindow):
             elif "mask_coords" in det:
                  coords = det["mask_coords"]
                  if isinstance(coords, list) and len(coords) > 2:
-                     item = self._manager.add_mask(coords, label=label, color=self._manager.default_color)
+                     item = self._manager.add_mask(coords, label=label, color=color)
                      self._canvas.add_annotation_item(item)
                      count += 1
 
@@ -386,7 +453,7 @@ class MainWindow(QMainWindow):
                     x1, y1, x2, y2 = det["box"]
                     w = x2 - x1
                     h = y2 - y1
-                    item = self._manager.add_rect(x1, y1, w, h, label=label, color=self._manager.default_color)
+                    item = self._manager.add_rect(x1, y1, w, h, label=label, color=color)
                     self._canvas.add_annotation_item(item)
                     count += 1
 

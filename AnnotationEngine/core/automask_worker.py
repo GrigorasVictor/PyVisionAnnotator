@@ -22,7 +22,7 @@ class AutoMaskWorker(QThread):
         error_occurred(str) — human-readable error message.
     """
 
-    result_ready = pyqtSignal(dict)
+    result_ready = pyqtSignal(object)
     error_occurred = pyqtSignal(str)
 
     def __init__(
@@ -33,6 +33,7 @@ class AutoMaskWorker(QThread):
         point_x: int,
         point_y: int,
         timeout: int = 120,
+        all_segments: bool = False,
         parent=None,
     ) -> None:
         super().__init__(parent)
@@ -42,6 +43,7 @@ class AutoMaskWorker(QThread):
         self._point_x = point_x
         self._point_y = point_y
         self._timeout = timeout
+        self._all_segments = all_segments
         self._managed: Optional[ManagedProcess] = None
 
     # ---- public: safe cancel ----------------------------------------- #
@@ -57,14 +59,22 @@ class AutoMaskWorker(QThread):
     # ---- thread entry point ------------------------------------------ #
     def run(self) -> None:
         """Called automatically by QThread.start() — runs in the worker thread."""
-        point_str = f"{self._point_x},{self._point_y}"
 
-        self._managed, err = SubprocessHandler.start_process(
+        args = ["--image", self._image_path, "--device", "cuda"]
+        if self._all_segments:
+            args.append("--all")
+        else:
+            point_str = f"{self._point_x},{self._point_y}"
+            args.extend(["--point", point_str])
+
+
+        managed, err = SubprocessHandler.start_process(
             executable=self._executable,
             script=self._script,
-            args=["--image", self._image_path, "--point", point_str, "--device", "cuda"],
+            args=args,
             timeout=self._timeout,
         )
+        self._managed = managed
 
         if self._managed is None:
             self.error_occurred.emit(f"AutoMask subprocess failed to start:\n{err}")
@@ -79,6 +89,10 @@ class AutoMaskWorker(QThread):
         if not success:
             self.error_occurred.emit(f"AutoMask subprocess failed:\n{error}")
             return
+            
+        if self._all_segments and isinstance(data, list):
+             self.result_ready.emit(data)
+             return
 
         if not isinstance(data, dict):
             self.error_occurred.emit(
@@ -93,4 +107,3 @@ class AutoMaskWorker(QThread):
             return
 
         self.result_ready.emit(data)
-

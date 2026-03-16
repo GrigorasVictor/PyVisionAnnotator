@@ -36,6 +36,17 @@ class AnnotationManager(QObject):
         self.default_label: str = ""
         self.default_color: str = "#ff3232"
 
+        # Color generation
+        self._label_colors: dict[str, str] = {}
+        # A palette of distinct colors for auto-coloring labels
+        self._color_palette = [
+            "#e6194b", "#3cb44b", "#ffe119", "#4363d8", "#f58231",
+            "#911eb4", "#46f0f0", "#f032e6", "#bcf60c", "#fabebe",
+            "#008080", "#e6beff", "#9a6324", "#fffac8", "#800000",
+            "#aaffc3", "#808000", "#ffd8b1", "#000075", "#808080",
+            "#ffffff", "#000000"
+        ]
+
         # Global style settings
         self.settings_pen_width: int = 2
         self.settings_font_size: int = 9
@@ -44,7 +55,25 @@ class AnnotationManager(QObject):
         # Current image metadata — updated by the canvas on load
         self.image_path: str = ""
         self.image_width: int = 0
-        self.image_height: int = 0
+        self.image_height: int = 18
+
+    def get_color_for_label(self, label: str) -> str:
+        """Return a consistent color for the given label.
+
+        If the label has been seen before, returns its cached color.
+        Otherwise, assigns a new color from the palette based on hash.
+        """
+        if not label:
+            return self.default_color
+            
+        if label in self._label_colors:
+            return self._label_colors[label]
+
+        # Assign a color based on simple hashing
+        idx = abs(hash(label)) % len(self._color_palette)
+        color = self._color_palette[idx]
+        self._label_colors[label] = color
+        return color
 
     # ------------------------------------------------------------------ #
     #  CRUD

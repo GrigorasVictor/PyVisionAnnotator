@@ -135,10 +135,10 @@ class SettingsDialog(QDialog):
         self.edit_yolo_model = QLineEdit()
         self.edit_yolo_model.setPlaceholderText(r"e.g. yoloe-26m-seg.pt")
         self.edit_yolo_model.setText(settings.value("autoseg_yolo/model_path", ""))
-        
+
         btn_browse_yolo = QPushButton("Browse Weights…")
         btn_browse_yolo.clicked.connect(self._browse_yolo_model)
-        
+
         row_yolo = QHBoxLayout()
         row_yolo.addWidget(self.edit_yolo_model)
         row_yolo.addWidget(btn_browse_yolo)

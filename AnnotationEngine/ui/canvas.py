@@ -354,6 +354,17 @@ class AnnotationCanvas(QGraphicsView):
                         self._scene.clearSelection()
                         item_under.setSelected(True)
                         target = item_under
+                    elif self._current_tool == "brush" and self._pixmap_item:
+                        # Auto-create mask if using brush and no mask selected
+                        target = self._manager.add_mask(
+                            [],
+                            label=self._manager.default_label,
+                            color=self._manager.default_color,
+                        )
+                        self._scene.addItem(target)
+                        self._scene.clearSelection()
+                        target.setSelected(True)
+
                 if target is not None:
                     self._painting = True
                     self._paint_target = target

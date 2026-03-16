@@ -9,7 +9,7 @@ import uuid
 from enum import Enum, auto
 from typing import Optional
 
-import random
+
 
 from PyQt6.QtCore import QRectF, QPointF, Qt
 from PyQt6.QtGui import QBrush, QColor, QPen, QPainter, QFont, QPolygonF, QPixmap, QPainterPath, QImage
@@ -233,6 +233,14 @@ class MaskItem(QGraphicsPixmapItem):
         from utils.geometry import rasterize_points
 
         pm, ox, oy = rasterize_points(self._points, self._color, fill_alpha=80)
+        
+        if pm.isNull():
+             # Default to a 1x1 transparent image at 0,0 if no points (e.g. fresh semantic mask)
+             self._img = QImage(1, 1, QImage.Format.Format_ARGB32)
+             self._img.fill(Qt.GlobalColor.transparent)
+             ox, oy = 0.0, 0.0
+             pm = QPixmap.fromImage(self._img)
+
         self._img: QImage = pm.toImage().convertToFormat(QImage.Format.Format_ARGB32)
         self._img_offset = QPointF(ox, oy)
         self.setPixmap(pm)
