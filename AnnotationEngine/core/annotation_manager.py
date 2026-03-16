@@ -137,6 +137,10 @@ class AnnotationManager(QObject):
         annotation_id: Optional[str] = None,
         label: str = "",
         color: str = "#ff3232",
+        bbox_x: Optional[float] = None,
+        bbox_y: Optional[float] = None,
+        bbox_w: Optional[float] = None,
+        bbox_h: Optional[float] = None,
     ) -> MaskItem:
         """Create a new MaskItem from raw ``[[x,y], …]`` pixel coords (AutoSeg).
 
@@ -151,6 +155,8 @@ class AnnotationManager(QObject):
         item.pen_width = self.settings_pen_width
         item.font_size = self.settings_font_size
         item.label_height = self.settings_label_height
+        if None not in (bbox_x, bbox_y, bbox_w, bbox_h):
+            item.set_bbox_rect(float(bbox_x), float(bbox_y), float(bbox_w), float(bbox_h))
 
         self._annotations[item.annotation_id] = item
         self.annotation_added.emit(item.annotation_id)
@@ -252,6 +258,10 @@ class AnnotationManager(QObject):
                     annotation_id=entry.get("id"),
                     label=entry.get("label", ""),
                     color=entry.get("color", "#ff3232"),
+                    bbox_x=entry.get("x"),
+                    bbox_y=entry.get("y"),
+                    bbox_w=entry.get("w"),
+                    bbox_h=entry.get("h"),
                 )
             elif atype == "poly" and "points" in entry:
                 poly = QPolygonF()

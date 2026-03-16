@@ -204,6 +204,9 @@ class MaskItem(QGraphicsPixmapItem):
         self._font_size: int = 9
         self._label_height: int = 18
         self._pen_width: int = 2  # kept for settings compat
+        self._active_handle: _HandlePosition = _HandlePosition.NONE
+        self._drag_rect_origin: Optional[QRectF] = None
+        self._bbox_override: Optional[QRectF] = None
 
         # Store raw points for export and hit-testing
         self._points: list[list[float]] = [
@@ -213,6 +216,8 @@ class MaskItem(QGraphicsPixmapItem):
         self._update_bbox()
 
         self.setFlag(QGraphicsPixmapItem.GraphicsItemFlag.ItemIsSelectable, True)
+        self.setFlag(QGraphicsPixmapItem.GraphicsItemFlag.ItemSendsGeometryChanges, True)
+        self.setAcceptHoverEvents(True)
         self.setZValue(10)
         self._rebuild_pixmap()
 
@@ -289,6 +294,49 @@ class MaskItem(QGraphicsPixmapItem):
         self._max_x = ox + self._img.width()
         self._max_y = oy + self._img.height()
 
+    def set_bbox_rect(self, x: float, y: float, w: float, h: float) -> None:
+        """Set an explicit editable bbox in scene coordinates."""
+        w = max(_MIN_DIMENSION, float(w))
+        h = max(_MIN_DIMENSION, float(h))
+        self.prepareGeometryChange()
+        self._bbox_override = QRectF(float(x), float(y), w, h)
+        self.update()
+
+    def _effective_bbox_scene(self) -> QRectF:
+        """Return the bbox used for drawing/handles in scene coordinates."""
+        if self._bbox_override is not None:
+            return QRectF(self._bbox_override)
+        w = max(1.0, self._max_x - self._min_x)
+        h = max(1.0, self._max_y - self._min_y)
+        return QRectF(self._min_x, self._min_y, w, h)
+
+    def _effective_bbox_local(self) -> QRectF:
+        off = self.offset()
+        r = self._effective_bbox_scene()
+        return QRectF(r.x() - off.x(), r.y() - off.y(), r.width(), r.height())
+
+    def _handle_rects(self) -> dict[_HandlePosition, QRectF]:
+        r = self._effective_bbox_local()
+        mx = (r.left() + r.right()) / 2.0
+        my = (r.top() + r.bottom()) / 2.0
+        s = _HALF_HANDLE
+        return {
+            _HandlePosition.TOP_LEFT: QRectF(r.left() - s, r.top() - s, _HANDLE_SIZE, _HANDLE_SIZE),
+            _HandlePosition.TOP: QRectF(mx - s, r.top() - s, _HANDLE_SIZE, _HANDLE_SIZE),
+            _HandlePosition.TOP_RIGHT: QRectF(r.right() - s, r.top() - s, _HANDLE_SIZE, _HANDLE_SIZE),
+            _HandlePosition.LEFT: QRectF(r.left() - s, my - s, _HANDLE_SIZE, _HANDLE_SIZE),
+            _HandlePosition.RIGHT: QRectF(r.right() - s, my - s, _HANDLE_SIZE, _HANDLE_SIZE),
+            _HandlePosition.BOTTOM_LEFT: QRectF(r.left() - s, r.bottom() - s, _HANDLE_SIZE, _HANDLE_SIZE),
+            _HandlePosition.BOTTOM: QRectF(mx - s, r.bottom() - s, _HANDLE_SIZE, _HANDLE_SIZE),
+            _HandlePosition.BOTTOM_RIGHT: QRectF(r.right() - s, r.bottom() - s, _HANDLE_SIZE, _HANDLE_SIZE),
+        }
+
+    def _handle_at(self, pos: QPointF) -> _HandlePosition:
+        for hp, hr in self._handle_rects().items():
+            if hr.contains(pos):
+                return hp
+        return _HandlePosition.NONE
+
     def paint_brush(self, scene_pos: QPointF, radius: float) -> None:
         """Paint a solid filled circle of the mask colour at *scene_pos*."""
         brush_rect = QRectF(
@@ -352,15 +400,9 @@ class MaskItem(QGraphicsPixmapItem):
 
     # ---- shape (accurate click hit-test) ------------------------------ #
     def shape(self) -> QPainterPath:
-        """Rectangular hit-test area covering all mask pixels."""
+        """Rectangular hit-test area covering the editable bbox."""
         path = QPainterPath()
-        off = self.offset()
-        path.addRect(QRectF(
-            self._min_x - off.x(),
-            self._min_y - off.y(),
-            self._max_x - self._min_x + 1,
-            self._max_y - self._min_y + 1,
-        ))
+        path.addRect(self._effective_bbox_local())
         return path
 
     # ---- properties --------------------------------------------------- #
@@ -403,9 +445,9 @@ class MaskItem(QGraphicsPixmapItem):
 
     # ---- bounding rect (includes label badge) ------------------------- #
     def boundingRect(self) -> QRectF:
-        base = super().boundingRect()
+        base = super().boundingRect().united(self._effective_bbox_local())
+        base = base.adjusted(-_HALF_HANDLE, -_HALF_HANDLE, _HALF_HANDLE, _HALF_HANDLE)
         if self.label:
-            # Extend upward from the top of the pixmap content to fit the badge
             base.setTop(base.top() - self._label_height)
         return base
 
@@ -418,12 +460,21 @@ class MaskItem(QGraphicsPixmapItem):
     ) -> None:
         super().paint(painter, option, widget)
 
+        bbox = self._effective_bbox_local()
+
+        if self.isSelected():
+            painter.setPen(QPen(QColor(50, 255, 50), self._pen_width))
+            painter.setBrush(Qt.BrushStyle.NoBrush)
+            painter.drawRect(bbox)
+
+            painter.setBrush(QBrush(QColor(255, 255, 255)))
+            painter.setPen(QPen(QColor(0, 0, 0), 1))
+            for hr in self._handle_rects().values():
+                painter.drawRect(hr)
+
         if self.label:
-            # The pixmap is drawn at self.offset() in item-local coordinates.
-            # Badge goes just above the pixmap's top-left corner.
-            off = self.offset()
             badge_w = len(self.label) * 8 + 12
-            badge = QRectF(off.x(), off.y() - self._label_height, badge_w, self._label_height)
+            badge = QRectF(bbox.left(), bbox.top() - self._label_height, badge_w, self._label_height)
 
             painter.setPen(Qt.PenStyle.NoPen)
             painter.setBrush(QBrush(self._color))
@@ -437,6 +488,63 @@ class MaskItem(QGraphicsPixmapItem):
                 f"  {self.label}",
             )
 
+    def hoverMoveEvent(self, event: QGraphicsSceneHoverEvent) -> None:
+        if self.isSelected():
+            hp = self._handle_at(event.pos())
+            if hp != _HandlePosition.NONE:
+                self.setCursor(_HANDLE_CURSORS[hp])
+            else:
+                self.unsetCursor()
+        else:
+            self.unsetCursor()
+        super().hoverMoveEvent(event)
+
+    def hoverLeaveEvent(self, event: QGraphicsSceneHoverEvent) -> None:
+        self.unsetCursor()
+        super().hoverLeaveEvent(event)
+
+    def mousePressEvent(self, event: QGraphicsSceneMouseEvent) -> None:
+        if event.button() == Qt.MouseButton.LeftButton and self.isSelected():
+            hp = self._handle_at(event.pos())
+            if hp != _HandlePosition.NONE:
+                self._active_handle = hp
+                self._drag_rect_origin = self._effective_bbox_local()
+                event.accept()
+                return
+        super().mousePressEvent(event)
+
+    def mouseMoveEvent(self, event: QGraphicsSceneMouseEvent) -> None:
+        if self._active_handle != _HandlePosition.NONE and self._drag_rect_origin is not None:
+            pos = event.pos()
+            r = QRectF(self._drag_rect_origin)
+            hp = self._active_handle
+
+            if hp in (_HandlePosition.TOP_LEFT, _HandlePosition.TOP, _HandlePosition.TOP_RIGHT):
+                r.setTop(min(pos.y(), r.bottom() - _MIN_DIMENSION))
+            if hp in (_HandlePosition.BOTTOM_LEFT, _HandlePosition.BOTTOM, _HandlePosition.BOTTOM_RIGHT):
+                r.setBottom(max(pos.y(), r.top() + _MIN_DIMENSION))
+            if hp in (_HandlePosition.TOP_LEFT, _HandlePosition.LEFT, _HandlePosition.BOTTOM_LEFT):
+                r.setLeft(min(pos.x(), r.right() - _MIN_DIMENSION))
+            if hp in (_HandlePosition.TOP_RIGHT, _HandlePosition.RIGHT, _HandlePosition.BOTTOM_RIGHT):
+                r.setRight(max(pos.x(), r.left() + _MIN_DIMENSION))
+
+            r = r.normalized()
+            off = self.offset()
+            self.prepareGeometryChange()
+            self._bbox_override = QRectF(r.x() + off.x(), r.y() + off.y(), r.width(), r.height())
+            self.update()
+            event.accept()
+            return
+        super().mouseMoveEvent(event)
+
+    def mouseReleaseEvent(self, event: QGraphicsSceneMouseEvent) -> None:
+        if self._active_handle != _HandlePosition.NONE:
+            self._active_handle = _HandlePosition.NONE
+            self._drag_rect_origin = None
+            event.accept()
+            return
+        super().mouseReleaseEvent(event)
+
     # ---- serialisation ------------------------------------------------ #
     def to_dict(self) -> dict:
         pts = self._current_points() if (hasattr(self, "_img") and self._img is not None) else self._points
@@ -445,12 +553,13 @@ class MaskItem(QGraphicsPixmapItem):
             xs = [p[0] for p in points]; ys = [p[1] for p in points]
             self._min_x, self._max_x = min(xs), max(xs)
             self._min_y, self._max_y = min(ys), max(ys)
+        bbox = self._effective_bbox_scene()
         return {
             "id": self.annotation_id, "type": "mask", "label": self.label,
             "color": self._color.name(), "points": points,
-            "x": round(self._min_x, 2), "y": round(self._min_y, 2),
-            "w": round(self._max_x - self._min_x, 2),
-            "h": round(self._max_y - self._min_y, 2),
+            "x": round(bbox.x(), 2), "y": round(bbox.y(), 2),
+            "w": round(bbox.width(), 2),
+            "h": round(bbox.height(), 2),
         }
 
     def __repr__(self) -> str:
