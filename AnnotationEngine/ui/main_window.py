@@ -101,6 +101,7 @@ class MainWindow(QMainWindow):
         self._toolbar.status_message.connect(self._status.showMessage)
         self._toolbar.unsaved_cleared.connect(self._clear_unsaved)
         self._toolbar.annotations_loaded.connect(self._load_process)
+        self._toolbar.settings_applied.connect(self._on_visual_settings_applied)
 
         # ---- Right panel ----
         self._right.status_message.connect(self._status.showMessage)
@@ -159,6 +160,19 @@ class MainWindow(QMainWindow):
 
     def _on_image_loaded(self, path: str, w: int, h: int) -> None:
         self._status.showMessage(f"{Path(path).name}  ({w} × {h} px)")
+
+    def _on_visual_settings_applied(self, pen_width: int, font_size: int, label_height: int) -> None:
+        """Apply visual style settings to all existing and future annotations."""
+        self._manager.update_global_settings(pen_width, font_size, label_height)
+
+        # Force immediate redraw so the user sees the style change right away.
+        for item in self._manager.get_all():
+            item.update()
+        self._canvas.viewport().update()
+
+        self._status.showMessage(
+            f"Visual style updated: width={pen_width}, font={font_size}, label={label_height}"
+        )
 
     # ================================================================== #
     #  Import / load-process  (cross-cutting: touches canvas + left panel)
