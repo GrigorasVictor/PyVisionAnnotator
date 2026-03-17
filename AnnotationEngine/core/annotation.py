@@ -204,6 +204,7 @@ class MaskItem(QGraphicsPixmapItem):
         self._font_size: int = 9
         self._label_height: int = 18
         self._pen_width: int = 2  # kept for settings compat
+        self._fill_alpha: int = 80
         self._active_handle: _HandlePosition = _HandlePosition.NONE
         self._drag_rect_origin: Optional[QRectF] = None
         self._bbox_override: Optional[QRectF] = None
@@ -237,7 +238,7 @@ class MaskItem(QGraphicsPixmapItem):
         """Rasterise points directly as individual pixels onto a QImage."""
         from utils.geometry import rasterize_points
 
-        pm, ox, oy = rasterize_points(self._points, self._color, fill_alpha=80)
+        pm, ox, oy = rasterize_points(self._points, self._color, fill_alpha=self._fill_alpha)
         
         if pm.isNull():
              # Default to a 1x1 transparent image at 0,0 if no points (e.g. fresh semantic mask)
@@ -250,6 +251,19 @@ class MaskItem(QGraphicsPixmapItem):
         self._img_offset = QPointF(ox, oy)
         self.setPixmap(pm)
         self.setOffset(ox, oy)
+
+    def _apply_fill_alpha_to_image(self) -> None:
+        """Normalize alpha for all non-transparent pixels in the current mask image."""
+        self._ensure_image()
+        w, h = self._img.width(), self._img.height()
+        for y in range(h):
+            for x in range(w):
+                px = self._img.pixelColor(x, y)
+                if px.alpha() == 0:
+                    continue
+                px.setAlpha(self._fill_alpha)
+                self._img.setPixelColor(x, y, px)
+        self._flush_image()
 
     # ---- pixel editing (brush / spray / eraser) ----------------------- #
     def _ensure_image(self) -> None:
@@ -355,7 +369,7 @@ class MaskItem(QGraphicsPixmapItem):
         p.setCompositionMode(QPainter.CompositionMode.CompositionMode_Source)
         p.setRenderHint(QPainter.RenderHint.Antialiasing)
         c = QColor(self._color)
-        c.setAlpha(80)  # Match default rasterization alpha (was 180)
+        c.setAlpha(self._fill_alpha)
         p.setPen(Qt.PenStyle.NoPen)
         p.setBrush(QBrush(c))
         p.drawEllipse(
@@ -443,12 +457,26 @@ class MaskItem(QGraphicsPixmapItem):
             self._label_height = max(10, h)
             self.update()
 
+    @property
+    def fill_alpha(self) -> int:
+        return self._fill_alpha
+
+    @fill_alpha.setter
+    def fill_alpha(self, alpha: int) -> None:
+        alpha_i = max(0, min(255, int(alpha)))
+        if self._fill_alpha == alpha_i:
+            return
+        self._fill_alpha = alpha_i
+        # Preserve brush edits by updating current image alpha in-place.
+        if hasattr(self, "_img") and self._img is not None and not self._img.isNull():
+            self._apply_fill_alpha_to_image()
+        else:
+            self._rebuild_pixmap()
+
     # ---- bounding rect (includes label badge) ------------------------- #
     def boundingRect(self) -> QRectF:
         base = super().boundingRect().united(self._effective_bbox_local())
         base = base.adjusted(-_HALF_HANDLE, -_HALF_HANDLE, _HALF_HANDLE, _HALF_HANDLE)
-        if self.label:
-            base.setTop(base.top() - self._label_height)
         return base
 
     # ---- paint (only draws the label badge; pixmap renders itself) ----- #
@@ -472,21 +500,7 @@ class MaskItem(QGraphicsPixmapItem):
             for hr in self._handle_rects().values():
                 painter.drawRect(hr)
 
-        if self.label:
-            badge_w = len(self.label) * 8 + 12
-            badge = QRectF(bbox.left(), bbox.top() - self._label_height, badge_w, self._label_height)
-
-            painter.setPen(Qt.PenStyle.NoPen)
-            painter.setBrush(QBrush(self._color))
-            painter.drawRect(badge)
-
-            painter.setFont(_make_font(self._font_size))
-            painter.setPen(QPen(QColor(255, 255, 255)))
-            painter.drawText(
-                badge,
-                int(Qt.AlignmentFlag.AlignVCenter | Qt.AlignmentFlag.AlignLeft),
-                f"  {self.label}",
-            )
+        # Mask label badges are hidden on-canvas to keep brush/automask workflows uncluttered.
 
     def hoverMoveEvent(self, event: QGraphicsSceneHoverEvent) -> None:
         if self.isSelected():

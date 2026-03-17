@@ -19,6 +19,10 @@
   - Click pe obiect → rulează subprocess → rezultat afișat ca poligon
   - Progress dialog cu opțiune de anulare
   - Suport JSON output cu coordonate de tip mască (simplificate automat cu Douglas-Peucker)
+- [x] **Mask Editing UX (Brush / AutoMask)**
+  - Etichetele nu mai sunt afișate direct peste imagine pentru măști (vizual mai curat)
+  - Label-urile rămân disponibile în panourile `Existing Labels` și `Annotations`
+  - Masca rămâne colorată, cu control de opacitate din slider
 
 ## 3. Gestionare Date & Proprietăți
 - [x] **Panou Proprietăți (Sidebar Dreapta)**:
@@ -64,6 +68,7 @@
 - [x] Slider Brightness (-100 la +100)
 - [x] Slider Contrast (0.1× la 3.0×)
 - [x] Slider Gamma (0.1 la 3.0)
+- [x] Slider Opacitate Mască (0% la 100%)
 - [x] Buton Reset pentru a reveni la valorile neutre
 - [x] Adnotările se salvează pe coordonatele **originale** — ajustările sunt strict vizuale
 

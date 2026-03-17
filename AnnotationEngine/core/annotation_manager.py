@@ -51,6 +51,7 @@ class AnnotationManager(QObject):
         self.settings_pen_width: int = 2
         self.settings_font_size: int = 9
         self.settings_label_height: int = 18
+        self.settings_mask_opacity: int = 31  # percent (0-100)
 
         # Current image metadata — updated by the canvas on load
         self.image_path: str = ""
@@ -155,6 +156,7 @@ class AnnotationManager(QObject):
         item.pen_width = self.settings_pen_width
         item.font_size = self.settings_font_size
         item.label_height = self.settings_label_height
+        item.fill_alpha = self._opacity_percent_to_alpha(self.settings_mask_opacity)
         if None not in (bbox_x, bbox_y, bbox_w, bbox_h):
             item.set_bbox_rect(float(bbox_x), float(bbox_y), float(bbox_w), float(bbox_h))
 
@@ -232,6 +234,19 @@ class AnnotationManager(QObject):
             item.label_height = label_height
             if isinstance(item, (BoundingBoxItem, PolygonItem, MaskItem)):
                 item.font_size = font_size
+
+    @staticmethod
+    def _opacity_percent_to_alpha(opacity: int) -> int:
+        pct = max(0, min(100, int(opacity)))
+        return int(round((pct / 100.0) * 255))
+
+    def set_mask_opacity(self, opacity: int) -> None:
+        """Update mask fill opacity for existing and future masks (0-100%)."""
+        self.settings_mask_opacity = max(0, min(100, int(opacity)))
+        alpha = self._opacity_percent_to_alpha(self.settings_mask_opacity)
+        for item in self._annotations.values():
+            if isinstance(item, MaskItem):
+                item.fill_alpha = alpha
 
     # ------------------------------------------------------------------ #
     #  Bulk loading (e.g. from JSON)

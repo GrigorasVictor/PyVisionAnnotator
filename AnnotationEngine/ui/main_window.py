@@ -111,6 +111,7 @@ class MainWindow(QMainWindow):
         self._right.canvas_brightness.connect(self._canvas.set_brightness)
         self._right.canvas_contrast.connect(self._canvas.set_contrast)
         self._right.canvas_gamma.connect(self._canvas.set_gamma)
+        self._right.mask_opacity_changed.connect(self._manager.set_mask_opacity)
         self._right.autoseg_run_requested.connect(self._on_autoseg_yolo_run)
         self._right.automask_all_requested.connect(self._on_automask_all_requested)
 
@@ -260,6 +261,8 @@ class MainWindow(QMainWindow):
         )
         self._automask_worker.result_ready.connect(self._on_autoseg_result)
         self._automask_worker.error_occurred.connect(self._on_autoseg_error)
+        self._automask_worker.finished.connect(self._on_autoseg_worker_finished)
+        self._automask_worker.start()
 
     def _on_autoseg_result(self, data: dict | list) -> None:
         """AutoSegWorker succeeded — forward result to canvas."""

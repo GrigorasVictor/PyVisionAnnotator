@@ -52,6 +52,7 @@ class RightPanel(QWidget):
     canvas_brightness = pyqtSignal(int)
     canvas_contrast = pyqtSignal(float)
     canvas_gamma = pyqtSignal(float)
+    mask_opacity_changed = pyqtSignal(int)
     autoseg_config_requested = pyqtSignal()
     autoseg_run_requested = pyqtSignal()
     automask_all_requested = pyqtSignal() # New signal
@@ -145,6 +146,15 @@ class RightPanel(QWidget):
         form.addRow(self.btn_automask_all)
         self.btn_automask_all.setVisible(False)
 
+        self.sld_mask_opacity = QSlider(Qt.Orientation.Horizontal)
+        self.sld_mask_opacity.setRange(0, 100)
+        self.sld_mask_opacity.setValue(int(getattr(self._manager, "settings_mask_opacity", 31)))
+        self.lbl_mask_opacity = QLabel(f"{self.sld_mask_opacity.value()}%")
+        op_row = QHBoxLayout()
+        op_row.addWidget(self.sld_mask_opacity)
+        op_row.addWidget(self.lbl_mask_opacity)
+        form.addRow("Mask Opacity:", op_row)
+
         layout.addWidget(grp)
 
     def _build_existing_labels_group(self, layout: QVBoxLayout) -> None:
@@ -164,7 +174,7 @@ class RightPanel(QWidget):
         layout.addWidget(grp)
 
     def _build_tools_group(self, layout: QVBoxLayout) -> None:
-        from PyQt6.QtWidgets import QGridLayout, QSpinBox
+        from PyQt6.QtWidgets import QGridLayout
         grp = QGroupBox("Tools")
         vbox = QVBoxLayout(grp)
         vbox.setSpacing(4)
@@ -294,6 +304,7 @@ class RightPanel(QWidget):
 
         # Brush size slider
         self.sld_brush_size.valueChanged.connect(self._on_brush_size_changed)
+        self.sld_mask_opacity.valueChanged.connect(self._on_mask_opacity_changed)
 
         # Annotations list
         self.annotation_list.currentItemChanged.connect(self._on_annotation_list_clicked)
@@ -444,6 +455,10 @@ class RightPanel(QWidget):
     def _on_brush_size_changed(self, value: int) -> None:
         self.lbl_brush_size.setText(f"{value} px")
         self.brush_size_changed.emit(value)
+
+    def _on_mask_opacity_changed(self, value: int) -> None:
+        self.lbl_mask_opacity.setText(f"{value}%")
+        self.mask_opacity_changed.emit(value)
 
     # ================================================================== #
     #  Business-logic slots — Annotations list
