@@ -26,7 +26,7 @@ from PyQt6.QtWidgets import (
     QHBoxLayout,
     QLabel,
     QVBoxLayout,
-    QDoubleSpinBox
+    QDoubleSpinBox,
 )
 
 from core.subprocess_handler import SubprocessHandler
@@ -101,6 +101,16 @@ class SettingsDialog(QDialog):
         self.spin_timeout.setValue(val_timeout)
         layout_automask.addRow("Timeout:", self.spin_timeout)
 
+        self.edit_automask_device = QLineEdit()
+        self.edit_automask_device.setText(str(settings.value("autoseg/device", "cpu")))
+        self.edit_automask_device.setPlaceholderText("cpu or cuda")
+        layout_automask.addRow("Device (cpu/cuda):", self.edit_automask_device)
+
+        self.edit_automask_extra_args = QLineEdit()
+        self.edit_automask_extra_args.setPlaceholderText(r'e.g. --half --imgsz 1024')
+        self.edit_automask_extra_args.setText(str(settings.value("autoseg/extra_args", "")))
+        layout_automask.addRow("Custom Args:", self.edit_automask_extra_args)
+
         info = QLabel(
             "<i>The subprocess will be called as:<br>"
             "• <code>model.exe --image &lt;path&gt; --point x,y</code><br>"
@@ -157,8 +167,13 @@ class SettingsDialog(QDialog):
         layout_autoseg.addRow("Confidence Threshold:", self.spin_yolo_conf)
 
         self.edit_yolo_device = QLineEdit()
-        self.edit_yolo_device.setText(settings.value("autoseg_yolo/device", "cuda" if self._has_cuda() else "cpu"))
+        self.edit_yolo_device.setText(str(settings.value("autoseg_yolo/device", "cpu")))
         layout_autoseg.addRow("Device (cuda/cpu):", self.edit_yolo_device)
+
+        self.edit_yolo_extra_args = QLineEdit()
+        self.edit_yolo_extra_args.setPlaceholderText(r'e.g. --imgsz 1280 --agnostic-nms')
+        self.edit_yolo_extra_args.setText(str(settings.value("autoseg_yolo/extra_args", "")))
+        layout_autoseg.addRow("Custom Args:", self.edit_yolo_extra_args)
 
         layout_autoseg.addRow(QLabel("<i>Runs 'bbox' and 'segment' modes automatically.</i>"))
 
@@ -174,16 +189,6 @@ class SettingsDialog(QDialog):
         btns.accepted.connect(self.accept)
         btns.rejected.connect(self.reject)
         main_layout.addWidget(btns)
-
-    def _has_cuda(self) -> bool:
-        """Check if CUDA is available via torch (if installed)."""
-        try:
-            import torch
-            return torch.cuda.is_available()
-        except ImportError:
-            return False
-        except Exception:
-            return False
 
     def _browse_model(self) -> None:
         path, _ = QFileDialog.getOpenFileName(
@@ -239,11 +244,15 @@ class SettingsDialog(QDialog):
         settings = QSettings(_ORG, _APP)
         settings.setValue("autoseg/model_path", self.edit_model.text().strip())
         settings.setValue("autoseg/timeout", self.spin_timeout.value())
+        settings.setValue("autoseg/device", self.edit_automask_device.text().strip())
+        settings.setValue("autoseg/extra_args", self.edit_automask_extra_args.text().strip())
         
         # Save AutoSeg (YOLO) settings
         settings.setValue("autoseg_yolo/executable", self.edit_yolo_exe.text().strip())
+        settings.setValue("autoseg_yolo/model_path", self.edit_yolo_model.text().strip())
         settings.setValue("autoseg_yolo/conf", self.spin_yolo_conf.value())
         settings.setValue("autoseg_yolo/device", self.edit_yolo_device.text().strip())
+        settings.setValue("autoseg_yolo/extra_args", self.edit_yolo_extra_args.text().strip())
         
         super().accept()
 

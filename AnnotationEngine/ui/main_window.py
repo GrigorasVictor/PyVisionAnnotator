@@ -8,11 +8,12 @@ outward signals together, and manages the remaining cross-cutting state
 from __future__ import annotations
 
 import os
+import shlex
 from pathlib import Path
 from typing import Optional
 
 from PyQt6.QtCore import Qt, QPointF
-from PyQt6.QtGui import QKeySequence, QShortcut, QPolygonF
+from PyQt6.QtGui import QKeySequence, QShortcut, QPolygonF, QCloseEvent
 from PyQt6.QtWidgets import (
     QMainWindow,
     QWidget,
@@ -131,6 +132,44 @@ class MainWindow(QMainWindow):
         QShortcut(QKeySequence("Ctrl+O"), self).activated.connect(self._left.btn_open_folder.click)
         QShortcut(QKeySequence("Ctrl+S"), self).activated.connect(self._toolbar.save_json)
 
+    @staticmethod
+    def _parse_custom_args(raw: object) -> list[str]:
+        """Parse user-entered CLI args into a safe argument list."""
+        text = str(raw or "").strip()
+        if not text:
+            return []
+        try:
+            return shlex.split(text, posix=False)
+        except ValueError:
+            # Fallback: split by whitespace if quoting is malformed.
+            return text.split()
+
+    def closeEvent(self, event: QCloseEvent) -> None:
+        """Guard app close when there are unsaved annotation changes."""
+        if not self._unsaved_changes:
+            event.accept()
+            return
+
+        reply = QMessageBox.question(
+            self,
+            "Unsaved Changes",
+            "You have unsaved annotations. Save before exiting?",
+            QMessageBox.StandardButton.Save
+            | QMessageBox.StandardButton.Discard
+            | QMessageBox.StandardButton.Cancel,
+            QMessageBox.StandardButton.Save,
+        )
+
+        if reply == QMessageBox.StandardButton.Cancel:
+            event.ignore()
+            return
+
+        if reply == QMessageBox.StandardButton.Save and not self._toolbar.save_json():
+            event.ignore()
+            return
+
+        event.accept()
+
     # ================================================================== #
     #  Slots
     # ================================================================== #
@@ -221,6 +260,16 @@ class MainWindow(QMainWindow):
         settings = QSettings("PyVisionAnnotator", "PyVisionAnnotator")
         exe = settings.value("autoseg/model_path", "")
         timeout = int(settings.value("autoseg/timeout", 120))
+        device = str(settings.value("autoseg/device", "")).strip().lower()
+        if not device:
+            # Legacy fallback for older settings that only stored a GPU toggle.
+            use_gpu_raw = settings.value("autoseg/use_gpu", False)
+            if isinstance(use_gpu_raw, str):
+                use_gpu = use_gpu_raw.strip().lower() in {"1", "true", "yes", "on"}
+            else:
+                use_gpu = bool(use_gpu_raw)
+            device = "cuda" if use_gpu else "cpu"
+        extra_args = self._parse_custom_args(settings.value("autoseg/extra_args", ""))
         # script is always None as we run executable directly
         script = None
 
@@ -255,6 +304,8 @@ class MainWindow(QMainWindow):
             image_path=image_path,
             point_x=px,
             point_y=py,
+            device=device,
+            extra_args=extra_args,
             timeout=timeout,
             all_segments=False, # Standard automask is never --all now
             parent=self,
@@ -299,6 +350,15 @@ class MainWindow(QMainWindow):
         settings = QSettings("PyVisionAnnotator", "PyVisionAnnotator")
         exe = settings.value("autoseg/model_path", "")
         timeout = int(settings.value("autoseg/timeout", 120))
+        device = str(settings.value("autoseg/device", "")).strip().lower()
+        if not device:
+            use_gpu_raw = settings.value("autoseg/use_gpu", False)
+            if isinstance(use_gpu_raw, str):
+                use_gpu = use_gpu_raw.strip().lower() in {"1", "true", "yes", "on"}
+            else:
+                use_gpu = bool(use_gpu_raw)
+            device = "cuda" if use_gpu else "cpu"
+        extra_args = self._parse_custom_args(settings.value("autoseg/extra_args", ""))
         script = None
 
         if not exe:
@@ -329,6 +389,8 @@ class MainWindow(QMainWindow):
             image_path=image_path,
             point_x=0, # Dummy, ignored in --all mode
             point_y=0, # Dummy
+            device=device,
+            extra_args=extra_args,
             timeout=timeout,
             all_segments=True, # Force True
             parent=self,
@@ -380,6 +442,7 @@ class MainWindow(QMainWindow):
         model_path = settings.value("autoseg_yolo/model_path", "")
         conf = float(settings.value("autoseg_yolo/conf", 0.32))
         device = settings.value("autoseg_yolo/device", "cpu")
+        extra_args = self._parse_custom_args(settings.value("autoseg_yolo/extra_args", ""))
 
         if not executable:
              QMessageBox.warning(self, "Not Configured", "Please set the YOLO Executable path in Settings.")
@@ -417,6 +480,7 @@ class MainWindow(QMainWindow):
             labels=labels,
             conf_threshold=conf,
             device=device,
+            extra_args=extra_args,
             mode=mode, # Pass the selected mode(s)
             parent=self
         )

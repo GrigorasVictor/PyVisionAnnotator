@@ -246,6 +246,9 @@ class RightPanel(QWidget):
         layout.addWidget(self.annotation_list)
         self.btn_delete = QPushButton("Delete Selected")
         layout.addWidget(self.btn_delete)
+        self.btn_delete_all = QPushButton("Delete All")
+        self.btn_delete_all.setToolTip("Delete all annotations from the current image.")
+        layout.addWidget(self.btn_delete_all)
 
     def _build_image_adjustments(self, layout: QVBoxLayout) -> None:
         grp = QGroupBox("Image Adjustments")
@@ -309,6 +312,7 @@ class RightPanel(QWidget):
         # Annotations list
         self.annotation_list.currentItemChanged.connect(self._on_annotation_list_clicked)
         self.btn_delete.clicked.connect(self._on_delete)
+        self.btn_delete_all.clicked.connect(self._on_clear_all)
 
         # Adjustments
         self.sld_brightness.valueChanged.connect(self._on_brightness_changed)
@@ -478,6 +482,30 @@ class RightPanel(QWidget):
 
     def _on_delete(self) -> None:
         self._get_canvas().delete_selected()
+
+    def _on_clear_all(self) -> None:
+        total = self._manager.count()
+        if total == 0:
+            self.status_message.emit("No annotations to delete.")
+            return
+
+        reply = QMessageBox.question(
+            self,
+            "Delete All Annotations",
+            f"Delete all {total} annotation(s) from this image? This cannot be undone.",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            QMessageBox.StandardButton.No,
+        )
+        if reply != QMessageBox.StandardButton.Yes:
+            return
+
+        canvas = self._get_canvas()
+        canvas.scene().clearSelection()
+        removed = self._manager.clear()
+        for item in removed:
+            canvas.scene().removeItem(item)
+        self.hide_properties()
+        self.status_message.emit(f"Deleted {len(removed)} annotation(s).")
 
     # ================================================================== #
     #  Business-logic slots — Adjustments

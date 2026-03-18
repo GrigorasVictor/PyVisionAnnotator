@@ -134,11 +134,12 @@ def export_coco_template(
 def export_yolo_template(
     labels_path: str | Path,
     classes_path: str | Path,
+    data_yaml_path: str | Path | None,
     width: int,
     height: int,
     annotations: list[dict[str, Any]],
 ) -> None:
-    """Write YOLO bbox labels and a classes template file."""
+    """Write YOLO bbox labels, classes, and an optional data.yaml template."""
     w_img = max(1.0, float(width))
     h_img = max(1.0, float(height))
     cat_to_id, categories = _build_categories(annotations)
@@ -160,6 +161,24 @@ def export_yolo_template(
     Path(labels_path).write_text("\n".join(lines) + ("\n" if lines else ""), encoding="utf-8")
     class_lines = [c["name"] for c in sorted(categories, key=lambda e: e["id"])]
     Path(classes_path).write_text("\n".join(class_lines) + ("\n" if class_lines else ""), encoding="utf-8")
+
+    if data_yaml_path is not None:
+        data_lines = [
+            "# YOLO dataset configuration template",
+            "# Update train/val paths to match your dataset layout",
+            "path: .",
+            "train: images/train",
+            "val: images/val",
+            f"nc: {len(class_lines)}",
+            "names:",
+        ]
+        if class_lines:
+            for idx, name in enumerate(class_lines):
+                safe_name = name.replace("\n", " ").replace(":", "-").strip() or f"class_{idx}"
+                data_lines.append(f"  {idx}: {safe_name}")
+        else:
+            data_lines.append("  {}")
+        Path(data_yaml_path).write_text("\n".join(data_lines) + "\n", encoding="utf-8")
 
 
 def export_template_structure(
@@ -184,8 +203,9 @@ def export_template_structure(
     if key == "yolo":
         labels_path = out / f"{base_name}.txt"
         classes_path = out / "classes.txt"
-        export_yolo_template(labels_path, classes_path, width, height, annotations)
-        return [str(labels_path), str(classes_path)]
+        data_yaml_path = out / "data.yaml"
+        export_yolo_template(labels_path, classes_path, data_yaml_path, width, height, annotations)
+        return [str(labels_path), str(classes_path), str(data_yaml_path)]
 
     raise ValueError(f"Unsupported export template: {template}")
 

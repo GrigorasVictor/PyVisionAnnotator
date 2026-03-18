@@ -6,7 +6,6 @@ Emits ``result_ready(list)`` on success or ``error_occurred(str)`` on failure.
 """
 from __future__ import annotations
 
-import json
 from typing import Optional, List
 
 from PyQt6.QtCore import QThread, pyqtSignal
@@ -35,6 +34,7 @@ class AutoSegWorker(QThread):
         device: str = "cuda",
         timeout: int = 300,
         mode: List[str] = None, # new parameter
+        extra_args: Optional[List[str]] = None,
         parent=None,
     ) -> None:
         super().__init__(parent)
@@ -46,6 +46,7 @@ class AutoSegWorker(QThread):
         self._device = device
         self._timeout = timeout
         self._mode = mode if mode else ["bbox", "segment"]
+        self._extra_args = list(extra_args or [])
         self._managed: Optional[ManagedProcess] = None
 
     def cancel(self) -> None:
@@ -60,6 +61,8 @@ class AutoSegWorker(QThread):
             "--device", self._device,
             "--mode", *self._mode
         ]
+        if self._extra_args:
+            args.extend(self._extra_args)
 
         self._managed, err = SubprocessHandler.start_process(
             executable=self._executable,

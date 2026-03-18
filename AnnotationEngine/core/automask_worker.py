@@ -32,6 +32,8 @@ class AutoMaskWorker(QThread):
         image_path: str,
         point_x: int,
         point_y: int,
+        device: str = "cuda",
+        extra_args: Optional[list[str]] = None,
         timeout: int = 120,
         all_segments: bool = False,
         parent=None,
@@ -42,6 +44,8 @@ class AutoMaskWorker(QThread):
         self._image_path = image_path
         self._point_x = point_x
         self._point_y = point_y
+        self._device = (device or "cuda").strip() or "cuda"
+        self._extra_args = list(extra_args or [])
         self._timeout = timeout
         self._all_segments = all_segments
         self._managed: Optional[ManagedProcess] = None
@@ -60,12 +64,14 @@ class AutoMaskWorker(QThread):
     def run(self) -> None:
         """Called automatically by QThread.start() — runs in the worker thread."""
 
-        args = ["--image", self._image_path, "--device", "cuda"]
+        args = ["--image", self._image_path, "--device", self._device]
         if self._all_segments:
             args.append("--all")
         else:
             point_str = f"{self._point_x},{self._point_y}"
             args.extend(["--point", point_str])
+        if self._extra_args:
+            args.extend(self._extra_args)
 
 
         managed, err = SubprocessHandler.start_process(
