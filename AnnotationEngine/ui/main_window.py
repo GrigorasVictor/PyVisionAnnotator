@@ -7,19 +7,16 @@ outward signals together, and manages the remaining cross-cutting state
 """
 from __future__ import annotations
 
-import os
 import shlex
-from pathlib import Path
 from typing import Optional
 
-from PyQt6.QtCore import Qt, QPointF
-from PyQt6.QtGui import QKeySequence, QShortcut, QPolygonF, QCloseEvent
+from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QKeySequence, QShortcut, QCloseEvent
 from PyQt6.QtWidgets import (
     QMainWindow,
     QWidget,
     QSplitter,
     QStatusBar,
-    QMessageBox,
     QProgressDialog,
 )
 
@@ -30,7 +27,28 @@ from ui.canvas import AnnotationCanvas
 from ui.panels.left_panel import LeftPanel
 from ui.panels.toolbar_panel import ToolbarPanel
 from ui.panels.right_panel import RightPanel
-from ui.autoseg_run_dialog import AutoSegRunDialog
+from utils.main_window_parts import (
+    clear_unsaved,
+    handle_close_event,
+    load_process,
+    on_automask_all_requested,
+    on_autoseg_cancelled,
+    on_autoseg_error,
+    on_autoseg_requested,
+    on_autoseg_result,
+    on_autoseg_worker_finished,
+    on_autoseg_yolo_cancelled,
+    on_autoseg_yolo_error,
+    on_autoseg_yolo_finished,
+    on_autoseg_yolo_result,
+    on_autoseg_yolo_run,
+    on_data_changed,
+    on_folder_opened,
+    on_image_load_requested,
+    on_image_loaded,
+    on_save_before_switch,
+    on_visual_settings_applied,
+)
 
 
 class MainWindow(QMainWindow):
@@ -145,105 +163,37 @@ class MainWindow(QMainWindow):
             return text.split()
 
     def closeEvent(self, event: QCloseEvent) -> None:
-        """Guard app close when there are unsaved annotation changes."""
-        if not self._unsaved_changes:
-            event.accept()
-            return
-
-        reply = QMessageBox.question(
-            self,
-            "Unsaved Changes",
-            "You have unsaved annotations. Save before exiting?",
-            QMessageBox.StandardButton.Save
-            | QMessageBox.StandardButton.Discard
-            | QMessageBox.StandardButton.Cancel,
-            QMessageBox.StandardButton.Save,
-        )
-
-        if reply == QMessageBox.StandardButton.Cancel:
-            event.ignore()
-            return
-
-        if reply == QMessageBox.StandardButton.Save and not self._toolbar.save_json():
-            event.ignore()
-            return
-
-        event.accept()
+        handle_close_event(self, event)
 
     # ================================================================== #
     #  Slots
     # ================================================================== #
     def _on_data_changed(self, *_args) -> None:
-        if not self._ignore_changes:
-            self._unsaved_changes = True
+        on_data_changed(self, *_args)
 
     def _clear_unsaved(self) -> None:
-        self._unsaved_changes = False
+        clear_unsaved(self)
 
     def _on_folder_opened(self, folder: str) -> None:
-        self._toolbar.reset_export_root()
-        self._status.showMessage(f"Loaded {self._left.file_list.count()} image(s) from {folder}")
+        on_folder_opened(self, folder)
 
     def _on_image_load_requested(self, path: str) -> None:
-        """Left panel wants to load a new image."""
-        self._ignore_changes = True
-        self._canvas.load_image(path)
-        self._ignore_changes = False
-        self._unsaved_changes = False
+        on_image_load_requested(self, path)
 
     def _on_save_before_switch(self) -> None:
-        """Left panel deferred a switch — we must save first."""
-        if self._toolbar.save_json():
-            self._left.confirm_switch()
-        else:
-            self._left.cancel_switch()
+        on_save_before_switch(self)
 
     def _on_image_loaded(self, path: str, w: int, h: int) -> None:
-        self._status.showMessage(f"{Path(path).name}  ({w} × {h} px)")
+        on_image_loaded(self, path, w, h)
 
     def _on_visual_settings_applied(self, pen_width: int, font_size: int, label_height: int) -> None:
-        """Apply visual style settings to all existing and future annotations."""
-        self._manager.update_global_settings(pen_width, font_size, label_height)
-
-        # Force immediate redraw so the user sees the style change right away.
-        for item in self._manager.get_all():
-            item.update()
-        self._canvas.viewport().update()
-
-        self._status.showMessage(
-            f"Visual style updated: width={pen_width}, font={font_size}, label={label_height}"
-        )
+        on_visual_settings_applied(self, pen_width, font_size, label_height)
 
     # ================================================================== #
     #  Import / load-process  (cross-cutting: touches canvas + left panel)
     # ================================================================== #
     def _load_process(self, image_path: str, annotations: list) -> None:
-        """Called by toolbar after a successful JSON import."""
-        current_norm = os.path.normcase(os.path.abspath(self._manager.image_path or ""))
-        new_norm     = os.path.normcase(os.path.abspath(image_path or ""))
-
-        if image_path and new_norm != current_norm:
-            self._ignore_changes = True
-            self._canvas.load_image(image_path)
-            self._ignore_changes = False
-        else:
-            # Same image — clear existing annotations first (no duplicates)
-            self._ignore_changes = True
-            for old in self._manager.clear():
-                self._canvas.scene().removeItem(old)
-            self._ignore_changes = False
-
-        self._ignore_changes = True
-        items = self._manager.load_annotations(annotations)
-        for item in items:
-            self._canvas.add_annotation_item(item)
-        self._ignore_changes = False
-
-        if image_path:
-            self._left.select_item_for_path(image_path)
-
-        self._unsaved_changes = False
-        self._status.showMessage(f"Loaded {len(items)} annotation(s).")
+        load_process(self, image_path, annotations)
 
     # ================================================================== #
     #  AutoSeg integration
@@ -255,319 +205,38 @@ class MainWindow(QMainWindow):
         pass
 
     def _on_autoseg_requested(self, scene_pos) -> None:
-        """Canvas emitted an AutoSeg click — launch the segmentation subprocess."""
-        from PyQt6.QtCore import QSettings
-        settings = QSettings("PyVisionAnnotator", "PyVisionAnnotator")
-        exe = settings.value("autoseg/model_path", "")
-        timeout = int(settings.value("autoseg/timeout", 120))
-        device = str(settings.value("autoseg/device", "")).strip().lower()
-        if not device:
-            # Legacy fallback for older settings that only stored a GPU toggle.
-            use_gpu_raw = settings.value("autoseg/use_gpu", False)
-            if isinstance(use_gpu_raw, str):
-                use_gpu = use_gpu_raw.strip().lower() in {"1", "true", "yes", "on"}
-            else:
-                use_gpu = bool(use_gpu_raw)
-            device = "cuda" if use_gpu else "cpu"
-        extra_args = self._parse_custom_args(settings.value("autoseg/extra_args", ""))
-        # script is always None as we run executable directly
-        script = None
-
-        if not exe:
-            self._canvas.autoseg_error_received("AutoSeg not configured.")
-            self._status.showMessage("AutoMask not configured — open Settings first.")
-            return
-
-        image_path = self._manager.image_path
-        if not image_path:
-            self._canvas.autoseg_error_received("No image loaded.")
-            return
-
-        px = int(round(scene_pos.x()))
-        py = int(round(scene_pos.y()))
-
-        self._status.showMessage(f"AutoMask: segmenting at ({px}, {py}) — please wait …")
-
-        # Progress dialog (indeterminate)
-        self._autoseg_progress = QProgressDialog(
-            "Running segmentation model …", "Cancel", 0, 0, self
-        )
-        self._autoseg_progress.setWindowTitle("AutoMask")
-        self._autoseg_progress.setMinimumDuration(0)
-        self._autoseg_progress.canceled.connect(self._on_autoseg_cancelled)
-        self._autoseg_progress.show()
-
-        # Launch worker thread
-        self._automask_worker = AutoMaskWorker(
-            executable=exe,
-            script=script,
-            image_path=image_path,
-            point_x=px,
-            point_y=py,
-            device=device,
-            extra_args=extra_args,
-            timeout=timeout,
-            all_segments=False, # Standard automask is never --all now
-            parent=self,
-        )
-        self._automask_worker.result_ready.connect(self._on_autoseg_result)
-        self._automask_worker.error_occurred.connect(self._on_autoseg_error)
-        self._automask_worker.finished.connect(self._on_autoseg_worker_finished)
-        self._automask_worker.start()
+        on_autoseg_requested(self, scene_pos)
 
     def _on_autoseg_result(self, data: dict | list) -> None:
-        """AutoSegWorker succeeded — forward result to canvas."""
-        # Handle list output (e.g. from --all mode)
-        if isinstance(data, list):
-            # Treat all items in the list as MaskItems (standard for AutoMask/SAM)
-            count = 0
-            self._ignore_changes = True
-            for det in data:
-                label = det.get("label", "Object")
-                coords = det.get("coordinates", [])
-                if coords and len(coords) > 2:
-                     color = self._manager.get_color_for_label(label)
-                     item = self._manager.add_mask(coords, label=label, color=color)
-                     self._canvas.add_annotation_item(item)
-                     count += 1
-            self._ignore_changes = False
-            
-            self._status.showMessage(f"AutoMask (--all): Added {count} masks.")
-            # Reset the canvas busy state
-            self._canvas.autoseg_result_received({}) 
-            return
-
-        label = data.get("label", "")
-        n_pts = len(data.get("coordinates", []))
-        self._status.showMessage(
-            f"AutoMask: segmented \"{label}\" — {n_pts} boundary points → mask created."
-        )
-        self._canvas.autoseg_result_received(data)
+        on_autoseg_result(self, data)
 
     def _on_automask_all_requested(self) -> None:
-        """Run AutoMask with --all (Segment Everything) triggered by RightPanel button."""
-        from PyQt6.QtCore import QSettings
-        settings = QSettings("PyVisionAnnotator", "PyVisionAnnotator")
-        exe = settings.value("autoseg/model_path", "")
-        timeout = int(settings.value("autoseg/timeout", 120))
-        device = str(settings.value("autoseg/device", "")).strip().lower()
-        if not device:
-            use_gpu_raw = settings.value("autoseg/use_gpu", False)
-            if isinstance(use_gpu_raw, str):
-                use_gpu = use_gpu_raw.strip().lower() in {"1", "true", "yes", "on"}
-            else:
-                use_gpu = bool(use_gpu_raw)
-            device = "cuda" if use_gpu else "cpu"
-        extra_args = self._parse_custom_args(settings.value("autoseg/extra_args", ""))
-        script = None
-
-        if not exe:
-            self._status.showMessage("AutoMask not configured — open Settings first.")
-            QMessageBox.warning(self, "AutoMask Not Configured", "Please configure the AutoMask model path first.")
-            return
-
-        image_path = self._manager.image_path
-        if not image_path:
-            self._status.showMessage("No image loaded.")
-            return
-
-        self._status.showMessage(f"AutoMask: segmenting everything — please wait …")
-
-        # Progress dialog (indeterminate)
-        self._autoseg_progress = QProgressDialog(
-            "Running AutoMask (Segment Everything) …", "Cancel", 0, 0, self
-        )
-        self._autoseg_progress.setWindowTitle("AutoMask --all")
-        self._autoseg_progress.setMinimumDuration(0)
-        self._autoseg_progress.canceled.connect(self._on_autoseg_cancelled)
-        self._autoseg_progress.show()
-
-        # Launch worker thread
-        self._automask_worker = AutoMaskWorker(
-            executable=exe,
-            script=script,
-            image_path=image_path,
-            point_x=0, # Dummy, ignored in --all mode
-            point_y=0, # Dummy
-            device=device,
-            extra_args=extra_args,
-            timeout=timeout,
-            all_segments=True, # Force True
-            parent=self,
-        )
-        self._automask_worker.result_ready.connect(self._on_autoseg_result)
-        self._automask_worker.error_occurred.connect(self._on_autoseg_error)
-        self._automask_worker.finished.connect(self._on_autoseg_worker_finished)
-        self._automask_worker.start()
+        on_automask_all_requested(self)
 
     def _on_autoseg_error(self, message: str) -> None:
-        """AutoSegWorker failed."""
-        self._canvas.autoseg_error_received(message)
-        self._status.showMessage("AutoMask: segmentation failed.")
-        QMessageBox.warning(self, "AutoMask Error", message)
+        on_autoseg_error(self, message)
 
     def _on_autoseg_cancelled(self) -> None:
-        """User pressed Cancel on the progress dialog."""
-        if self._automask_worker and self._automask_worker.isRunning():
-            self._automask_worker.cancel()       # kill the OS process
-            self._automask_worker.wait(3000)     # wait for thread to exit naturally
-        self._canvas._autoseg_reset()
-        self._status.showMessage("AutoMask: cancelled.")
+        on_autoseg_cancelled(self)
 
     def _on_autoseg_worker_finished(self) -> None:
-        """Clean up progress dialog when the worker thread finishes."""
-        if self._autoseg_progress:
-            self._autoseg_progress.close()
-            self._autoseg_progress = None
-        self._automask_worker = None
+        on_autoseg_worker_finished(self)
 
     # ================================================================== #
     #  AutoSeg (YOLO) integration
     # ================================================================== #
     def _on_autoseg_yolo_run(self) -> None:
-        """Run YOLO segmentation on the full image."""
-        from PyQt6.QtCore import QSettings
-        settings = QSettings("PyVisionAnnotator", "PyVisionAnnotator")
-
-        # Use configured executable, no python script wrapper
-        executable = settings.value("autoseg_yolo/executable", "")
-        # If blank, fallback? Or warn?
-        
-        image_path = self._manager.image_path
-        if not image_path:
-             QMessageBox.warning(self, "No Image", "Please load an image first.")
-             return
-             
-        # Optional weights path (e.g. .pt file) if the executable requires it
-        model_path = settings.value("autoseg_yolo/model_path", "")
-        conf = float(settings.value("autoseg_yolo/conf", 0.32))
-        device = settings.value("autoseg_yolo/device", "cpu")
-        extra_args = self._parse_custom_args(settings.value("autoseg_yolo/extra_args", ""))
-
-        if not executable:
-             QMessageBox.warning(self, "Not Configured", "Please set the YOLO Executable path in Settings.")
-             return
-
-        # Prompt for labels and mode
-        dlg = AutoSegRunDialog(self)
-        if not dlg.exec():
-            return
-            
-        labels, mode = dlg.get_values()
-        
-        if not labels:
-            QMessageBox.warning(self, "No Labels", "Please enter at least one label.")
-            return
-            
-        if not mode:
-            QMessageBox.warning(self, "No Mode", "Please select at least one output mode (BBox or Segment).")
-            return
-
-        self._status.showMessage("Running AutoSeg (YOLO)...")
-        
-        self._autoseg_progress = QProgressDialog(
-            "Running YOLO segmentation...", "Cancel", 0, 0, self
-        )
-        self._autoseg_progress.setWindowTitle("AutoSeg (YOLO)")
-        self._autoseg_progress.setMinimumDuration(0)
-        self._autoseg_progress.canceled.connect(self._on_autoseg_yolo_cancelled)
-        self._autoseg_progress.show()
-        
-        self._autoseg_worker = AutoSegYoloWorker(
-            executable=executable,
-            script=None,  # No script, running exe directly
-            image_path=image_path,
-            labels=labels,
-            conf_threshold=conf,
-            device=device,
-            extra_args=extra_args,
-            mode=mode, # Pass the selected mode(s)
-            parent=self
-        )
-        self._autoseg_worker.result_ready.connect(self._on_autoseg_yolo_result)
-        self._autoseg_worker.error_occurred.connect(self._on_autoseg_yolo_error)
-        self._autoseg_worker.finished.connect(self._on_autoseg_yolo_finished)
-        self._autoseg_worker.start()
-
-    def _add_polygon(self, coords: list, label: str) -> None:
-        """Helper to convert [ [x,y], ... ] into a vector PolygonItem (visual figure)."""
-        poly = QPolygonF()
-        for p in coords:
-            if isinstance(p, list) and len(p) >= 2:
-                poly.append(QPointF(float(p[0]), float(p[1])))
-        
-        if not poly.isEmpty():
-            color = self._manager.get_color_for_label(label)
-            item = self._manager.add_poly(poly, label=label, color=color)
-            self._canvas.add_annotation_item(item)
+        on_autoseg_yolo_run(self)
 
     def _on_autoseg_yolo_result(self, detections: list) -> None:
-        """Process results from YOLO."""
-        import logging
-        logger = logging.getLogger(__name__)
-        logger.info(f"AutoSeg received {len(detections)} detections: {detections}")
-
-        count = 0
-        self._ignore_changes = True
-        for det in detections:
-            label = det.get("label", "Object")
-            color = self._manager.get_color_for_label(label)
-            
-            # 1. Coordinates -> Polygon (Vector figure)
-            if "coordinates" in det:
-                 coords = det["coordinates"]
-                 if isinstance(coords, list) and len(coords) > 2:
-                     self._add_polygon(coords, label)
-                     count += 1
-
-            # 2. Mask Coords -> Pixel Mask (Fallback / specific key)
-            elif "mask_coords" in det:
-                 coords = det["mask_coords"]
-                 if isinstance(coords, list) and len(coords) > 2:
-                     item = self._manager.add_mask(coords, label=label, color=color)
-                     self._canvas.add_annotation_item(item)
-                     count += 1
-
-            # 3. BBox
-            if "box" in det:
-                if isinstance(det["box"], list) and len(det["box"]) == 4:
-                    x1, y1, x2, y2 = det["box"]
-                    w = x2 - x1
-                    h = y2 - y1
-                    item = self._manager.add_rect(x1, y1, w, h, label=label, color=color)
-                    self._canvas.add_annotation_item(item)
-                    count += 1
-
-        self._ignore_changes = False
-        
-        if count == 0 and len(detections) > 0:
-            # Debugging helper: Parsing matched nothing, but we got data.
-            keys = list(detections[0].keys())
-            msg = f"Received {len(detections)} detections but added 0.\nFirst item keys: {keys}\nExpected: 'box' or 'coordinates'"
-            self._status.showMessage(f"AutoSeg: Added 0 annotations. (Keys mismatch?)")
-            QMessageBox.warning(self, "AutoSeg Debug", msg)
-        elif count == 0:
-             self._status.showMessage("AutoSeg: No objects detected (0 returned).")
-        else:
-            self._status.showMessage(f"AutoSeg: Added {count} annotations.")
+        on_autoseg_yolo_result(self, detections)
         
     def _on_autoseg_yolo_error(self, message: str) -> None:
-        self._status.showMessage(f"AutoSeg Error: {message}")
-        QMessageBox.warning(self, "AutoSeg Error", message)
+        on_autoseg_yolo_error(self, message)
         
     def _on_autoseg_yolo_cancelled(self) -> None:
-        if self._autoseg_worker and self._autoseg_worker.isRunning():
-            self._autoseg_worker.cancel()
-            self._autoseg_worker.wait(2000)
-        self._status.showMessage("AutoSeg cancelled.")
+        on_autoseg_yolo_cancelled(self)
         
     def _on_autoseg_yolo_finished(self) -> None:
-        if self._autoseg_progress:
-            try:
-                self._autoseg_progress.canceled.disconnect(self._on_autoseg_yolo_cancelled)
-            except (TypeError, RuntimeError):
-                pass
-            self._autoseg_progress.close()
-            self._autoseg_progress = None
-        self._autoseg_worker = None
+        on_autoseg_yolo_finished(self)
 

@@ -1,0 +1,50 @@
+"""Helpers for keeping `MainWindow` focused on orchestration."""
+
+from .automask_handlers import (
+    on_automask_all_requested,
+    on_autoseg_cancelled,
+    on_autoseg_error,
+    on_autoseg_requested,
+    on_autoseg_result,
+    on_autoseg_worker_finished,
+)
+from .autoseg_yolo_handlers import (
+    on_autoseg_yolo_cancelled,
+    on_autoseg_yolo_error,
+    on_autoseg_yolo_finished,
+    on_autoseg_yolo_result,
+    on_autoseg_yolo_run,
+)
+from .dirty_state import clear_unsaved, handle_close_event, on_data_changed
+from .load_process import (
+    load_process,
+    on_folder_opened,
+    on_image_load_requested,
+    on_image_loaded,
+    on_save_before_switch,
+    on_visual_settings_applied,
+)
+
+__all__ = [
+    "clear_unsaved",
+    "handle_close_event",
+    "load_process",
+    "on_automask_all_requested",
+    "on_autoseg_cancelled",
+    "on_autoseg_error",
+    "on_autoseg_requested",
+    "on_autoseg_result",
+    "on_autoseg_worker_finished",
+    "on_autoseg_yolo_cancelled",
+    "on_autoseg_yolo_error",
+    "on_autoseg_yolo_finished",
+    "on_autoseg_yolo_result",
+    "on_autoseg_yolo_run",
+    "on_data_changed",
+    "on_folder_opened",
+    "on_image_load_requested",
+    "on_image_loaded",
+    "on_save_before_switch",
+    "on_visual_settings_applied",
+]
+
