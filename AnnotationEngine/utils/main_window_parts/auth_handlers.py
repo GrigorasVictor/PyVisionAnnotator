@@ -9,8 +9,8 @@ from core.auth_worker import AuthWorker
 from ui.auth_login_dialog import AuthLoginDialog
 from utils.auth_store import save_auth_payload
 
-_DEFAULT_LOGIN_URL = "http://127.0.0.1:8080/auth/login"
-_DEFAULT_REGISTER_URL = "http://127.0.0.1:8080/auth/register"
+_DEFAULT_LOGIN_URL = "http://127.0.0.1:80/auth/login"
+_DEFAULT_REGISTER_URL = "http://127.0.0.1:80/auth/register"
 
 
 def _auth_endpoint(mode: str) -> str:

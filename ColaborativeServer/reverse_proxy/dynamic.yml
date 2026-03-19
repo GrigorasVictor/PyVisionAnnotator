@@ -1,0 +1,36 @@
+http:
+  routers:
+    auth-router:
+      entryPoints:
+        - web
+      rule: PathPrefix(`/auth`)
+      service: auth-service
+
+    chat-router:
+      entryPoints:
+        - web
+      rule: PathPrefix(`/chat`) || PathPrefix(`/notifications`) || PathPrefix(`/ws`) || PathPrefix(`/monitor`)
+      middlewares:
+        - auth-forward
+      service: chat-service
+
+  middlewares:
+    auth-forward:
+      forwardAuth:
+        address: "http://auth-service:8080/auth/validate"
+        trustForwardHeader: true
+        authResponseHeaders:
+          - X-User-Id
+          - X-User-Role
+
+  services:
+    auth-service:
+      loadBalancer:
+        servers:
+          - url: "http://auth-service:8080"
+
+    chat-service:
+      loadBalancer:
+        servers:
+          - url: "http://chat-service:8084"
+
