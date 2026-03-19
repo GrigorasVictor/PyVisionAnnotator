@@ -21,6 +21,7 @@ from PyQt6.QtWidgets import (
 )
 
 from core.annotation_manager import AnnotationManager
+from core.auth_worker import AuthWorker
 from core.autoseg_worker import AutoSegWorker as AutoSegYoloWorker
 from core.automask_worker import AutoMaskWorker
 from ui.canvas import AnnotationCanvas
@@ -46,6 +47,11 @@ from utils.main_window_parts import (
     on_folder_opened,
     on_image_load_requested,
     on_image_loaded,
+    on_auth_cancelled,
+    on_auth_error,
+    on_auth_finished,
+    on_auth_requested,
+    on_auth_success,
     on_save_before_switch,
     on_visual_settings_applied,
 )
@@ -63,6 +69,9 @@ class MainWindow(QMainWindow):
         self._automask_worker: Optional[AutoMaskWorker] = None
         self._autoseg_worker: Optional[AutoSegYoloWorker] = None
         self._autoseg_progress: Optional[QProgressDialog] = None
+        self._auth_worker: Optional[AuthWorker] = None
+        self._auth_progress: Optional[QProgressDialog] = None
+        self._auth_mode: str = "login"
 
         self._build_ui()
         self._connect_signals()
@@ -121,6 +130,7 @@ class MainWindow(QMainWindow):
         self._toolbar.unsaved_cleared.connect(self._clear_unsaved)
         self._toolbar.annotations_loaded.connect(self._load_process)
         self._toolbar.settings_applied.connect(self._on_visual_settings_applied)
+        self._toolbar.auth_requested.connect(self._on_auth_requested)
 
         # ---- Right panel ----
         self._right.status_message.connect(self._status.showMessage)
@@ -188,6 +198,21 @@ class MainWindow(QMainWindow):
 
     def _on_visual_settings_applied(self, pen_width: int, font_size: int, label_height: int) -> None:
         on_visual_settings_applied(self, pen_width, font_size, label_height)
+
+    def _on_auth_requested(self) -> None:
+        on_auth_requested(self)
+
+    def _on_auth_success(self, payload: dict) -> None:
+        on_auth_success(self, payload)
+
+    def _on_auth_error(self, message: str) -> None:
+        on_auth_error(self, message)
+
+    def _on_auth_cancelled(self) -> None:
+        on_auth_cancelled(self)
+
+    def _on_auth_finished(self) -> None:
+        on_auth_finished(self)
 
     # ================================================================== #
     #  Import / load-process  (cross-cutting: touches canvas + left panel)

@@ -24,6 +24,13 @@ from .load_process import (
     on_save_before_switch,
     on_visual_settings_applied,
 )
+from .auth_handlers import (
+    on_auth_cancelled,
+    on_auth_error,
+    on_auth_finished,
+    on_auth_requested,
+    on_auth_success,
+)
 
 __all__ = [
     "clear_unsaved",
@@ -46,5 +53,10 @@ __all__ = [
     "on_image_loaded",
     "on_save_before_switch",
     "on_visual_settings_applied",
+    "on_auth_cancelled",
+    "on_auth_error",
+    "on_auth_finished",
+    "on_auth_requested",
+    "on_auth_success",
 ]
 

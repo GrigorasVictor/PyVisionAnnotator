@@ -179,6 +179,22 @@ class SettingsDialog(QDialog):
 
         self.tabs.addTab(self.tab_autoseg, "AutoSeg (YOLO)")
 
+        # --- Tab 4: Account ---
+        self.tab_account = QWidget()
+        layout_account = QFormLayout(self.tab_account)
+
+        self.edit_auth_login_url = QLineEdit()
+        self.edit_auth_login_url.setPlaceholderText("http://127.0.0.1:8000/auth/login")
+        self.edit_auth_login_url.setText(str(settings.value("auth/login_url", "http://127.0.0.1:8000/auth/login")))
+        layout_account.addRow("Login URL:", self.edit_auth_login_url)
+
+        self.edit_auth_register_url = QLineEdit()
+        self.edit_auth_register_url.setPlaceholderText("http://127.0.0.1:8000/auth/register")
+        self.edit_auth_register_url.setText(str(settings.value("auth/register_url", "http://127.0.0.1:8000/auth/register")))
+        layout_account.addRow("Register URL:", self.edit_auth_register_url)
+
+        self.tabs.addTab(self.tab_account, "Account")
+
         # --- Main Layout ---
         main_layout = QVBoxLayout(self)
         main_layout.addWidget(self.tabs)
@@ -253,6 +269,10 @@ class SettingsDialog(QDialog):
         settings.setValue("autoseg_yolo/conf", self.spin_yolo_conf.value())
         settings.setValue("autoseg_yolo/device", self.edit_yolo_device.text().strip())
         settings.setValue("autoseg_yolo/extra_args", self.edit_yolo_extra_args.text().strip())
+
+        # Save Account endpoints
+        settings.setValue("auth/login_url", self.edit_auth_login_url.text().strip())
+        settings.setValue("auth/register_url", self.edit_auth_register_url.text().strip())
         
         super().accept()
 
@@ -269,12 +289,14 @@ class ToolbarPanel(QToolBar):
         settings_applied(w, f, h)    — new pen/font/height values (MainWindow applies to manager).
         unsaved_cleared()            — a successful save cleared the dirty flag.
         annotations_loaded(img, lst) — finished loading: image path + annotation list.
+        auth_requested()             — request auth flow (MainWindow handles popup + HTTP).
     """
 
     status_message = pyqtSignal(str)
     settings_applied = pyqtSignal(int, int, int)   # pen_width, font_size, label_height
     unsaved_cleared = pyqtSignal()
     annotations_loaded = pyqtSignal(str, list)     # image_path, annotation dicts
+    auth_requested = pyqtSignal()
 
     def __init__(
         self,
@@ -295,6 +317,7 @@ class ToolbarPanel(QToolBar):
         self._act_export_yolo: QAction = self.addAction("🧩 Export YOLO Template")
         self._act_load_json: QAction = self.addAction("📥 Load JSON")
         self.addSeparator()
+        self._act_auth: QAction = self.addAction("👤 Account")
         self._act_settings: QAction   = self.addAction("⚙ Settings")
         self._act_help: QAction       = self.addAction("❓ Help")
 
@@ -302,6 +325,7 @@ class ToolbarPanel(QToolBar):
         self._act_export_coco.triggered.connect(self._on_export_coco_template)
         self._act_export_yolo.triggered.connect(self._on_export_yolo_template)
         self._act_load_json.triggered.connect(self._on_load_json)
+        self._act_auth.triggered.connect(self.auth_requested.emit)
         self._act_settings.triggered.connect(self._on_settings)
         self._act_help.triggered.connect(self._on_help)
 
