@@ -11,7 +11,7 @@ from typing import Optional
 from PyQt6.QtCore import QObject, pyqtSignal, QPointF
 from PyQt6.QtGui import QPolygonF
 
-from core.annotation import BoundingBoxItem, PolygonItem, MaskItem
+from core.annotation.annotation import BoundingBoxItem, PolygonItem, MaskItem
 
 
 class AnnotationManager(QObject):

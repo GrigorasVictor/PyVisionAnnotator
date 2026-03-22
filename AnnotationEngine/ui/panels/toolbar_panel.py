@@ -297,6 +297,7 @@ class ToolbarPanel(QToolBar):
     unsaved_cleared = pyqtSignal()
     annotations_loaded = pyqtSignal(str, list)     # image_path, annotation dicts
     auth_requested = pyqtSignal()
+    chat_requested = pyqtSignal()
 
     def __init__(
         self,
@@ -318,6 +319,7 @@ class ToolbarPanel(QToolBar):
         self._act_load_json: QAction = self.addAction("📥 Load JSON")
         self.addSeparator()
         self._act_auth: QAction = self.addAction("👤 Account")
+        self._act_chat: QAction = self.addAction("💬 Chat")
         self._act_settings: QAction   = self.addAction("⚙ Settings")
         self._act_help: QAction       = self.addAction("❓ Help")
 
@@ -326,6 +328,7 @@ class ToolbarPanel(QToolBar):
         self._act_export_yolo.triggered.connect(self._on_export_yolo_template)
         self._act_load_json.triggered.connect(self._on_load_json)
         self._act_auth.triggered.connect(self.auth_requested.emit)
+        self._act_chat.triggered.connect(self.chat_requested.emit)
         self._act_settings.triggered.connect(self._on_settings)
         self._act_help.triggered.connect(self._on_help)
 

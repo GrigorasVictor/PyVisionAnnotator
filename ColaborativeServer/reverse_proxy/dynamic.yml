@@ -21,7 +21,6 @@ http:
         trustForwardHeader: true
         authResponseHeaders:
           - X-User-Id
-          - X-User-Role
 
   services:
     auth-service:

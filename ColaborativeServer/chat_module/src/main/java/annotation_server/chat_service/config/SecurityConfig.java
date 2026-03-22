@@ -26,9 +26,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/actuator/**").permitAll()
-                        .requestMatchers("/chat/admin/**").hasAuthority("ROLE_ADMIN")
-                        .requestMatchers("/chat/**", "/notifications/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_CLIENT", "ROLE_USER")
-                        .requestMatchers("/monitor/**", "/ws/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_CLIENT", "ROLE_USER")
+                        .requestMatchers("/chat/**", "/notifications/**", "/monitor/**", "/ws/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

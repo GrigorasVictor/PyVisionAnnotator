@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 from PyQt6.QtCore import QSettings
 from PyQt6.QtWidgets import QMessageBox, QProgressDialog
 
-from core.auth_worker import AuthWorker
+from core.workers.auth_worker import AuthWorker
 from ui.auth_login_dialog import AuthLoginDialog
 from utils.auth_store import save_auth_payload
 

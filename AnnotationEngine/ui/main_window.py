@@ -20,11 +20,12 @@ from PyQt6.QtWidgets import (
     QProgressDialog,
 )
 
-from core.annotation_manager import AnnotationManager
-from core.auth_worker import AuthWorker
-from core.autoseg_worker import AutoSegWorker as AutoSegYoloWorker
-from core.automask_worker import AutoMaskWorker
+from core.annotation.annotation_manager import AnnotationManager
+from core.workers.auth_worker import AuthWorker
+from core.workers.autoseg_worker import AutoSegWorker as AutoSegYoloWorker
+from core.workers.automask_worker import AutoMaskWorker
 from ui.canvas import AnnotationCanvas
+from ui.chat_window import ChatWindow
 from ui.panels.left_panel import LeftPanel
 from ui.panels.toolbar_panel import ToolbarPanel
 from ui.panels.right_panel import RightPanel
@@ -72,6 +73,7 @@ class MainWindow(QMainWindow):
         self._auth_worker: Optional[AuthWorker] = None
         self._auth_progress: Optional[QProgressDialog] = None
         self._auth_mode: str = "login"
+        self._chat_window: Optional[ChatWindow] = None
 
         self._build_ui()
         self._connect_signals()
@@ -131,6 +133,7 @@ class MainWindow(QMainWindow):
         self._toolbar.annotations_loaded.connect(self._load_process)
         self._toolbar.settings_applied.connect(self._on_visual_settings_applied)
         self._toolbar.auth_requested.connect(self._on_auth_requested)
+        self._toolbar.chat_requested.connect(self._on_chat_requested)
 
         # ---- Right panel ----
         self._right.status_message.connect(self._status.showMessage)
@@ -213,6 +216,13 @@ class MainWindow(QMainWindow):
 
     def _on_auth_finished(self) -> None:
         on_auth_finished(self)
+
+    def _on_chat_requested(self) -> None:
+        if self._chat_window is None:
+            self._chat_window = ChatWindow()
+        self._chat_window.show()
+        self._chat_window.raise_()
+        self._chat_window.activateWindow()
 
     # ================================================================== #
     #  Import / load-process  (cross-cutting: touches canvas + left panel)

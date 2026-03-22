@@ -87,12 +87,10 @@ public class AuthenticationController {
                 return ResponseEntity.status(401).build();
             }
 
-            String roles = jwtUtils.extractRoles(token);
-            logger.info("Token validated successfully - User: {}, Roles: {}", username, roles);
+            logger.info("Token validated successfully - User: {}", username);
 
             return ResponseEntity.ok()
                     .header("X-User-Id", username)
-                    .header("X-User-Role", roles != null ? roles : "USER")
                     .build();
         } catch (Exception e) {
             logger.error("Token validation error: {}", e.getMessage(), e);

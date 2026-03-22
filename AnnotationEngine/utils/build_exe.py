@@ -70,6 +70,30 @@ def build():
         "--paths", str(project_root),
     ]
 
+    # Ensure PyInstaller bundles websocket-client: dynamic imports may be missed.
+    # Add common websocket-client modules as hidden imports so the built exe contains them.
+    hidden = [
+        "websocket",
+        "websocket._app",
+        "websocket._core",
+        "websocket._socket",
+    ]
+    for mod in hidden:
+        cmd.extend(["--hidden-import", mod])
+
+    # Pre-build sanity check: ensure the environment has websocket-client (not a conflicting
+    # package named 'websocket' with different API). This helps avoid runtime failures in the
+    # packaged app where an incompatible websocket module gets bundled.
+    try:
+        import importlib
+        ws_mod = importlib.import_module("websocket")
+        has_good_api = hasattr(ws_mod, "create_connection") or hasattr(ws_mod, "WebSocket")
+        if not has_good_api:
+            print("WARNING: 'websocket' module found but it does not look like 'websocket-client'.")
+            print("Please install 'websocket-client' in the build environment: python -m pip install websocket-client")
+    except ModuleNotFoundError:
+        print("WARNING: 'websocket-client' not found in build environment. Installing it is recommended.")
+
     print("\nStarting build process... (this may take a minute)")
     print("Executing:", " ".join(cmd))
 

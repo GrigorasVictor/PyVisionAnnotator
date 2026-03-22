@@ -3,7 +3,7 @@ from __future__ import annotations
 from PyQt6.QtCore import QSettings
 from PyQt6.QtWidgets import QMessageBox, QProgressDialog
 
-from core.automask_worker import AutoMaskWorker
+from core.workers.automask_worker import AutoMaskWorker
 
 
 def _read_automask_settings(window) -> tuple[str, int, str, list[str]]:
