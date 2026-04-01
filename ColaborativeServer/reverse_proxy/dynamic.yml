@@ -14,6 +14,15 @@ http:
         - auth-forward
       service: chat-service
 
+    annotation-router:
+      entryPoints:
+        - web
+      rule: PathPrefix(`/annotation`)
+      middlewares:
+        - auth-forward
+        - annotation-strip-prefix
+      service: annotation-service
+
   middlewares:
     auth-forward:
       forwardAuth:
@@ -21,6 +30,12 @@ http:
         trustForwardHeader: true
         authResponseHeaders:
           - X-User-Id
+
+    annotation-strip-prefix:
+      stripPrefix:
+        prefixes:
+          - /annotation
+        forceSlash: false
 
   services:
     auth-service:
@@ -32,4 +47,9 @@ http:
       loadBalancer:
         servers:
           - url: "http://chat-service:8084"
+
+    annotation-service:
+      loadBalancer:
+        servers:
+          - url: "http://annotation-service:8085"
 

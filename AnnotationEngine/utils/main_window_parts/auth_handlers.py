@@ -6,7 +6,7 @@ from PyQt6.QtCore import QSettings
 from PyQt6.QtWidgets import QMessageBox, QProgressDialog
 
 from core.workers.auth_worker import AuthWorker
-from ui.auth_login_dialog import AuthLoginDialog
+from ui.chat.auth_login_dialog import AuthLoginDialog
 from utils.auth_store import save_auth_payload
 
 _DEFAULT_LOGIN_URL = "http://127.0.0.1:80/auth/login"

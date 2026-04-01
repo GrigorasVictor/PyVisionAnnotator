@@ -13,6 +13,7 @@ services:
     depends_on:
       - auth-service
       - chat-service
+      - annotation-service
     networks:
       - server-network
     restart: unless-stopped
@@ -136,6 +137,29 @@ services:
     depends_on:
       postgres-chat:
         condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - server-network
+    restart: unless-stopped
+
+  annotation-service:
+    container_name: annotation-service
+    build:
+      context: annotation_module
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      SERVER_PORT: 8085
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: ${RABBITMQ_USERNAME}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+    expose:
+      - "8085"
+    depends_on:
       rabbitmq:
         condition: service_healthy
     networks:

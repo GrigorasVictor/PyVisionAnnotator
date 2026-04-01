@@ -43,6 +43,11 @@
   - YOLO: exportă `.txt` + `classes.txt`
 - [x] **Smart Load**: La încărcarea unui JSON, aplicația găsește și deschide automat imaginea aferentă
 - [x] **Protecție Date**: Prompt de confirmare "Save changes?" la schimbarea imaginii dacă există modificări nesalvate
+- [x] **Optimizare Serializare Mască**:
+  - Înaintea: ~500.000 linii JSON (toate punctele rasterizate)
+  - După: ~100 linii JSON (bitset comprimat + zlib + base64)
+  - Metoda: Encoding compact `bitset_v1` cu compresie zlib și codificare Base64
+  - Compatibilitate: Load/import seamless pentru ambele formate (legacy + compact)
 
 ## 5. Configurare (Settings)
 - [x] Dialog dedicat pentru setări vizuale persistente:

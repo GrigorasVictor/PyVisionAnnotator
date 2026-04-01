@@ -25,7 +25,7 @@ from core.workers.auth_worker import AuthWorker
 from core.workers.autoseg_worker import AutoSegWorker as AutoSegYoloWorker
 from core.workers.automask_worker import AutoMaskWorker
 from ui.canvas import AnnotationCanvas
-from ui.chat_window import ChatWindow
+from ui.chat.chat_window import ChatWindow
 from ui.panels.left_panel import LeftPanel
 from ui.panels.toolbar_panel import ToolbarPanel
 from ui.panels.right_panel import RightPanel

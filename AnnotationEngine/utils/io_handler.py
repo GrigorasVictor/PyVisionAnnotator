@@ -19,7 +19,9 @@ JSON schema::
 """
 from __future__ import annotations
 
+import base64
 import json
+import zlib
 from pathlib import Path
 from typing import Any
 
@@ -27,6 +29,116 @@ from typing import Any
 # -------------------------------------------------------------------- #
 #  JSON
 # -------------------------------------------------------------------- #
+_MASK_ENCODING_BITSET_V1 = "bitset_v1"
+
+
+def _encode_mask_points_bitset_v1(points: list[list[float]]) -> dict[str, Any]:
+    """Encode mask points as a compact bitset payload.
+
+    Returns metadata needed to restore legacy ``points`` on import.
+    """
+    if not points:
+        return {
+            "mask_encoding": _MASK_ENCODING_BITSET_V1,
+            "mask_origin": [0, 0],
+            "mask_size": [0, 0],
+            "mask_data": "",
+        }
+
+    int_points = {(int(round(p[0])), int(round(p[1]))) for p in points if len(p) >= 2}
+    if not int_points:
+        return {
+            "mask_encoding": _MASK_ENCODING_BITSET_V1,
+            "mask_origin": [0, 0],
+            "mask_size": [0, 0],
+            "mask_data": "",
+        }
+
+    xs = [p[0] for p in int_points]
+    ys = [p[1] for p in int_points]
+    min_x, max_x = min(xs), max(xs)
+    min_y, max_y = min(ys), max(ys)
+    width = (max_x - min_x) + 1
+    height = (max_y - min_y) + 1
+
+    bit_count = width * height
+    raw = bytearray((bit_count + 7) // 8)
+    for x, y in int_points:
+        idx = (y - min_y) * width + (x - min_x)
+        raw[idx // 8] |= 1 << (idx % 8)
+
+    compressed = zlib.compress(bytes(raw), level=9)
+    encoded = base64.b64encode(compressed).decode("ascii")
+    return {
+        "mask_encoding": _MASK_ENCODING_BITSET_V1,
+        "mask_origin": [min_x, min_y],
+        "mask_size": [width, height],
+        "mask_data": encoded,
+    }
+
+
+def _decode_mask_points_bitset_v1(annotation: dict[str, Any]) -> list[list[float]]:
+    """Decode compact mask payload back to legacy ``points`` format."""
+    origin = annotation.get("mask_origin")
+    size = annotation.get("mask_size")
+    data = annotation.get("mask_data", "")
+
+    if not isinstance(origin, list) or len(origin) != 2:
+        raise ValueError("Invalid mask_origin for mask annotation")
+    if not isinstance(size, list) or len(size) != 2:
+        raise ValueError("Invalid mask_size for mask annotation")
+
+    min_x, min_y = int(origin[0]), int(origin[1])
+    width, height = int(size[0]), int(size[1])
+    if width <= 0 or height <= 0:
+        return []
+    if not isinstance(data, str) or not data:
+        return []
+
+    compressed = base64.b64decode(data.encode("ascii"))
+    raw = zlib.decompress(compressed)
+
+    expected_len = ((width * height) + 7) // 8
+    if len(raw) != expected_len:
+        raise ValueError("Invalid mask_data length for mask annotation")
+
+    points: list[list[float]] = []
+    for idx in range(width * height):
+        if raw[idx // 8] & (1 << (idx % 8)):
+            x = min_x + (idx % width)
+            y = min_y + (idx // width)
+            points.append([float(x), float(y)])
+    return points
+
+
+def _prepare_annotations_for_export(annotations: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Convert heavy mask point payloads to compact encoded payloads."""
+    prepared: list[dict[str, Any]] = []
+    for ann in annotations:
+        item = dict(ann)
+        if item.get("type") == "mask" and isinstance(item.get("points"), list):
+            encoded = _encode_mask_points_bitset_v1(item.get("points", []))
+            item.pop("points", None)
+            item.update(encoded)
+        prepared.append(item)
+    return prepared
+
+
+def _prepare_annotations_for_import(annotations: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Expand compact mask payloads back to legacy point payloads."""
+    prepared: list[dict[str, Any]] = []
+    for ann in annotations:
+        item = dict(ann)
+        if (
+            item.get("type") == "mask"
+            and "points" not in item
+            and item.get("mask_encoding") == _MASK_ENCODING_BITSET_V1
+        ):
+            item["points"] = _decode_mask_points_bitset_v1(item)
+        prepared.append(item)
+    return prepared
+
+
 def export_json(
     save_path: str | Path,
     image_filename: str,
@@ -47,7 +159,7 @@ def export_json(
         "filename": image_filename,
         "width": width,
         "height": height,
-        "annotations": annotations, # Pass dicts directly as they are now prepared by to_dict()
+        "annotations": _prepare_annotations_for_export(annotations),
     }
     path = Path(save_path)
     path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
@@ -65,7 +177,7 @@ def import_json(load_path: str | Path) -> tuple[str, int, int, list[dict[str, An
         data["filename"],
         int(data["width"]),
         int(data["height"]),
-        data.get("annotations", []),
+        _prepare_annotations_for_import(data.get("annotations", [])),
     )
 
 
