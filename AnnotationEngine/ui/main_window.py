@@ -74,6 +74,7 @@ class MainWindow(QMainWindow):
         self._auth_progress: Optional[QProgressDialog] = None
         self._auth_mode: str = "login"
         self._chat_window: Optional[ChatWindow] = None
+        self._applying_remote_collab: bool = False
 
         self._build_ui()
         self._connect_signals()
@@ -157,6 +158,9 @@ class MainWindow(QMainWindow):
         self._manager.annotation_removed.connect(self._on_data_changed)
         self._manager.annotation_updated.connect(self._on_data_changed)
         self._manager.annotations_cleared.connect(self._on_data_changed)
+        self._manager.annotation_added.connect(self._on_collab_annotation_added)
+        self._manager.annotation_removed.connect(self._on_collab_annotation_removed)
+        self._manager.annotation_updated.connect(self._on_collab_annotation_updated)
 
     def _setup_shortcuts(self) -> None:
         QShortcut(QKeySequence("Delete"), self).activated.connect(self._canvas.delete_selected)
@@ -219,10 +223,87 @@ class MainWindow(QMainWindow):
 
     def _on_chat_requested(self) -> None:
         if self._chat_window is None:
-            self._chat_window = ChatWindow()
+            self._chat_window = ChatWindow(current_image_path_fn=lambda: self._manager.image_path)
+            self._chat_window.collab_snapshot_received.connect(self._on_collab_snapshot_received)
+            self._chat_window.collab_event_received.connect(self._on_collab_event_received)
         self._chat_window.show()
         self._chat_window.raise_()
         self._chat_window.activateWindow()
+
+    def _on_collab_snapshot_received(self, snapshot: dict) -> None:
+        if not isinstance(snapshot, dict):
+            return
+        anns = snapshot.get("annotations") if isinstance(snapshot.get("annotations"), list) else []
+        self._applying_remote_collab = True
+        try:
+            for item in self._manager.clear():
+                self._canvas.scene().removeItem(item)
+            items = self._manager.load_annotations(anns)
+            for item in items:
+                self._canvas.add_annotation_item(item)
+        finally:
+            self._applying_remote_collab = False
+
+    def _on_collab_event_received(self, envelope: dict) -> None:
+        if not isinstance(envelope, dict):
+            return
+        actor = str(envelope.get("actorId") or "").strip().lower()
+        if actor and actor == str(getattr(self._chat_window, "_user_id", "")).strip().lower():
+            return
+        etype = str(envelope.get("type") or "")
+        payload = envelope.get("payload")
+        if not isinstance(payload, dict):
+            return
+
+        self._applying_remote_collab = True
+        try:
+            if etype in ("annotation.create", "annotation.update"):
+                ann_id = str(payload.get("id") or "").strip()
+                if ann_id:
+                    existing = self._manager.remove(ann_id)
+                    if existing is not None:
+                        self._canvas.scene().removeItem(existing)
+                if payload.get("type") == "mask" and "points" not in payload:
+                    # Current desktop client stores mask as points; skip compressed-only payloads.
+                    return
+                created = self._manager.load_annotations([payload])
+                for item in created:
+                    self._canvas.add_annotation_item(item)
+            elif etype == "annotation.delete":
+                ann_id = str(payload.get("id") or "").strip()
+                if ann_id:
+                    removed = self._manager.remove(ann_id)
+                    if removed is not None:
+                        self._canvas.scene().removeItem(removed)
+        finally:
+            self._applying_remote_collab = False
+
+    def _emit_collab_annotation(self, event_type: str, annotation_id: str) -> None:
+        if self._applying_remote_collab:
+            return
+        if not self._chat_window:
+            return
+        ann_id = str(annotation_id or "").strip()
+        if not ann_id:
+            return
+        payload: dict
+        if event_type == "annotation.delete":
+            payload = {"id": ann_id}
+        else:
+            item = self._manager.get(ann_id)
+            if item is None:
+                return
+            payload = item.to_dict()
+        self._chat_window.send_collab_event(event_type, payload)
+
+    def _on_collab_annotation_added(self, annotation_id: str) -> None:
+        self._emit_collab_annotation("annotation.create", annotation_id)
+
+    def _on_collab_annotation_removed(self, annotation_id: str) -> None:
+        self._emit_collab_annotation("annotation.delete", annotation_id)
+
+    def _on_collab_annotation_updated(self, annotation_id: str) -> None:
+        self._emit_collab_annotation("annotation.update", annotation_id)
 
     # ================================================================== #
     #  Import / load-process  (cross-cutting: touches canvas + left panel)

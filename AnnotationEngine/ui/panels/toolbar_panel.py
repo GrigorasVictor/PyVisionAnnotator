@@ -33,6 +33,8 @@ from core.subprocess_handler import SubprocessHandler
 
 _ORG = "PyVisionAnnotator"
 _APP = "PyVisionAnnotator"
+_DEFAULT_LOGIN_URL = "http://localhost/auth/login"
+_DEFAULT_REGISTER_URL = "http://localhost/auth/register"
 
 class SettingsDialog(QDialog):
     """Modal dialog for application settings (Style & AutoMask)."""
@@ -184,13 +186,13 @@ class SettingsDialog(QDialog):
         layout_account = QFormLayout(self.tab_account)
 
         self.edit_auth_login_url = QLineEdit()
-        self.edit_auth_login_url.setPlaceholderText("http://127.0.0.1:8000/auth/login")
-        self.edit_auth_login_url.setText(str(settings.value("auth/login_url", "http://127.0.0.1:8000/auth/login")))
+        self.edit_auth_login_url.setPlaceholderText(_DEFAULT_LOGIN_URL)
+        self.edit_auth_login_url.setText(str(settings.value("auth/login_url", _DEFAULT_LOGIN_URL)))
         layout_account.addRow("Login URL:", self.edit_auth_login_url)
 
         self.edit_auth_register_url = QLineEdit()
-        self.edit_auth_register_url.setPlaceholderText("http://127.0.0.1:8000/auth/register")
-        self.edit_auth_register_url.setText(str(settings.value("auth/register_url", "http://127.0.0.1:8000/auth/register")))
+        self.edit_auth_register_url.setPlaceholderText(_DEFAULT_REGISTER_URL)
+        self.edit_auth_register_url.setText(str(settings.value("auth/register_url", _DEFAULT_REGISTER_URL)))
         layout_account.addRow("Register URL:", self.edit_auth_register_url)
 
         self.tabs.addTab(self.tab_account, "Account")
@@ -271,8 +273,10 @@ class SettingsDialog(QDialog):
         settings.setValue("autoseg_yolo/extra_args", self.edit_yolo_extra_args.text().strip())
 
         # Save Account endpoints
-        settings.setValue("auth/login_url", self.edit_auth_login_url.text().strip())
-        settings.setValue("auth/register_url", self.edit_auth_register_url.text().strip())
+        login_url = self.edit_auth_login_url.text().strip() or _DEFAULT_LOGIN_URL
+        register_url = self.edit_auth_register_url.text().strip() or _DEFAULT_REGISTER_URL
+        settings.setValue("auth/login_url", login_url)
+        settings.setValue("auth/register_url", register_url)
         
         super().accept()
 
