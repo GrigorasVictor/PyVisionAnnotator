@@ -14,7 +14,7 @@ from PyQt6.QtWidgets import QGraphicsView
 from core.annotation import BoundingBoxItem, PolygonItem, MaskItem
 
 if TYPE_CHECKING:
-    from ui.canvas import AnnotationCanvas
+    from ui.main_window.canvas import AnnotationCanvas
 
 
 def wheel_event(canvas: "AnnotationCanvas", event: QWheelEvent) -> None:

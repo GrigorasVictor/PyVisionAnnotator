@@ -1,5 +1,5 @@
 """
-ui/main_window.py — MainWindow
+ui/main_window/main_window.py — MainWindow
 
 Pure orchestrator: builds the three panels + canvas, wires their
 outward signals together, and manages the remaining cross-cutting state
@@ -24,11 +24,11 @@ from core.annotation.annotation_manager import AnnotationManager
 from core.workers.auth_worker import AuthWorker
 from core.workers.autoseg_worker import AutoSegWorker as AutoSegYoloWorker
 from core.workers.automask_worker import AutoMaskWorker
-from ui.canvas import AnnotationCanvas
+from ui.main_window.canvas import AnnotationCanvas
 from ui.chat.chat_window import ChatWindow
-from ui.panels.left_panel import LeftPanel
-from ui.panels.toolbar_panel import ToolbarPanel
-from ui.panels.right_panel import RightPanel
+from ui.main_window.panels.left_panel import LeftPanel
+from ui.main_window.panels.toolbar_panel import ToolbarPanel
+from ui.main_window.panels.right_panel import RightPanel
 from utils.main_window_parts import (
     clear_unsaved,
     handle_close_event,
@@ -80,14 +80,9 @@ class MainWindow(QMainWindow):
         self._connect_signals()
         self._setup_shortcuts()
 
-    # ================================================================== #
-    #  UI construction
-    # ================================================================== #
     def _build_ui(self) -> None:
-        # Canvas (created first so panels can hold a lazy reference to it)
         self._canvas = AnnotationCanvas(self._manager, self)
 
-        # Panels — each gets the dependencies it needs via callables
         self._left = LeftPanel(
             current_image_path_fn=lambda: self._manager.image_path,
             unsaved_fn=lambda: self._unsaved_changes,
@@ -117,18 +112,13 @@ class MainWindow(QMainWindow):
 
         self._status = QStatusBar(self)
         self.setStatusBar(self._status)
-        self._status.showMessage("Ready — open a folder to begin.")
+        self._status.showMessage("Ready - open a folder to begin.")
 
-    # ================================================================== #
-    #  Signal wiring
-    # ================================================================== #
     def _connect_signals(self) -> None:
-        # ---- Left panel ----
         self._left.folder_opened.connect(self._on_folder_opened)
         self._left.image_load_requested.connect(self._on_image_load_requested)
         self._left.save_before_switch_requested.connect(self._on_save_before_switch)
 
-        # ---- Toolbar panel ----
         self._toolbar.status_message.connect(self._status.showMessage)
         self._toolbar.unsaved_cleared.connect(self._clear_unsaved)
         self._toolbar.annotations_loaded.connect(self._load_process)
@@ -136,7 +126,6 @@ class MainWindow(QMainWindow):
         self._toolbar.auth_requested.connect(self._on_auth_requested)
         self._toolbar.chat_requested.connect(self._on_chat_requested)
 
-        # ---- Right panel ----
         self._right.status_message.connect(self._status.showMessage)
         self._right.tool_changed.connect(self._canvas.set_tool)
         self._right.brush_size_changed.connect(self._canvas.set_brush_size)
@@ -148,12 +137,10 @@ class MainWindow(QMainWindow):
         self._right.autoseg_run_requested.connect(self._on_autoseg_yolo_run)
         self._right.automask_all_requested.connect(self._on_automask_all_requested)
 
-        # ---- Canvas ----
         self._canvas.image_loaded.connect(self._on_image_loaded)
         self._canvas.scene().selectionChanged.connect(self._right.on_scene_selection_changed)
         self._canvas.autoseg_requested.connect(self._on_autoseg_requested)
 
-        # ---- Dirty tracking (manager → MainWindow) ----
         self._manager.annotation_added.connect(self._on_data_changed)
         self._manager.annotation_removed.connect(self._on_data_changed)
         self._manager.annotation_updated.connect(self._on_data_changed)
@@ -169,22 +156,17 @@ class MainWindow(QMainWindow):
 
     @staticmethod
     def _parse_custom_args(raw: object) -> list[str]:
-        """Parse user-entered CLI args into a safe argument list."""
         text = str(raw or "").strip()
         if not text:
             return []
         try:
             return shlex.split(text, posix=False)
         except ValueError:
-            # Fallback: split by whitespace if quoting is malformed.
             return text.split()
 
     def closeEvent(self, event: QCloseEvent) -> None:
         handle_close_event(self, event)
 
-    # ================================================================== #
-    #  Slots
-    # ================================================================== #
     def _on_data_changed(self, *_args) -> None:
         on_data_changed(self, *_args)
 
@@ -264,7 +246,6 @@ class MainWindow(QMainWindow):
                     if existing is not None:
                         self._canvas.scene().removeItem(existing)
                 if payload.get("type") == "mask" and "points" not in payload:
-                    # Current desktop client stores mask as points; skip compressed-only payloads.
                     return
                 created = self._manager.load_annotations([payload])
                 for item in created:
@@ -305,19 +286,10 @@ class MainWindow(QMainWindow):
     def _on_collab_annotation_updated(self, annotation_id: str) -> None:
         self._emit_collab_annotation("annotation.update", annotation_id)
 
-    # ================================================================== #
-    #  Import / load-process  (cross-cutting: touches canvas + left panel)
-    # ================================================================== #
     def _load_process(self, image_path: str, annotations: list) -> None:
         load_process(self, image_path, annotations)
 
-    # ================================================================== #
-    #  AutoSeg integration
-    # ================================================================== #
     def _on_autoseg_config(self) -> None:
-        """Open the AutoSeg settings dialog (Merged into main Settings)."""
-        # This slot is no longer called by toolbar, but might be called if we didn't fully clean up.
-        # The toolbar now handles its own settings dialog which includes AutoSeg.
         pass
 
     def _on_autoseg_requested(self, scene_pos) -> None:
@@ -338,21 +310,18 @@ class MainWindow(QMainWindow):
     def _on_autoseg_worker_finished(self) -> None:
         on_autoseg_worker_finished(self)
 
-    # ================================================================== #
-    #  AutoSeg (YOLO) integration
-    # ================================================================== #
     def _on_autoseg_yolo_run(self) -> None:
         on_autoseg_yolo_run(self)
 
     def _on_autoseg_yolo_result(self, detections: list) -> None:
         on_autoseg_yolo_result(self, detections)
-        
+
     def _on_autoseg_yolo_error(self, message: str) -> None:
         on_autoseg_yolo_error(self, message)
-        
+
     def _on_autoseg_yolo_cancelled(self) -> None:
         on_autoseg_yolo_cancelled(self)
-        
+
     def _on_autoseg_yolo_finished(self) -> None:
         on_autoseg_yolo_finished(self)
 

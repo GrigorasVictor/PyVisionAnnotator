@@ -7,7 +7,7 @@ from PyQt6.QtGui import QPolygonF
 from PyQt6.QtWidgets import QMessageBox, QProgressDialog
 
 from core.workers.autoseg_worker import AutoSegWorker as AutoSegYoloWorker
-from ui.autoseg_run_dialog import AutoSegRunDialog
+from ui.main_window.autoseg_run_dialog import AutoSegRunDialog
 
 logger = logging.getLogger(__name__)
 

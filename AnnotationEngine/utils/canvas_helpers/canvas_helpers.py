@@ -13,7 +13,7 @@ from PyQt6.QtGui import QPixmap, QPen, QColor, QPolygonF, QImage
 from core.annotation import MaskItem
 
 if TYPE_CHECKING:
-    from ui.canvas import AnnotationCanvas
+    from ui.main_window.canvas import AnnotationCanvas
 
 
 def load_image(canvas: "AnnotationCanvas", path: str) -> None:
