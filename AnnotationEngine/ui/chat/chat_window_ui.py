@@ -46,9 +46,8 @@ def build_chat_ui(window) -> None:
     window.combo_collab_sessions = QComboBox()
     window.combo_collab_sessions.setEditable(False)
     window.btn_collab_refresh = QPushButton("Load Sessions")
+    window.btn_collab_create = QPushButton("Create Session")
     window.btn_collab_join = QPushButton("Join Session")
-    window.btn_collab_upload_image = QPushButton("Upload Current Image")
-
     toolbar = QFrame(window)
     toolbar.setObjectName("chatToolbar")
     toolbar_layout = QHBoxLayout(toolbar)
@@ -74,8 +73,8 @@ def build_chat_ui(window) -> None:
     collab_layout.addWidget(QLabel("Session:"))
     collab_layout.addWidget(window.combo_collab_sessions, 1)
     collab_layout.addWidget(window.btn_collab_refresh)
+    collab_layout.addWidget(window.btn_collab_create)
     collab_layout.addWidget(window.btn_collab_join)
-    collab_layout.addWidget(window.btn_collab_upload_image)
     root.addWidget(collab_bar)
 
     info_row = QFrame(window)
@@ -165,8 +164,8 @@ def bind_chat_signals(window) -> None:
     window.combo_profiles.activated.connect(window._on_profile_switched)
     window.chk_show_raw_presence.stateChanged.connect(lambda _: None)
     window.btn_collab_refresh.clicked.connect(window._on_collab_refresh_sessions)
+    window.btn_collab_create.clicked.connect(window._on_collab_create_session)
     window.btn_collab_join.clicked.connect(window._on_collab_join_session)
-    window.btn_collab_upload_image.clicked.connect(window._on_collab_upload_image)
 
 
 def open_advanced_popup(window) -> None:

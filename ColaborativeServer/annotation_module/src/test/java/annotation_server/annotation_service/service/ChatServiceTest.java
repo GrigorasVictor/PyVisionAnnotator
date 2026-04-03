@@ -18,7 +18,11 @@ class ChatServiceTest {
 
     @BeforeEach
     void setUp() {
-        collaborationService = new CollaborationService(new TempImageStore(), new EventDedupStore(Duration.ofMinutes(10)));
+        collaborationService = new CollaborationService(
+                new TempImageStore(),
+                new EventDedupStore(Duration.ofMinutes(10)),
+                Duration.ofMinutes(5)
+        );
     }
 
     @Test

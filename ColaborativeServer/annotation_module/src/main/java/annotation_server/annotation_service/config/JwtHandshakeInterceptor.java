@@ -1,6 +1,8 @@
 package annotation_server.annotation_service.config;
 
 import annotation_server.annotation_service.service.JwtService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.ServerHttpRequest;
@@ -13,6 +15,8 @@ import java.util.Map;
 
 @Component
 public class JwtHandshakeInterceptor implements HandshakeInterceptor {
+
+    private static final Logger log = LoggerFactory.getLogger(JwtHandshakeInterceptor.class);
 
     static final String ATTR_USER_ID = "wsUserId";
 
@@ -41,6 +45,7 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
         }
 
         if (token == null || token.isBlank()) {
+            log.warn("ws.handshake.rejected reason=missing_token uri={}", request.getURI());
             response.setStatusCode(HttpStatus.UNAUTHORIZED);
             return false;
         }
@@ -48,8 +53,10 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
         try {
             String userId = jwtService.extractUser(token);
             attributes.put(ATTR_USER_ID, userId);
+            log.info("ws.handshake.accepted userId={} uri={}", userId, request.getURI());
             return true;
         } catch (Exception ex) {
+            log.warn("ws.handshake.rejected reason=invalid_token uri={} error={}", request.getURI(), ex.getMessage());
             response.setStatusCode(HttpStatus.UNAUTHORIZED);
             return false;
         }

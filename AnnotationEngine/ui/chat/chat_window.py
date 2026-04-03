@@ -6,9 +6,9 @@ from typing import Any
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtWidgets import QListWidgetItem, QMessageBox, QWidget
 
-from core.chat.chat_protocol import HTTP_BASE_DEFAULT, WS_URL_DEFAULT
+from core.chat.chat_protocol import HTTP_BASE_DEFAULT
 from core.chat.chat_stomp_worker import ChatStompWorker
-from core.chat.collab_protocol import COLLAB_HTTP_BASE_DEFAULT, COLLAB_WS_PATH, COLLAB_WS_URL_DEFAULT
+from core.chat.collab_protocol import COLLAB_WS_PATH, COLLAB_WS_URL_DEFAULT
 from core.chat.collab_rest import CollabRestClient
 from core.chat.collab_stomp_worker import CollabStompWorker
 from ui.chat.chat_window_settings import (
@@ -36,12 +36,15 @@ from ui.chat.chat_window_connection import (
 )
 from ui.chat.chat_window_collab import (
     collab_client,
+    download_image_from_event,
+    on_collab_create_session,
     on_collab_event_received,
     on_collab_join_session,
     on_collab_refresh_sessions,
     on_collab_upload_image,
     send_collab_event,
     start_collab_worker,
+    upload_current_image,
 )
 from ui.chat.chat_window_messages import (
     append_system,
@@ -104,8 +107,8 @@ class ChatWindow(QWidget):
         self.btn_refresh_presence.setEnabled(connected)
         self.btn_clear_messages.setEnabled(True)
         self.btn_collab_refresh.setEnabled(connected)
+        self.btn_collab_create.setEnabled(connected)
         self.btn_collab_join.setEnabled(connected)
-        self.btn_collab_upload_image.setEnabled(connected)
 
     def _bind_signals(self) -> None:
         bind_chat_signals(self)
@@ -189,6 +192,9 @@ class ChatWindow(QWidget):
     def _on_collab_refresh_sessions(self) -> None:
         on_collab_refresh_sessions(self)
 
+    def _on_collab_create_session(self) -> None:
+        on_collab_create_session(self)
+
     def _on_collab_join_session(self) -> None:
         on_collab_join_session(self)
 
@@ -197,6 +203,12 @@ class ChatWindow(QWidget):
 
     def send_collab_event(self, event_type: str, payload: dict[str, Any]) -> bool:
         return send_collab_event(self, event_type, payload)
+
+    def download_collab_image(self, envelope: dict) -> tuple[bool, str, str]:
+        return download_image_from_event(self, envelope)
+
+    def upload_current_collab_image(self, show_message: bool = False) -> bool:
+        return upload_current_image(self, show_message=show_message)
 
     def _on_collab_event_received(self, payload: dict) -> None:
         on_collab_event_received(self, payload)
@@ -240,4 +252,3 @@ class ChatWindow(QWidget):
 
     def closeEvent(self, event) -> None:  # noqa: N802
         close_event(self, event)
-

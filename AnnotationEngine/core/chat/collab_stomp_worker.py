@@ -18,6 +18,7 @@ class CollabStompWorker(QThread):
     disconnected = pyqtSignal(str)
     connection_error = pyqtSignal(str)
     event_received = pyqtSignal(dict)
+    debug_log = pyqtSignal(str)
 
     def __init__(self, ws_url: str, jwt_token: str, parent=None) -> None:
         super().__init__(parent)
@@ -57,7 +58,9 @@ class CollabStompWorker(QThread):
     @staticmethod
     def _parse_frame(frame: str) -> tuple[str, dict[str, str], str]:
         raw = frame.rstrip("\x00")
-        if "\n\n" in raw:
+        if "\r\n\r\n" in raw:
+            head, body = raw.split("\r\n\r\n", 1)
+        elif "\n\n" in raw:
             head, body = raw.split("\n\n", 1)
         else:
             head, body = raw, ""
@@ -80,6 +83,7 @@ class CollabStompWorker(QThread):
                 "ack": "auto",
             },
         )
+        self.debug_log.emit(f"STOMP SUBSCRIBE id=collab-global dest={COLLAB_TOPIC_SESSIONS}")
 
     def _subscribe_session(self, session_id: str) -> None:
         sid = str(session_id).strip()
@@ -93,6 +97,7 @@ class CollabStompWorker(QThread):
                 "ack": "auto",
             },
         )
+        self.debug_log.emit(f"STOMP SUBSCRIBE id=collab-sess-{sid} dest={COLLAB_TOPIC_SESSIONS}/{sid}")
         self._active_session_id = sid
 
     def _open_connection(self) -> None:
@@ -121,6 +126,8 @@ class CollabStompWorker(QThread):
             if command == "CONNECTED":
                 self._connected = True
                 self._subscribe_base()
+                if self._active_session_id:
+                    self._subscribe_session(self._active_session_id)
                 self.connected.emit()
                 return
             if command == "ERROR":
@@ -171,8 +178,11 @@ class CollabStompWorker(QThread):
                     },
                     body=body,
                 )
+                etype = str(payload.get("type") or "")
+                sid = str(payload.get("sessionId") or "")
+                self.debug_log.emit(f"STOMP SEND dest={COLLAB_DEST_SEND_EVENT} type={etype} sessionId={sid}")
 
-    def _route_message(self, body: str) -> None:
+    def _route_message(self, body: str, headers: dict[str, str] | None = None) -> None:
         if not body:
             return
         try:
@@ -181,6 +191,9 @@ class CollabStompWorker(QThread):
             payload = {"raw": body}
         if not isinstance(payload, dict):
             return
+        destination = str((headers or {}).get("destination") or "").strip()
+        if destination:
+            payload.setdefault("_wsDestination", destination)
         eid = str(payload.get("eventId") or "").strip()
         if eid:
             if eid in self._seen_event_ids:
@@ -212,7 +225,7 @@ class CollabStompWorker(QThread):
                         continue
                     command, _headers, body = self._parse_frame(raw)
                     if command == "MESSAGE":
-                        self._route_message(body)
+                        self._route_message(body, _headers)
                     elif command == "ERROR":
                         self.connection_error.emit("Received STOMP ERROR frame.")
                         raise RuntimeError("STOMP ERROR")

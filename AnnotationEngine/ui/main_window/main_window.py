@@ -184,6 +184,7 @@ class MainWindow(QMainWindow):
 
     def _on_image_loaded(self, path: str, w: int, h: int) -> None:
         on_image_loaded(self, path, w, h)
+        self._sync_collab_current_image_if_needed()
 
     def _on_visual_settings_applied(self, pen_width: int, font_size: int, label_height: int) -> None:
         on_visual_settings_applied(self, pen_width, font_size, label_height)
@@ -215,6 +216,7 @@ class MainWindow(QMainWindow):
     def _on_collab_snapshot_received(self, snapshot: dict) -> None:
         if not isinstance(snapshot, dict):
             return
+        self._load_collab_snapshot_image(snapshot)
         anns = snapshot.get("annotations") if isinstance(snapshot.get("annotations"), list) else []
         self._applying_remote_collab = True
         try:
@@ -229,12 +231,16 @@ class MainWindow(QMainWindow):
     def _on_collab_event_received(self, envelope: dict) -> None:
         if not isinstance(envelope, dict):
             return
-        actor = str(envelope.get("actorId") or "").strip().lower()
-        if actor and actor == str(getattr(self._chat_window, "_user_id", "")).strip().lower():
-            return
+        
+        # STOMP worker's `_seen_event_ids` deduplicates our own messages.
+        # Dropping by `actorId` prevents testing with 2 clients on the same account.
+        
         etype = str(envelope.get("type") or "")
         payload = envelope.get("payload")
         if not isinstance(payload, dict):
+            return
+        if etype == "image.available":
+            self._load_collab_image_event(envelope)
             return
 
         self._applying_remote_collab = True
@@ -259,6 +265,47 @@ class MainWindow(QMainWindow):
         finally:
             self._applying_remote_collab = False
 
+    def _load_collab_snapshot_image(self, snapshot: dict) -> None:
+        if not self._chat_window:
+            return
+        image_meta = snapshot.get("imageMeta")
+        if not isinstance(image_meta, dict):
+            return
+        envelope = {
+            "type": "image.available",
+            "sessionId": snapshot.get("sessionId"),
+            "imageId": snapshot.get("imageId"),
+            "payload": {
+                "imageId": image_meta.get("imageId") or snapshot.get("imageId"),
+                "downloadUrl": image_meta.get("downloadUrl"),
+                "fileName": image_meta.get("fileName") or image_meta.get("name") or snapshot.get("imageId"),
+                "sessionId": snapshot.get("sessionId"),
+            },
+        }
+        self._load_collab_image_event(envelope)
+
+    def _load_collab_image_event(self, envelope: dict) -> None:
+        if not self._chat_window:
+            return
+        ok, image_path, err = self._chat_window.download_collab_image(envelope)
+        if not ok:
+            self._status.showMessage(err)
+            return
+        self._applying_remote_collab = True
+        self._ignore_changes = True
+        try:
+            self._canvas.load_image(image_path)
+        finally:
+            self._ignore_changes = False
+            self._applying_remote_collab = False
+        self._unsaved_changes = False
+        self._status.showMessage(f"Collab image synced: {image_path}")
+
+    def _sync_collab_current_image_if_needed(self) -> None:
+        if self._applying_remote_collab or not self._chat_window:
+            return
+        self._chat_window.upload_current_collab_image(show_message=False)
+
     def _emit_collab_annotation(self, event_type: str, annotation_id: str) -> None:
         if self._applying_remote_collab:
             return
@@ -275,7 +322,14 @@ class MainWindow(QMainWindow):
             if item is None:
                 return
             payload = item.to_dict()
-        self._chat_window.send_collab_event(event_type, payload)
+        self._chat_window._append_system(
+            f"[collab] local emit {event_type} id={ann_id}"
+        )
+        sent = self._chat_window.send_collab_event(event_type, payload)
+        if not sent:
+            self._chat_window._append_system(
+                f"[collab] send blocked for {event_type} id={ann_id}"
+            )
 
     def _on_collab_annotation_added(self, annotation_id: str) -> None:
         self._emit_collab_annotation("annotation.create", annotation_id)

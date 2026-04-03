@@ -1,6 +1,8 @@
 package annotation_server.annotation_service.dto;
 
 public enum EventType {
+    SESSION_CREATED("session.created"),
+    SESSION_UPDATED("session.updated"),
     SESSION_USER_JOINED("session.user.joined"),
     SESSION_USER_LEFT("session.user.left"),
     ANNOTATION_CREATE("annotation.create"),

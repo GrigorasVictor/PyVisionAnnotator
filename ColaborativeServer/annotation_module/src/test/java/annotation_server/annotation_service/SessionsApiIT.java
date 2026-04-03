@@ -8,9 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.hamcrest.Matchers.matchesPattern;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -40,6 +43,26 @@ class SessionsApiIT {
                 .andExpect(jsonPath("$.items[0].cameraId").value("cam_entrance_01"))
                 .andExpect(jsonPath("$.items[0].users[0].userId").exists())
                 .andExpect(jsonPath("$.items[0].users.length()").value(2));
+    }
+
+    @Test
+    void createSessionReturnsRandomRoomCodeAndAddsCreator() throws Exception {
+        mockMvc.perform(post("/sessions")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":\"Camera room\"}")
+                        .header(HttpHeaders.AUTHORIZATION, TestJwtFactory.bearerFor("ana@gmail.com")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.sessionId", matchesPattern("^[a-z0-9]{5}$")))
+                .andExpect(jsonPath("$.name").value("Camera room"));
+    }
+
+    @Test
+    void snapshotAutoAddsAuthenticatedUserAsSessionMember() throws Exception {
+        mockMvc.perform(get("/sessions/sess_001/snapshot")
+                        .header(HttpHeaders.AUTHORIZATION, TestJwtFactory.bearerFor("alex@gmail.com")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.sessionId").value("sess_001"))
+                .andExpect(jsonPath("$.users[?(@.userId=='alex@gmail.com')]").exists());
     }
 }
 

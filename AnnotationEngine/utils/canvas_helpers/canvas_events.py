@@ -226,8 +226,11 @@ def mouse_release_event(canvas: "AnnotationCanvas", event: QMouseEvent) -> None:
     btn = event.button()
 
     if canvas._painting and btn == Qt.MouseButton.LeftButton:
+        target = canvas._paint_target
         canvas._painting = False
         canvas._paint_target = None
+        if target is not None:
+            canvas._manager.update_item(target.annotation_id)
         event.accept()
         return
 

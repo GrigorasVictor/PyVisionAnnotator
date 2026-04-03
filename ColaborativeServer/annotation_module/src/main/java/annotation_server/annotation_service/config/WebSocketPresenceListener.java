@@ -25,10 +25,12 @@ public class WebSocketPresenceListener {
 
     @EventListener
     public void onConnected(SessionConnectedEvent event) {
-        log.info("SessionConnectedEvent received: headers={} user={}", event.getMessage().getHeaders(), event.getUser());
+        log.info("ws.connected sessionId={} user={}",
+                event.getMessage().getHeaders().get("simpSessionId"),
+                event.getUser() == null ? null : event.getUser().getName());
         Principal principal = event.getUser();
         if (principal == null || principal.getName() == null || principal.getName().isBlank()) {
-            log.warn("SessionConnectedEvent with no principal — skipping markOnline");
+            log.warn("ws.connected.rejected reason=missing_principal");
             return;
         }
 
@@ -38,14 +40,20 @@ public class WebSocketPresenceListener {
         PresenceEvent update = new PresenceEvent("ONLINE", userId, presenceService.getOnlineUsers());
         messagingTemplate.convertAndSend("/topic/presence", update);
         messagingTemplate.convertAndSendToUser(userId, "/queue/presence", update);
+        log.info("ws.presence.out status=ONLINE userId={} onlineCount={} destinations=/topic/presence,/user/{}/queue/presence",
+                userId,
+                update.onlineUsers().size(),
+                userId);
     }
 
     @EventListener
     public void onDisconnected(SessionDisconnectEvent event) {
-        log.info("SessionDisconnectEvent received: sessionId={} user={}", event.getSessionId(), event.getUser());
+        log.info("ws.disconnected sessionId={} user={}",
+                event.getSessionId(),
+                event.getUser() == null ? null : event.getUser().getName());
         Principal principal = event.getUser();
         if (principal == null || principal.getName() == null || principal.getName().isBlank()) {
-            log.warn("SessionDisconnectEvent with no principal — skipping markOffline");
+            log.warn("ws.disconnected.rejected reason=missing_principal");
             return;
         }
 
@@ -54,5 +62,8 @@ public class WebSocketPresenceListener {
 
         PresenceEvent update = new PresenceEvent("OFFLINE", userId, presenceService.getOnlineUsers());
         messagingTemplate.convertAndSend("/topic/presence", update);
+        log.info("ws.presence.out status=OFFLINE userId={} onlineCount={} destination=/topic/presence",
+                userId,
+                update.onlineUsers().size());
     }
 }

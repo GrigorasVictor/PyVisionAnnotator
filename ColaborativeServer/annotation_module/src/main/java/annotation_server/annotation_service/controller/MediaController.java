@@ -1,9 +1,13 @@
 package annotation_server.annotation_service.controller;
 
 import annotation_server.annotation_service.dto.ImageMetaDto;
+import annotation_server.annotation_service.dto.EventType;
+import annotation_server.annotation_service.dto.WsEventEnvelope;
 import annotation_server.annotation_service.entity.TempImageData;
 import annotation_server.annotation_service.service.CollaborationService;
 import annotation_server.annotation_service.service.TempImageStore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -36,6 +40,8 @@ import java.util.UUID;
 @RequestMapping("/media")
 public class MediaController {
 
+    private static final Logger log = LoggerFactory.getLogger(MediaController.class);
+
     private final CollaborationService collaborationService;
     private final TempImageStore tempImageStore;
     private final SimpMessagingTemplate messagingTemplate;
@@ -61,6 +67,16 @@ public class MediaController {
             @RequestParam("file") MultipartFile file,
             Authentication authentication
     ) throws IOException {
+        String actor = authentication == null ? "" : String.valueOf(authentication.getPrincipal()).toLowerCase();
+        log.info("media.upload.in sessionId={} projectId={} imageId={} cameraId={} actor={} fileName={} sizeBytes={}",
+                sessionId,
+                projectId,
+                imageId,
+                cameraId,
+                actor,
+                file.getOriginalFilename(),
+                file.getSize());
+
         if (file.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "file is required");
         }
@@ -74,13 +90,13 @@ public class MediaController {
         collaborationService.ensureSession(sessionId, projectId, imageId, cameraId,
                 name == null || name.isBlank() ? sessionId : name);
 
-        String actor = authentication == null ? "" : String.valueOf(authentication.getPrincipal()).toLowerCase();
         if (!actor.isBlank()) {
             try {
                 collaborationService.requireMember(sessionId, actor);
             } catch (IllegalArgumentException ex) {
                 // First upload on a new session can bootstrap membership for actor.
                 collaborationService.markUser(sessionId, actor, "EDITOR", "ONLINE");
+                log.info("media.upload.membership_bootstrap sessionId={} actor={}", sessionId, actor);
             }
         }
 
@@ -110,11 +126,35 @@ public class MediaController {
                 collaborationService.buildImageAvailableEvent(sessionId, meta, actor.isBlank() ? "system" : actor)
         );
 
+        WsEventEnvelope sessionUpdated = collaborationService.buildSessionListEvent(
+                EventType.SESSION_UPDATED.value(),
+                sessionId,
+                actor,
+                "image_upload"
+        );
+        messagingTemplate.convertAndSend("/topic/sessions", sessionUpdated);
+
+        log.info("media.upload.out sessionId={} imageId={} cameraId={} actor={} destination={} expiresAt={}",
+                sessionId,
+                imageId,
+                cameraId,
+                actor.isBlank() ? "system" : actor,
+                "/topic/sessions/" + sessionId,
+                expiresAt);
+        log.info("ws.event.out eventId={} type={} sessionId={} actor={} version={} destination={}",
+                sessionUpdated.eventId(),
+                sessionUpdated.type(),
+                sessionUpdated.sessionId(),
+                sessionUpdated.actorId(),
+                sessionUpdated.version(),
+                "/topic/sessions");
+
         return meta;
     }
 
     @GetMapping("/temp/{imageId}")
     public ResponseEntity<byte[]> getTempImage(@PathVariable String imageId, @RequestParam String token) {
+        log.info("media.download.in imageId={}", imageId);
         TempImageData imageData = tempImageStore.get(imageId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Image not found"));
 
@@ -125,6 +165,10 @@ public class MediaController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType(imageData.metadata().mimeType()));
         headers.setContentDisposition(ContentDisposition.inline().filename(imageData.metadata().fileName()).build());
+        log.info("media.download.out imageId={} mimeType={} sizeBytes={}",
+                imageId,
+                imageData.metadata().mimeType(),
+                imageData.content().length);
         return new ResponseEntity<>(imageData.content(), headers, HttpStatus.OK);
     }
 

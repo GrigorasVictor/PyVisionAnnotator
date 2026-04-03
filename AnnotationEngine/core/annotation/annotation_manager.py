@@ -104,6 +104,7 @@ class AnnotationManager(QObject):
         item.pen_width = self.settings_pen_width
         item.font_size = self.settings_font_size
         item.label_height = self.settings_label_height
+        item._on_local_geometry_changed = lambda aid=item.annotation_id: self.update_item(aid)
 
         self._annotations[item.annotation_id] = item
         self.annotation_added.emit(item.annotation_id)
@@ -127,6 +128,7 @@ class AnnotationManager(QObject):
         item.pen_width = self.settings_pen_width
         item.font_size = self.settings_font_size
         item.label_height = self.settings_label_height
+        item._on_local_geometry_changed = lambda aid=item.annotation_id: self.update_item(aid)
 
         self._annotations[item.annotation_id] = item
         self.annotation_added.emit(item.annotation_id)
@@ -157,6 +159,7 @@ class AnnotationManager(QObject):
         item.font_size = self.settings_font_size
         item.label_height = self.settings_label_height
         item.fill_alpha = self._opacity_percent_to_alpha(self.settings_mask_opacity)
+        item._on_local_geometry_changed = lambda aid=item.annotation_id: self.update_item(aid)
         if None not in (bbox_x, bbox_y, bbox_w, bbox_h):
             item.set_bbox_rect(float(bbox_x), float(bbox_y), float(bbox_w), float(bbox_h))
 

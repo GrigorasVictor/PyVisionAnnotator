@@ -360,6 +360,9 @@ class MaskItem(QGraphicsPixmapItem):
         if self._active_handle != _HandlePosition.NONE:
             self._active_handle = _HandlePosition.NONE
             self._drag_rect_origin = None
+            callback = getattr(self, "_on_local_geometry_changed", None)
+            if callable(callback):
+                callback()
             event.accept()
             return
         super().mouseReleaseEvent(event)

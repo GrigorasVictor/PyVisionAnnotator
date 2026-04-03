@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 COLLAB_HTTP_BASE_DEFAULT = "http://localhost"
-COLLAB_WS_PATH = "/ws"
+COLLAB_WS_PATH = "/annotation/ws"
 COLLAB_WS_URL_DEFAULT = f"ws://localhost{COLLAB_WS_PATH}"
 
 COLLAB_SESSIONS_PATH = "/annotation/sessions"
