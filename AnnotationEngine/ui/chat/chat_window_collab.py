@@ -21,6 +21,8 @@ def _ensure_sync_state(window) -> None:
         window._collab_processed_event_ids = set()
     if not hasattr(window, "_collab_last_version_by_session"):
         window._collab_last_version_by_session = {}
+    if not hasattr(window, "_collab_synced_sessions"):
+        window._collab_synced_sessions = set()
 
 
 def _session_id_from_event(envelope: dict[str, Any]) -> str:
@@ -76,14 +78,19 @@ def start_collab_worker(window) -> None:
         sid = str(window._collab_session.get("sessionId") or "").strip() if isinstance(window._collab_session, dict) else ""
         if sid and window._collab_worker:
             window._collab_worker.set_active_session(sid)
+            _ensure_sync_state(window)
+            # Reconnect should not force snapshot replay if this session was already synced once,
+            # otherwise unsent local edits can be wiped by older server state.
+            if sid in window._collab_synced_sessions:
+                return
             status, snap = window._collab_client().get_snapshot(sid)
             if status == 200 and isinstance(snap, dict):
                 window.collab_snapshot_received.emit(snap)
-                _ensure_sync_state(window)
                 try:
                     window._collab_last_version_by_session[sid] = int(snap.get("version") or 0)
                 except Exception:
                     window._collab_last_version_by_session[sid] = 0
+                window._collab_synced_sessions.add(sid)
 
     window._collab_worker.connected.connect(_on_connected)
     window._collab_worker.disconnected.connect(lambda reason: window._append_system(f"Collab: {reason}"))
@@ -204,6 +211,7 @@ def on_collab_join_session(window) -> None:
             window._collab_last_version_by_session[sid] = int(snap.get("version") or 0)
         except Exception:
             window._collab_last_version_by_session[sid] = 0
+        window._collab_synced_sessions.add(sid)
         window.collab_snapshot_received.emit(snap)
         image_meta = snap.get("imageMeta")
         if not isinstance(image_meta, dict) or not image_meta.get("downloadUrl"):

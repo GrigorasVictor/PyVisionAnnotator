@@ -12,7 +12,7 @@ class CollaborationServiceRoomLifecycleTest {
 
     @Test
     void cleanupRemovesEmptyInactiveRooms() {
-        CollaborationService service = new CollaborationService(new TempImageStore(), new EventDedupStore(Duration.ofMinutes(10)), Duration.ofMinutes(5));
+        CollaborationService service = new CollaborationService(new TempImageStore(), new EventDedupStore(Duration.ofMinutes(10)), Duration.ofMinutes(5), 2_000_000);
         CreateSessionResponseDto created = service.createSession("proj", "img", "cam", "room", "");
 
         service.cleanupInactiveSessions(Instant.now().plus(Duration.ofMinutes(6)));
@@ -23,7 +23,7 @@ class CollaborationServiceRoomLifecycleTest {
 
     @Test
     void cleanupKeepsRoomWhenAtLeastOneUserIsOnline() {
-        CollaborationService service = new CollaborationService(new TempImageStore(), new EventDedupStore(Duration.ofMinutes(10)), Duration.ofMinutes(5));
+        CollaborationService service = new CollaborationService(new TempImageStore(), new EventDedupStore(Duration.ofMinutes(10)), Duration.ofMinutes(5), 2_000_000);
         CreateSessionResponseDto created = service.createSession("proj", "img", "cam", "room", "ana@gmail.com");
 
         service.cleanupInactiveSessions(Instant.now().plus(Duration.ofMinutes(30)));

@@ -10,6 +10,8 @@ import annotation_server.annotation_service.dto.SessionsResponseDto;
 import annotation_server.annotation_service.dto.WsEventEnvelope;
 import annotation_server.annotation_service.entity.SessionState;
 import annotation_server.annotation_service.entity.SessionUserState;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,6 +32,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class CollaborationService {
 
     private static final Logger log = LoggerFactory.getLogger(CollaborationService.class);
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     private static final String SESSION_CODE_ALPHABET = "abcdefghijklmnopqrstuvwxyz0123456789";
     private static final int SESSION_CODE_LENGTH = 5;
@@ -38,13 +41,16 @@ public class CollaborationService {
     private final TempImageStore tempImageStore;
     private final EventDedupStore eventDedupStore;
     private final Duration emptySessionTtl;
+    private final int maxMaskDataChars;
 
     public CollaborationService(TempImageStore tempImageStore,
                                 EventDedupStore eventDedupStore,
-                                @Value("${collab.empty-session-ttl:PT5M}") Duration emptySessionTtl) {
+                                @Value("${collab.empty-session-ttl:PT5M}") Duration emptySessionTtl,
+                                @Value("${collab.mask-max-data-chars:2000000}") int maxMaskDataChars) {
         this.tempImageStore = tempImageStore;
         this.eventDedupStore = eventDedupStore;
         this.emptySessionTtl = emptySessionTtl;
+        this.maxMaskDataChars = maxMaskDataChars;
     }
 
     public CreateSessionResponseDto createSession(String projectId,
@@ -199,20 +205,25 @@ public class CollaborationService {
                 session.getAnnotations().remove(String.valueOf(id));
                 log.info("annotation.delete sessionId={} actor={} annotationId={}", incoming.sessionId(), actorId, id);
             }
-        } else {
-            Object id = incoming.payload() == null ? null : incoming.payload().get("id");
-            if (id == null) {
-                throw new IllegalArgumentException("Annotation payload.id is required");
-            }
-            session.getAnnotations().put(String.valueOf(id), incoming.payload());
-            Object shapeType = incoming.payload().get("type");
-            String action = EventType.ANNOTATION_CREATE.value().equals(type) ? "create" : "update";
-            log.info("annotation.{} sessionId={} actor={} annotationId={} shapeType={}",
-                    action,
+            // TODO delete: temporary payload visibility for client-side debugging.
+            log.info("annotation.payload.tmp eventId={} type={} sessionId={} actor={} payloadJson={}",
+                    incoming.eventId(),
+                    type,
                     incoming.sessionId(),
                     actorId,
-                    id,
-                    shapeType == null ? "unknown" : shapeType);
+                    toJson(incoming.payload()));
+        } else {
+            Map<String, Object> payload = validateAnnotationPayload(incoming.payload());
+            Object id = payload.get("id");
+            session.getAnnotations().put(String.valueOf(id), payload);
+
+            // TODO delete: temporary payload visibility for client-side debugging.
+            log.info("annotation.payload.tmp eventId={} type={} sessionId={} actor={} payloadJson={}",
+                    incoming.eventId(),
+                    type,
+                    incoming.sessionId(),
+                    actorId,
+                    toJson(payload));
         }
 
         long version = session.nextVersion(now);
@@ -228,6 +239,118 @@ public class CollaborationService {
                 now,
                 incoming.payload()
         );
+    }
+
+    private Map<String, Object> validateAnnotationPayload(Map<String, Object> payload) {
+        if (payload == null) {
+            throw new IllegalArgumentException("Annotation payload is required");
+        }
+
+        String id = requireNonBlankString(payload, "id");
+        String type = requireNonBlankString(payload, "type");
+
+        if ("mask".equals(type)) {
+            Map<?, ?> maskMap = payload.get("mask") instanceof Map<?, ?> map ? map : Map.of();
+
+            String encoding = firstNonBlank(
+                    optionalNonBlankString(maskMap, "encoding"),
+                    optionalNonBlankString(payload, "mask_encoding")
+            );
+            String data = firstNonBlank(
+                    optionalNonBlankString(maskMap, "data"),
+                    optionalNonBlankString(payload, "mask_data")
+            );
+            String format = firstNonBlank(
+                    optionalNonBlankString(maskMap, "format"),
+                    optionalNonBlankString(payload, "mask_format")
+            );
+            String counts = firstNonBlank(
+                    optionalNonBlankString(maskMap, "counts"),
+                    optionalNonBlankString(payload, "mask_counts")
+            );
+            Object size = maskMap.containsKey("size") ? maskMap.get("size") : payload.get("mask_size");
+
+            boolean legacyMask = encoding != null || data != null;
+            boolean rleMask = format != null || counts != null || size != null;
+
+            if (legacyMask) {
+                if (encoding == null || data == null) {
+                    throw new IllegalArgumentException("Mask annotation requires encoding+data (payload.mask.* or payload.mask_*)");
+                }
+                validateMaskDataLength(data);
+            }
+
+            if (rleMask) {
+                if (format == null && (counts != null || size != null)) {
+                    // Default to rle for compact payloads that omit explicit format.
+                    format = "rle";
+                }
+                if (!"rle".equalsIgnoreCase(format)) {
+                    throw new IllegalArgumentException("mask format must be 'rle' (payload.mask.format or payload.mask_format)");
+                }
+                if (size == null) {
+                    throw new IllegalArgumentException("Mask annotation requires size (payload.mask.size or payload.mask_size)");
+                }
+                validateMaskSize(size);
+                if (counts == null) {
+                    throw new IllegalArgumentException("Mask annotation requires counts (payload.mask.counts or payload.mask_counts)");
+                }
+                validateMaskDataLength(counts);
+            }
+
+            if (!legacyMask && !rleMask) {
+                throw new IllegalArgumentException("Mask annotation requires encoding/data or format/size/counts");
+            }
+
+            // We intentionally do not decode/decompress mask data server-side.
+            log.debug("annotation.mask.validated id={} legacy={} rle={}", id, legacyMask, rleMask);
+        }
+
+        return payload;
+    }
+
+    private String firstNonBlank(String first, String second) {
+        return first != null ? first : second;
+    }
+
+    private String requireNonBlankString(Map<?, ?> source, String key) {
+        return requireNonBlankString(source, key, "payload." + key);
+    }
+
+    private String requireNonBlankString(Map<?, ?> source, String key, String fieldName) {
+        Object value = source.get(key);
+        if (!(value instanceof String text) || text.isBlank()) {
+            throw new IllegalArgumentException(fieldName + " is required");
+        }
+        return text;
+    }
+
+    private String optionalNonBlankString(Map<?, ?> source, String key) {
+        Object value = source.get(key);
+        if (!(value instanceof String text) || text.isBlank()) {
+            return null;
+        }
+        return text;
+    }
+
+    private void validateMaskSize(Object sizeRaw) {
+        if (!(sizeRaw instanceof List<?> size) || size.size() != 2) {
+            throw new IllegalArgumentException("payload.mask.size must contain [height, width]");
+        }
+        validatePositiveInteger(size.get(0), "payload.mask.size[0]");
+        validatePositiveInteger(size.get(1), "payload.mask.size[1]");
+    }
+
+    private void validatePositiveInteger(Object value, String fieldName) {
+        if (!(value instanceof Number number) || number.intValue() <= 0 || number.doubleValue() % 1 != 0) {
+            throw new IllegalArgumentException(fieldName + " must be a positive integer");
+        }
+    }
+
+    private void validateMaskDataLength(String data) {
+        if (data.length() > maxMaskDataChars) {
+            throw new IllegalArgumentException("Mask data exceeds max size");
+        }
     }
 
     public WsEventEnvelope buildImageAvailableEvent(String sessionId, ImageMetaDto meta, String actorId) {
@@ -365,6 +488,16 @@ public class CollaborationService {
     private String normalizeUserId(String userId) {
         return userId == null ? "" : userId.trim().toLowerCase();
     }
-}
 
+    private String toJson(Object value) {
+        if (value == null) {
+            return "null";
+        }
+        try {
+            return OBJECT_MAPPER.writeValueAsString(value);
+        } catch (JsonProcessingException ex) {
+            return String.valueOf(value);
+        }
+    }
+}
 

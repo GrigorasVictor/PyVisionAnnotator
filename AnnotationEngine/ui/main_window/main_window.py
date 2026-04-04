@@ -7,6 +7,8 @@ outward signals together, and manages the remaining cross-cutting state
 """
 from __future__ import annotations
 
+import base64
+import json
 import shlex
 from typing import Optional
 
@@ -164,6 +166,57 @@ class MainWindow(QMainWindow):
         except ValueError:
             return text.split()
 
+    @staticmethod
+    def _encode_mask_counts(points: object) -> str:
+        if not isinstance(points, list):
+            points = []
+        raw = json.dumps(points, separators=(",", ":")).encode("utf-8")
+        return base64.b64encode(raw).decode("ascii")
+
+    @staticmethod
+    def _decode_mask_counts(counts: object) -> list[list[float]]:
+        payload_data = str(counts or "").strip()
+        if not payload_data:
+            return []
+        try:
+            decoded = base64.b64decode(payload_data.encode("ascii"), validate=True)
+            parsed = json.loads(decoded.decode("utf-8"))
+        except Exception:
+            return []
+        if not isinstance(parsed, list):
+            return []
+        points: list[list[float]] = []
+        for pair in parsed:
+            if isinstance(pair, (list, tuple)) and len(pair) >= 2:
+                try:
+                    points.append([float(pair[0]), float(pair[1])])
+                except Exception:
+                    continue
+        return points
+
+    @staticmethod
+    def _normalize_collab_annotation_payload(payload: dict) -> dict:
+        if not isinstance(payload, dict):
+            return {}
+        normalized = dict(payload)
+
+        if str(normalized.get("type") or "") == "bbox":
+            normalized["type"] = "rect"
+
+        if str(normalized.get("type") or "") != "mask":
+            return normalized
+
+        mask_obj = normalized.get("mask")
+        if not isinstance(mask_obj, dict):
+            return payload
+
+        if not normalized.get("points") and str(mask_obj.get("format") or "").lower() == "rle":
+            decoded_points = MainWindow._decode_mask_counts(mask_obj.get("counts"))
+            if decoded_points:
+                normalized["points"] = decoded_points
+
+        return normalized
+
     def closeEvent(self, event: QCloseEvent) -> None:
         handle_close_event(self, event)
 
@@ -218,11 +271,18 @@ class MainWindow(QMainWindow):
             return
         self._load_collab_snapshot_image(snapshot)
         anns = snapshot.get("annotations") if isinstance(snapshot.get("annotations"), list) else []
+        normalized_anns: list[dict] = []
+        for ann in anns:
+            if isinstance(ann, dict):
+                normalized = self._normalize_collab_annotation_payload(ann)
+                if str(normalized.get("type") or "") == "mask" and not normalized.get("points"):
+                    continue
+                normalized_anns.append(normalized)
         self._applying_remote_collab = True
         try:
             for item in self._manager.clear():
                 self._canvas.scene().removeItem(item)
-            items = self._manager.load_annotations(anns)
+            items = self._manager.load_annotations(normalized_anns)
             for item in items:
                 self._canvas.add_annotation_item(item)
         finally:
@@ -239,6 +299,7 @@ class MainWindow(QMainWindow):
         payload = envelope.get("payload")
         if not isinstance(payload, dict):
             return
+        payload = self._normalize_collab_annotation_payload(payload)
         if etype == "image.available":
             self._load_collab_image_event(envelope)
             return
@@ -247,13 +308,23 @@ class MainWindow(QMainWindow):
         try:
             if etype in ("annotation.create", "annotation.update"):
                 ann_id = str(payload.get("id") or "").strip()
+
+                # Ignore non-drawable masks (missing or empty points after normalization).
+                if payload.get("type") == "mask" and not payload.get("points"):
+                    if self._chat_window:
+                        self._chat_window._append_system(
+                            f"[collab] ignored {etype} for mask id={ann_id or '?'} (empty points)"
+                        )
+                    return
+
+                created = self._manager.load_annotations([payload])
+                if not created:
+                    return
+
                 if ann_id:
                     existing = self._manager.remove(ann_id)
                     if existing is not None:
                         self._canvas.scene().removeItem(existing)
-                if payload.get("type") == "mask" and "points" not in payload:
-                    return
-                created = self._manager.load_annotations([payload])
                 for item in created:
                     self._canvas.add_annotation_item(item)
             elif etype == "annotation.delete":
@@ -306,6 +377,41 @@ class MainWindow(QMainWindow):
             return
         self._chat_window.upload_current_collab_image(show_message=False)
 
+    def _build_collab_annotation_payload(self, event_type: str, ann_id: str) -> dict | None:
+        if event_type == "annotation.delete":
+            return {"id": ann_id}
+        if event_type not in ("annotation.create", "annotation.update"):
+            return None
+
+        item = self._manager.get(ann_id)
+        if item is None:
+            return None
+
+        payload = item.to_dict() if hasattr(item, "to_dict") else {}
+        if not isinstance(payload, dict):
+            return None
+
+        # Server validator requires payload.id for every annotation event.
+        payload["id"] = ann_id
+        if payload.get("type") == "rect":
+            payload["type"] = "bbox"
+
+        if payload.get("type") == "mask":
+            points = payload.get("points", [])
+            if not isinstance(points, list) or len(points) == 0:
+                # Ignore transient empty masks (e.g. brush started but no painted pixels yet).
+                return None
+            counts = self._encode_mask_counts(points)
+            h = max(1, int(getattr(self._manager, "image_height", 0) or 0))
+            w = max(1, int(getattr(self._manager, "image_width", 0) or 0))
+            payload["mask"] = {
+                "format": "rle",
+                "size": [h, w],
+                "counts": counts,
+            }
+
+        return payload
+
     def _emit_collab_annotation(self, event_type: str, annotation_id: str) -> None:
         if self._applying_remote_collab:
             return
@@ -314,14 +420,13 @@ class MainWindow(QMainWindow):
         ann_id = str(annotation_id or "").strip()
         if not ann_id:
             return
-        payload: dict
-        if event_type == "annotation.delete":
-            payload = {"id": ann_id}
-        else:
-            item = self._manager.get(ann_id)
-            if item is None:
-                return
-            payload = item.to_dict()
+        payload = self._build_collab_annotation_payload(event_type, ann_id)
+        if payload is None:
+            if self._chat_window:
+                self._chat_window._append_system(
+                    f"[collab] payload build failed for {event_type} id={ann_id}"
+                )
+            return
         self._chat_window._append_system(
             f"[collab] local emit {event_type} id={ann_id}"
         )

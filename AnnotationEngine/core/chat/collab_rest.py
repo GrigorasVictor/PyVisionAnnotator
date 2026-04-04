@@ -9,11 +9,8 @@ from urllib import error, parse, request
 
 from core.chat.collab_protocol import (
     COLLAB_MEDIA_TEMP_PREFIX,
-    COLLAB_MEDIA_TEMP_PREFIX_LEGACY,
     COLLAB_SESSIONS_PATH,
-    COLLAB_SESSIONS_PATH_LEGACY,
     COLLAB_UPLOAD_TEMP_PATH,
-    COLLAB_UPLOAD_TEMP_PATH_LEGACY,
 )
 
 
@@ -48,24 +45,15 @@ class CollabRestClient:
             return exc.code, body
 
     def list_sessions(self) -> tuple[int, dict[str, Any]]:
-        status, body = self._json_request("GET", COLLAB_SESSIONS_PATH)
-        if status == 404:
-            return self._json_request("GET", COLLAB_SESSIONS_PATH_LEGACY)
-        return status, body
+        return self._json_request("GET", COLLAB_SESSIONS_PATH)
 
     def create_session(self, payload: dict[str, Any]) -> tuple[int, dict[str, Any]]:
         raw = json.dumps(payload or {}, ensure_ascii=True).encode("utf-8")
-        status, body = self._json_request("POST", COLLAB_SESSIONS_PATH, data=raw)
-        if status == 404:
-            return self._json_request("POST", COLLAB_SESSIONS_PATH_LEGACY, data=raw)
-        return status, body
+        return self._json_request("POST", COLLAB_SESSIONS_PATH, data=raw)
 
     def get_snapshot(self, session_id: str) -> tuple[int, dict[str, Any]]:
         sid = parse.quote(str(session_id).strip())
-        status, body = self._json_request("GET", f"{COLLAB_SESSIONS_PATH}/{sid}/snapshot")
-        if status == 404:
-            return self._json_request("GET", f"{COLLAB_SESSIONS_PATH_LEGACY}/{sid}/snapshot")
-        return status, body
+        return self._json_request("GET", f"{COLLAB_SESSIONS_PATH}/{sid}/snapshot")
 
     def upload_temp_image(
         self,
@@ -139,8 +127,6 @@ class CollabRestClient:
                 return exc.code, body_json
 
         status, body = _upload_with(COLLAB_UPLOAD_TEMP_PATH)
-        if status == 404:
-            return _upload_with(COLLAB_UPLOAD_TEMP_PATH_LEGACY)
         return status, body
 
     def _download_temp_image_from_prefix(self, image_id: str, token: str, media_prefix: str) -> tuple[int, bytes, str]:
@@ -164,9 +150,4 @@ class CollabRestClient:
             return exc.code, exc.read(), ct
 
     def download_temp_image(self, image_id: str, token: str) -> tuple[int, bytes, str]:
-        status, data, content_type = self._download_temp_image_from_prefix(image_id, token, COLLAB_MEDIA_TEMP_PREFIX)
-        if status == 404:
-            return self._download_temp_image_from_prefix(image_id, token, COLLAB_MEDIA_TEMP_PREFIX_LEGACY)
-        return status, data, content_type
-
-
+        return self._download_temp_image_from_prefix(image_id, token, COLLAB_MEDIA_TEMP_PREFIX)
