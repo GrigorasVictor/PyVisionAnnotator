@@ -412,14 +412,17 @@ class MainWindow(QMainWindow):
                         )
                     return
 
-                created = self._manager.load_annotations([payload])
-                if not created:
-                    return
-
+                # Replace existing item first so manager keeps the incoming item,
+                # not a transient one removed right after creation.
                 if ann_id:
                     existing = self._manager.remove(ann_id)
                     if existing is not None:
                         self._canvas.scene().removeItem(existing)
+
+                created = self._manager.load_annotations([payload])
+                if not created:
+                    return
+
                 for item in created:
                     self._canvas.add_annotation_item(item)
             elif etype == "annotation.delete":
