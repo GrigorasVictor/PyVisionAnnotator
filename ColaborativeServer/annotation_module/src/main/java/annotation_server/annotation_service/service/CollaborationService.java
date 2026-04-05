@@ -213,17 +213,18 @@ public class CollaborationService {
                     actorId,
                     toJson(incoming.payload()));
         } else {
-            Map<String, Object> payload = validateAnnotationPayload(incoming.payload());
-            Object id = payload.get("id");
-            session.getAnnotations().put(String.valueOf(id), payload);
-
             // TODO delete: temporary payload visibility for client-side debugging.
             log.info("annotation.payload.tmp eventId={} type={} sessionId={} actor={} payloadJson={}",
                     incoming.eventId(),
                     type,
                     incoming.sessionId(),
                     actorId,
-                    toJson(payload));
+                    toJson(incoming.payload()));
+            Map<String, Object> payload = validateAnnotationPayload(incoming.payload());
+            Object id = payload.get("id");
+            session.getAnnotations().put(String.valueOf(id), payload);
+
+
         }
 
         long version = session.nextVersion(now);
@@ -251,66 +252,17 @@ public class CollaborationService {
 
         if ("mask".equals(type)) {
             Map<?, ?> maskMap = payload.get("mask") instanceof Map<?, ?> map ? map : Map.of();
+            Object points = maskMap.containsKey("points") ? maskMap.get("points") : payload.get("points");
 
-            String encoding = firstNonBlank(
-                    optionalNonBlankString(maskMap, "encoding"),
-                    optionalNonBlankString(payload, "mask_encoding")
-            );
-            String data = firstNonBlank(
-                    optionalNonBlankString(maskMap, "data"),
-                    optionalNonBlankString(payload, "mask_data")
-            );
-            String format = firstNonBlank(
-                    optionalNonBlankString(maskMap, "format"),
-                    optionalNonBlankString(payload, "mask_format")
-            );
-            String counts = firstNonBlank(
-                    optionalNonBlankString(maskMap, "counts"),
-                    optionalNonBlankString(payload, "mask_counts")
-            );
-            Object size = maskMap.containsKey("size") ? maskMap.get("size") : payload.get("mask_size");
-
-            boolean legacyMask = encoding != null || data != null;
-            boolean rleMask = format != null || counts != null || size != null;
-
-            if (legacyMask) {
-                if (encoding == null || data == null) {
-                    throw new IllegalArgumentException("Mask annotation requires encoding+data (payload.mask.* or payload.mask_*)");
-                }
-                validateMaskDataLength(data);
+            if (points == null) {
+                throw new IllegalArgumentException("Mask annotation requires points (payload.points or payload.mask.points)");
             }
+            validateMaskPoints(points);
 
-            if (rleMask) {
-                if (format == null && (counts != null || size != null)) {
-                    // Default to rle for compact payloads that omit explicit format.
-                    format = "rle";
-                }
-                if (!"rle".equalsIgnoreCase(format)) {
-                    throw new IllegalArgumentException("mask format must be 'rle' (payload.mask.format or payload.mask_format)");
-                }
-                if (size == null) {
-                    throw new IllegalArgumentException("Mask annotation requires size (payload.mask.size or payload.mask_size)");
-                }
-                validateMaskSize(size);
-                if (counts == null) {
-                    throw new IllegalArgumentException("Mask annotation requires counts (payload.mask.counts or payload.mask_counts)");
-                }
-                validateMaskDataLength(counts);
-            }
-
-            if (!legacyMask && !rleMask) {
-                throw new IllegalArgumentException("Mask annotation requires encoding/data or format/size/counts");
-            }
-
-            // We intentionally do not decode/decompress mask data server-side.
-            log.debug("annotation.mask.validated id={} legacy={} rle={}", id, legacyMask, rleMask);
+            log.debug("annotation.mask.validated id={} pointsOnly=true", id);
         }
 
         return payload;
-    }
-
-    private String firstNonBlank(String first, String second) {
-        return first != null ? first : second;
     }
 
     private String requireNonBlankString(Map<?, ?> source, String key) {
@@ -325,33 +277,31 @@ public class CollaborationService {
         return text;
     }
 
-    private String optionalNonBlankString(Map<?, ?> source, String key) {
-        Object value = source.get(key);
-        if (!(value instanceof String text) || text.isBlank()) {
-            return null;
+    private void validateMaskPoints(Object pointsRaw) {
+        if (!(pointsRaw instanceof List<?> points) || points.isEmpty()) {
+            throw new IllegalArgumentException("payload.points must contain at least one [x, y] entry");
         }
-        return text;
-    }
 
-    private void validateMaskSize(Object sizeRaw) {
-        if (!(sizeRaw instanceof List<?> size) || size.size() != 2) {
-            throw new IllegalArgumentException("payload.mask.size must contain [height, width]");
-        }
-        validatePositiveInteger(size.get(0), "payload.mask.size[0]");
-        validatePositiveInteger(size.get(1), "payload.mask.size[1]");
-    }
-
-    private void validatePositiveInteger(Object value, String fieldName) {
-        if (!(value instanceof Number number) || number.intValue() <= 0 || number.doubleValue() % 1 != 0) {
-            throw new IllegalArgumentException(fieldName + " must be a positive integer");
+        for (int i = 0; i < points.size(); i++) {
+            Object pointRaw = points.get(i);
+            if (!(pointRaw instanceof List<?> point) || point.size() != 2) {
+                throw new IllegalArgumentException("payload.points[" + i + "] must contain exactly [x, y]");
+            }
+            validateFiniteNumber(point.get(0), "payload.points[" + i + "][0]");
+            validateFiniteNumber(point.get(1), "payload.points[" + i + "][1]");
         }
     }
 
-    private void validateMaskDataLength(String data) {
-        if (data.length() > maxMaskDataChars) {
-            throw new IllegalArgumentException("Mask data exceeds max size");
+    private void validateFiniteNumber(Object value, String fieldName) {
+        if (!(value instanceof Number number)) {
+            throw new IllegalArgumentException(fieldName + " must be numeric");
+        }
+        double numericValue = number.doubleValue();
+        if (Double.isNaN(numericValue) || Double.isInfinite(numericValue)) {
+            throw new IllegalArgumentException(fieldName + " must be finite");
         }
     }
+
 
     public WsEventEnvelope buildImageAvailableEvent(String sessionId, ImageMetaDto meta, String actorId) {
         SessionState session = getSession(sessionId);

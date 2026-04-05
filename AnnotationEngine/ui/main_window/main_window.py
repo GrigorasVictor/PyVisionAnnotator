@@ -12,7 +12,7 @@ import json
 import shlex
 from typing import Optional
 
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QTimer
 from PyQt6.QtGui import QKeySequence, QShortcut, QCloseEvent
 from PyQt6.QtWidgets import (
     QMainWindow,
@@ -77,6 +77,8 @@ class MainWindow(QMainWindow):
         self._auth_mode: str = "login"
         self._chat_window: Optional[ChatWindow] = None
         self._applying_remote_collab: bool = False
+        self._collab_mask_update_timer: Optional[QTimer] = None
+        self._pending_mask_update_ids: set[str] = set()
 
         self._build_ui()
         self._connect_signals()
@@ -167,13 +169,6 @@ class MainWindow(QMainWindow):
             return text.split()
 
     @staticmethod
-    def _encode_mask_counts(points: object) -> str:
-        if not isinstance(points, list):
-            points = []
-        raw = json.dumps(points, separators=(",", ":")).encode("utf-8")
-        return base64.b64encode(raw).decode("ascii")
-
-    @staticmethod
     def _decode_mask_counts(counts: object) -> list[list[float]]:
         payload_data = str(counts or "").strip()
         if not payload_data:
@@ -195,29 +190,121 @@ class MainWindow(QMainWindow):
         return points
 
     @staticmethod
+    def _normalize_points_payload(raw_points: object) -> list[list[float]]:
+        if not isinstance(raw_points, list):
+            return []
+
+        # Accept flattened numeric arrays: [x1, y1, x2, y2, ...]
+        if raw_points and all(isinstance(v, (int, float)) for v in raw_points):
+            out: list[list[float]] = []
+            for i in range(0, len(raw_points) - 1, 2):
+                out.append([float(raw_points[i]), float(raw_points[i + 1])])
+            return out
+
+        out: list[list[float]] = []
+        for point in raw_points:
+            if isinstance(point, (list, tuple)) and len(point) >= 2:
+                try:
+                    out.append([float(point[0]), float(point[1])])
+                except Exception:
+                    continue
+                continue
+            if isinstance(point, dict):
+                try:
+                    out.append([float(point.get("x")), float(point.get("y"))])
+                except Exception:
+                    continue
+        return out
+
+    @staticmethod
     def _normalize_collab_annotation_payload(payload: dict) -> dict:
         if not isinstance(payload, dict):
             return {}
         normalized = dict(payload)
 
+        # Accept wrapped annotation payloads: {"annotation": {...}, ...}
+        wrapped = normalized.get("annotation")
+        if isinstance(wrapped, dict):
+            merged = dict(wrapped)
+            for key in ("id", "type", "label", "color", "x", "y", "w", "h", "points", "mask"):
+                if key not in merged and key in normalized:
+                    merged[key] = normalized.get(key)
+            normalized = merged
+
+        if not normalized.get("id") and normalized.get("annotationId"):
+            normalized["id"] = normalized.get("annotationId")
+
+        if not normalized.get("label"):
+            normalized["label"] = (
+                normalized.get("className")
+                or normalized.get("name")
+                or normalized.get("category")
+                or ""
+            )
+
+        if not normalized.get("color"):
+            normalized["color"] = (
+                normalized.get("colour")
+                or normalized.get("hexColor")
+                or normalized.get("strokeColor")
+                or "#ff3232"
+            )
+
+        raw_type = str(normalized.get("type") or "").strip().lower()
+        if raw_type in ("bbox", "rectangle", "box"):
+            normalized["type"] = "rect"
+        elif raw_type in ("segmentation", "seg"):
+            normalized["type"] = "mask"
+
         if str(normalized.get("type") or "") == "bbox":
             normalized["type"] = "rect"
+
+        bbox = normalized.get("bbox")
+        if isinstance(bbox, dict):
+            if "x" not in normalized and "left" in bbox:
+                normalized["x"] = bbox.get("left")
+            if "y" not in normalized and "top" in bbox:
+                normalized["y"] = bbox.get("top")
+            if "w" not in normalized and "width" in bbox:
+                normalized["w"] = bbox.get("width")
+            if "h" not in normalized and "height" in bbox:
+                normalized["h"] = bbox.get("height")
 
         if str(normalized.get("type") or "") != "mask":
             return normalized
 
-        mask_obj = normalized.get("mask")
-        if not isinstance(mask_obj, dict):
-            return payload
+        if not normalized.get("points"):
+            normalized["points"] = normalized.get("coordinates")
 
-        if not normalized.get("points") and str(mask_obj.get("format") or "").lower() == "rle":
-            decoded_points = MainWindow._decode_mask_counts(mask_obj.get("counts"))
-            if decoded_points:
-                normalized["points"] = decoded_points
+        mask_obj = normalized.get("mask")
+        if isinstance(mask_obj, dict):
+            if not normalized.get("points"):
+                normalized["points"] = mask_obj.get("points")
+
+            if not normalized.get("points") and str(mask_obj.get("format") or "").lower() == "rle":
+                decoded_points = MainWindow._decode_mask_counts(mask_obj.get("counts"))
+                if decoded_points:
+                    normalized["points"] = decoded_points
+
+        normalized_points = MainWindow._normalize_points_payload(normalized.get("points"))
+        if normalized_points:
+            normalized["points"] = normalized_points
+            if any(k not in normalized for k in ("x", "y", "w", "h")):
+                xs = [p[0] for p in normalized_points]
+                ys = [p[1] for p in normalized_points]
+                min_x = min(xs)
+                max_x = max(xs)
+                min_y = min(ys)
+                max_y = max(ys)
+                normalized.setdefault("x", min_x)
+                normalized.setdefault("y", min_y)
+                normalized.setdefault("w", max(1.0, max_x - min_x))
+                normalized.setdefault("h", max(1.0, max_y - min_y))
 
         return normalized
 
     def closeEvent(self, event: QCloseEvent) -> None:
+        self._flush_pending_mask_updates()
         handle_close_event(self, event)
 
     def _on_data_changed(self, *_args) -> None:
@@ -300,6 +387,14 @@ class MainWindow(QMainWindow):
         if not isinstance(payload, dict):
             return
         payload = self._normalize_collab_annotation_payload(payload)
+        if self._chat_window and etype.startswith("annotation."):
+            try:
+                payload_json = json.dumps(payload, separators=(",", ":"))
+            except Exception:
+                payload_json = str(payload)
+            self._chat_window._append_system(
+                f"[collab] incoming {etype} payloadJson={payload_json}"
+            )
         if etype == "image.available":
             self._load_collab_image_event(envelope)
             return
@@ -401,14 +496,8 @@ class MainWindow(QMainWindow):
             if not isinstance(points, list) or len(points) == 0:
                 # Ignore transient empty masks (e.g. brush started but no painted pixels yet).
                 return None
-            counts = self._encode_mask_counts(points)
-            h = max(1, int(getattr(self._manager, "image_height", 0) or 0))
-            w = max(1, int(getattr(self._manager, "image_width", 0) or 0))
-            payload["mask"] = {
-                "format": "rle",
-                "size": [h, w],
-                "counts": counts,
-            }
+            # Send masks as raw points only.
+            payload.pop("mask", None)
 
         return payload
 
@@ -427,8 +516,12 @@ class MainWindow(QMainWindow):
                     f"[collab] payload build failed for {event_type} id={ann_id}"
                 )
             return
+        try:
+            payload_json = json.dumps(payload, separators=(",", ":"))
+        except Exception:
+            payload_json = str(payload)
         self._chat_window._append_system(
-            f"[collab] local emit {event_type} id={ann_id}"
+            f"[collab] local emit {event_type} id={ann_id} payloadJson={payload_json}"
         )
         sent = self._chat_window.send_collab_event(event_type, payload)
         if not sent:
@@ -436,14 +529,46 @@ class MainWindow(QMainWindow):
                 f"[collab] send blocked for {event_type} id={ann_id}"
             )
 
+    def _schedule_mask_update_emit(self, annotation_id: str) -> None:
+        ann_id = str(annotation_id or "").strip()
+        if not ann_id:
+            return
+        self._pending_mask_update_ids.add(ann_id)
+        if self._collab_mask_update_timer is None:
+            self._collab_mask_update_timer = QTimer(self)
+            self._collab_mask_update_timer.setSingleShot(True)
+            self._collab_mask_update_timer.timeout.connect(self._flush_pending_mask_updates)
+        # Send mask updates after brush activity settles to avoid redundant WS traffic.
+        self._collab_mask_update_timer.start(220)
+
+    def _flush_pending_mask_updates(self) -> None:
+        if not self._pending_mask_update_ids:
+            return
+        pending_ids = list(self._pending_mask_update_ids)
+        self._pending_mask_update_ids.clear()
+        for ann_id in pending_ids:
+            self._emit_collab_annotation("annotation.update", ann_id)
+
     def _on_collab_annotation_added(self, annotation_id: str) -> None:
         self._emit_collab_annotation("annotation.create", annotation_id)
 
     def _on_collab_annotation_removed(self, annotation_id: str) -> None:
+        self._pending_mask_update_ids.discard(str(annotation_id or "").strip())
         self._emit_collab_annotation("annotation.delete", annotation_id)
 
     def _on_collab_annotation_updated(self, annotation_id: str) -> None:
-        self._emit_collab_annotation("annotation.update", annotation_id)
+        ann_id = str(annotation_id or "").strip()
+        if not ann_id:
+            return
+        item = self._manager.get(ann_id)
+        if item is None:
+            return
+        payload = item.to_dict() if hasattr(item, "to_dict") else {}
+        atype = str(payload.get("type") or "") if isinstance(payload, dict) else ""
+        if atype == "mask":
+            self._schedule_mask_update_emit(ann_id)
+            return
+        self._emit_collab_annotation("annotation.update", ann_id)
 
     def _load_process(self, image_path: str, annotations: list) -> None:
         load_process(self, image_path, annotations)

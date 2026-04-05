@@ -13,6 +13,9 @@ from PyQt6.QtCore import QThread, pyqtSignal
 from core.chat.collab_protocol import COLLAB_DEST_SEND_EVENT, COLLAB_TOPIC_SESSIONS
 
 
+_MAX_SEND_BODY_BYTES = 256 * 1024
+
+
 class CollabStompWorker(QThread):
     connected = pyqtSignal()
     disconnected = pyqtSignal(str)
@@ -169,18 +172,29 @@ class CollabStompWorker(QThread):
                 continue
             if cmd == "send_event":
                 body = json.dumps(payload, ensure_ascii=True)
+                body_bytes = len(body.encode("utf-8"))
+                etype = str(payload.get("type") or "")
+                sid = str(payload.get("sessionId") or "")
+
+                # Large frames can trigger server/proxy closes; skip instead of forcing reconnect loops.
+                if body_bytes > _MAX_SEND_BODY_BYTES:
+                    self.debug_log.emit(
+                        f"DROP SEND too_large bytes={body_bytes} max={_MAX_SEND_BODY_BYTES} type={etype} sessionId={sid}"
+                    )
+                    continue
+
                 self._send_frame(
                     "SEND",
                     headers={
                         "destination": COLLAB_DEST_SEND_EVENT,
                         "content-type": "application/json",
-                        "content-length": str(len(body.encode("utf-8"))),
+                        "content-length": str(body_bytes),
                     },
                     body=body,
                 )
-                etype = str(payload.get("type") or "")
-                sid = str(payload.get("sessionId") or "")
-                self.debug_log.emit(f"STOMP SEND dest={COLLAB_DEST_SEND_EVENT} type={etype} sessionId={sid}")
+                self.debug_log.emit(
+                    f"STOMP SEND dest={COLLAB_DEST_SEND_EVENT} type={etype} sessionId={sid} bytes={body_bytes}"
+                )
 
     def _route_message(self, body: str, headers: dict[str, str] | None = None) -> None:
         if not body:
