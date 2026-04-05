@@ -1,3 +1,10 @@
+"""Authentication dialog + worker orchestration for MainWindow.
+
+Shows login/register dialog, spawns AuthWorker (email/password POST), saves JWT payload on success,
+handles cancellation & cleanup. Key: on_auth_requested (show dialog + spawn worker), on_auth_success
+(save payload), on_auth_error/on_auth_cancelled/on_auth_finished (signal handlers + cleanup).
+"""
+
 from __future__ import annotations
 
 from datetime import datetime, timezone

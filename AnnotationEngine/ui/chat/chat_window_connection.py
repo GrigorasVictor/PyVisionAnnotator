@@ -6,7 +6,7 @@ import importlib.util
 from PyQt6.QtWidgets import QMessageBox, QWidget
 
 from core.chat.chat_protocol import WS_URL_DEFAULT
-from core.chat.chat_stomp_worker import ChatStompWorker
+from core.workers.chat_stomp_worker import ChatStompWorker
 
 
 def on_connect_requested(window) -> None:

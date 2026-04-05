@@ -1,7 +1,9 @@
 """
-ui/canvas_events.py
+Qt event handlers extracted from AnnotationCanvas.
 
-Qt event handlers extracted from AnnotationCanvas to keep ui/canvas.py compact.
+Handles zoom (wheel), keyboard shortcuts (space pan/delete/escape), mouse drawing (rect/poly/brush/automask),
+panning, rubber bands. Key: mouse_press_event/mouse_move_event/mouse_release_event, 
+key_press_event/key_release_event, wheel_event, leave_event.
 """
 from __future__ import annotations
 

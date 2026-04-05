@@ -1,7 +1,9 @@
 """
-ui/canvas_helpers.py
+Internal helper functions used by AnnotationCanvas.
 
-Internal helper functions used by AnnotationCanvas to keep ui/canvas.py smaller.
+Image loading/display (brightness/contrast/gamma), polygon drawing (finish/cancel), brush/eraser paint,
+AutoSeg marker & result handling. Key: load_image, apply_adjustments, finish_polygon, cancel_polygon,
+find_selected_mask, apply_paint, autoseg_result_received, remove_autoseg_marker.
 """
 from __future__ import annotations
 

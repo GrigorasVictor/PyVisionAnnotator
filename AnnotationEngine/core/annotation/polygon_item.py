@@ -1,4 +1,9 @@
-"""Polygon annotation graphics item."""
+"""Polygon annotation graphics item.
+
+Selectable polygon drawn from vertex list with label badge and semi-transparent fill.
+Key: paint (draws polygon + label badge), _apply_style (pen/brush), to_dict (serialize),
+color/pen_width/font_size/label_height properties, boundingRect (with label offset).
+"""
 from __future__ import annotations
 
 import uuid

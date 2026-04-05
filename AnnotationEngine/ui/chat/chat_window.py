@@ -7,7 +7,7 @@ from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtWidgets import QListWidgetItem, QMessageBox, QWidget
 
 from core.chat.chat_protocol import HTTP_BASE_DEFAULT
-from core.chat.chat_stomp_worker import ChatStompWorker
+from core.workers.chat_stomp_worker import ChatStompWorker
 from core.chat.collab_protocol import COLLAB_WS_PATH, COLLAB_WS_URL_DEFAULT
 from core.chat.collab_rest import CollabRestClient
 from core.chat.collab_stomp_worker import CollabStompWorker

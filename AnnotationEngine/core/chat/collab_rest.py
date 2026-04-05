@@ -1,4 +1,9 @@
-"""Small REST client for annotation collaboration endpoints."""
+"""Small REST client for annotation collaboration endpoints.
+
+Wraps HTTP calls (GET/POST/multipart) with JWT auth for sessions, snapshots, image upload/download.
+Key: list_sessions, create_session, get_snapshot, upload_temp_image (multipart), download_temp_image,
+_json_request (auth helper).
+"""
 from __future__ import annotations
 
 import json

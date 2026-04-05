@@ -1,4 +1,9 @@
-"""Mask annotation graphics item."""
+"""Mask annotation graphics item.
+
+Selectable pixmap-based mask with rasterized colored pixels, 8 resize handles, brush/eraser tools.
+Key: paint_brush/erase_brush (brush/eraser), _rebuild_pixmap (rasterize), _current_points (extract from image),
+paint (draw rect + handles when selected), mouse/hover events (resize), to_dict (serialize), fill_alpha property.
+"""
 from __future__ import annotations
 
 import uuid

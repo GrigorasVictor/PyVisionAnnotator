@@ -31,6 +31,25 @@ from .auth_handlers import (
     on_auth_requested,
     on_auth_success,
 )
+from .collab_payload import (
+    build_collab_annotation_payload,
+    is_empty_mask_annotation,
+    normalize_collab_annotation_payload,
+)
+from .collab_handlers import (
+    emit_collab_annotation,
+    flush_pending_mask_updates,
+    load_collab_image_event,
+    load_collab_snapshot_image,
+    on_chat_requested,
+    on_collab_annotation_added,
+    on_collab_annotation_removed,
+    on_collab_annotation_updated,
+    on_collab_event_received,
+    on_collab_snapshot_received,
+    schedule_mask_update_emit,
+    sync_collab_current_image_if_needed,
+)
 
 __all__ = [
     "clear_unsaved",
@@ -58,5 +77,20 @@ __all__ = [
     "on_auth_finished",
     "on_auth_requested",
     "on_auth_success",
+    "build_collab_annotation_payload",
+    "is_empty_mask_annotation",
+    "normalize_collab_annotation_payload",
+    "emit_collab_annotation",
+    "flush_pending_mask_updates",
+    "load_collab_image_event",
+    "load_collab_snapshot_image",
+    "on_chat_requested",
+    "on_collab_annotation_added",
+    "on_collab_annotation_removed",
+    "on_collab_annotation_updated",
+    "on_collab_event_received",
+    "on_collab_snapshot_received",
+    "schedule_mask_update_emit",
+    "sync_collab_current_image_if_needed",
 ]
 

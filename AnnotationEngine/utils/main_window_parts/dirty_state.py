@@ -1,3 +1,9 @@
+"""Track annotation unsaved changes state and close-event guard.
+
+Marks dirty on annotation changes, clears on save, prompts user Save/Discard/Cancel on app close.
+Key: on_data_changed (set flag), clear_unsaved (reset), handle_close_event (prompt if dirty).
+"""
+
 from __future__ import annotations
 
 from PyQt6.QtGui import QCloseEvent

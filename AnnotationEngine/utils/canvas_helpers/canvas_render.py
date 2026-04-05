@@ -1,4 +1,8 @@
-"""Rendering helpers for AnnotationCanvas foreground overlays."""
+"""Rendering helpers for AnnotationCanvas foreground overlays.
+
+Draws brush cursor radius, eraser indicator, crosshair overlay in viewport coords.
+Key: draw_foreground (calls super, then draws brush/eraser circle + center point + crosshair).
+"""
 from __future__ import annotations
 
 from PyQt6.QtCore import Qt, QPointF, QRectF

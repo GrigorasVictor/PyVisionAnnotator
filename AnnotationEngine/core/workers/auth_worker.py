@@ -1,4 +1,9 @@
-"""Background worker for authentication HTTP requests."""
+"""Background worker for authentication HTTP requests.
+
+POSTs email/password, emits success(dict) or failed(str). Retries localhost:8080 if localhost:80 refused.
+Key: run (POST + JSON parse with fallback retry), cancel, _read_reason_from_body (extract error),
+_fallback_url_for_localhost (connection refused recovery).
+"""
 from __future__ import annotations
 
 import json

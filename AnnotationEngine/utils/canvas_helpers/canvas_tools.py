@@ -1,4 +1,8 @@
-"""Tool-state helpers for AnnotationCanvas."""
+"""Tool-state helpers for AnnotationCanvas.
+
+Clears in-progress drawing state (paint target, poly points, rubber bands, markers) when switching tools.
+Key: set_tool (reset drawing flags + remove temp overlays).
+"""
 from __future__ import annotations
 
 

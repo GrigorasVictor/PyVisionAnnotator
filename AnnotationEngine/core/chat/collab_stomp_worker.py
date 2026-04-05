@@ -1,4 +1,10 @@
-"""STOMP worker for annotation collaboration events."""
+"""STOMP worker for annotation collaboration events.
+
+Background thread managing STOMP subscriptions to collab topics, deduplicates incoming events,
+routes payloads, sends outbound annotation events. Max send 256KB/frame to avoid proxy timeouts.
+Key: set_active_session, send_event (queue), _route_message (dedup via eventId), 
+_open_connection (CONNECT+SUBSCRIBE), run (recv loop + reconnect with backoff).
+"""
 from __future__ import annotations
 
 import importlib

@@ -1,4 +1,9 @@
-"""STOMP-over-WebSocket worker used by the standalone chat window."""
+"""STOMP-over-WebSocket worker used by the standalone chat window.
+
+Background thread managing STOMP subscriptions, emits signals on messages/presence/history/errors.
+Key: _open_connection (STOMP CONNECT+SUBSCRIBE), run (recv loop), _route_message (dispatch by dest),
+send_private/request_history/request_presence (queue cmds), _process_commands (dequeue & SEND frame).
+"""
 from __future__ import annotations
 
 import json

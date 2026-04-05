@@ -1,4 +1,9 @@
-"""Bounding box annotation graphics item."""
+"""Bounding box annotation graphics item.
+
+Selectable, resizable rect drawn on canvas with label badge and 8-point resize handles.
+Key: paint (draws rect + label + handles when selected), mouse events (drag handles), 
+hoverMoveEvent (cursor feedback), to_dict (serialize), color/pen_width/font_size/label_height properties.
+"""
 from __future__ import annotations
 
 import uuid

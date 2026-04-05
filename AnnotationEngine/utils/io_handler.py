@@ -1,21 +1,9 @@
 """
-utils/io_handler.py — Export / Import helpers
+Export / Import helpers for annotations (JSON, COCO, YOLO formats).
 
-Functions for persisting annotations as JSON and exporting template formats
-such as COCO and YOLO.
-
-JSON schema::
-
-    {
-      "filename": "photo.jpg",
-      "width": 1920,
-      "height": 1080,
-      "annotations": [
-        {"id": "a1b2c3d4", "x": 10.0, "y": 20.0, "w": 100.0, "h": 50.0},
-        ...
-      ]
-    }
-
+Persists annotations as compact JSON (masks encoded as bitset_v1), exports COCO/YOLO templates,
+splits Rect/Poly/Mask into subfolders. Key: export_json, import_json, export_coco_template,
+export_yolo_template, save_dataset_structure, _encode/_decode_mask_points_bitset_v1.
 """
 from __future__ import annotations
 

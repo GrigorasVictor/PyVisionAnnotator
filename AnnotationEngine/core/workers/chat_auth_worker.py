@@ -1,4 +1,8 @@
-"""Background HTTP auth worker for the separate chat window."""
+"""Background HTTP auth worker for the separate chat window.
+
+POSTs email/password to auth endpoint, emits success(dict) or failed(str) signals.
+Key: run (POST request + JSON parse), cancel, _read_reason (extract error from response).
+"""
 from __future__ import annotations
 
 import json

@@ -1,3 +1,10 @@
+"""YOLO full-image segmentation handlers for MainWindow.
+
+Shows run dialog (labels+mode), spawns AutoSegYoloWorker, parses bbox/polygon/mask detections,
+adds items to manager + canvas, handles errors/cancellation + cleanup. Key: on_autoseg_yolo_run,
+on_autoseg_yolo_result (add rects/polys/masks), on_autoseg_yolo_error/cancelled/finished.
+"""
+
 from __future__ import annotations
 
 import logging

@@ -1,3 +1,10 @@
+"""Image/annotation load orchestration and visual settings handlers.
+
+Handles folder open, image switch, JSON import (load_process), visual style sync to all items,
+deferred save-before-switch flow. Key: on_folder_opened, on_image_load_requested, load_process,
+on_save_before_switch, on_image_loaded, on_visual_settings_applied.
+"""
+
 from __future__ import annotations
 
 import os

@@ -1,3 +1,10 @@
+"""AutoMask (SAM) segmentation handlers for MainWindow.
+
+Reads settings, spawns AutoMaskWorker subprocess (point-click or --all Segment Everything),
+handles results (add masks to manager), errors, cancellation + cleanup. Key: on_autoseg_requested,
+on_automask_all_requested, on_autoseg_result, on_autoseg_error/cancelled/worker_finished.
+"""
+
 from __future__ import annotations
 
 from PyQt6.QtCore import QSettings

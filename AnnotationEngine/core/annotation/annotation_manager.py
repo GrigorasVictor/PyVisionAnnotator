@@ -1,8 +1,10 @@
 """
 core/annotation_manager.py — AnnotationManager
 
-Central store that owns every BoundingBoxItem for the current image.
-Emits Qt signals so the UI can react to additions / removals.
+Central store owning all annotations (rect/poly/mask) for the current image.
+Emits Qt signals on changes and applies global style settings to all items.
+Key: add_rect/add_poly/add_mask, remove, clear, load_annotations, update_item, 
+update_global_settings, set_mask_opacity, get_color_for_label.
 """
 from __future__ import annotations
 
