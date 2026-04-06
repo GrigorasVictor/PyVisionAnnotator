@@ -105,6 +105,8 @@
   - Creare/Join sesiune, sincronizare imagine curentă
   - Evenimente `annotation.create/update/delete` trimise și recepționate live
   - Debounce pentru update-urile de mask (trafic WS mai eficient)
+  - `mask` update/create sunt trimise chunked (`annotation.chunk`) pentru payload-uri mari
+  - Chunk-urile sunt trimise în ordine (`index/total`) și folosesc dimensiune redusă (sub ~16KB per mesaj)
 - [x] **Normalizare payload colaborativ**
   - Acceptă variații de format pentru tipuri/culori/puncte
   - Compatibilitate cu payload-uri mask în puncte și fallback-uri existente

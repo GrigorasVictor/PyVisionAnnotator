@@ -8,6 +8,10 @@ public enum EventType {
     ANNOTATION_CREATE("annotation.create"),
     ANNOTATION_UPDATE("annotation.update"),
     ANNOTATION_DELETE("annotation.delete"),
+    ANNOTATION_CHUNK("annotation.chunk"),
+    ANNOTATION_CHUNK_ACK("annotation.chunk.ack"),
+    ANNOTATION_CHUNK_ERROR("annotation.chunk.error"),
+    WS_ERROR("ws.error"),
     IMAGE_AVAILABLE("image.available"),
     SNAPSHOT("snapshot");
 

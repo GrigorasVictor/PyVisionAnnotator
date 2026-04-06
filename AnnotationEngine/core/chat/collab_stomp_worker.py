@@ -41,6 +41,7 @@ class CollabStompWorker(QThread):
         self._websocket_module: Any = None
         self._seen_event_ids: set[str] = set()
         self._active_session_id: str = ""
+        self._last_outbound_event_type: str = ""
 
     def stop(self, manual: bool = True) -> None:
         self._manual_stop = manual
@@ -63,6 +64,22 @@ class CollabStompWorker(QThread):
         parts.append(body)
         data = "\n".join(parts) + "\x00"
         self._socket.send(data)
+
+    def _format_error_cause(self, exc: BaseException) -> str:
+        errno_value = getattr(exc, "errno", None)
+        if errno_value is None and getattr(exc, "args", None):
+            first = exc.args[0]
+            if isinstance(first, int):
+                errno_value = first
+        close_code = getattr(self._socket, "close_status_code", None) if self._socket else None
+        close_reason = getattr(self._socket, "close_reason", None) if self._socket else None
+        args_raw = repr(getattr(exc, "args", ()))
+        return (
+            f"cause={type(exc).__name__} errno={errno_value} "
+            f"closeCode={close_code} closeReason={close_reason} "
+            f"lastEventType={self._last_outbound_event_type or 'unknown'} "
+            f"args={args_raw} msg={exc}"
+        )
 
     @staticmethod
     def _parse_frame(frame: str) -> tuple[str, dict[str, str], str]:
@@ -181,6 +198,7 @@ class CollabStompWorker(QThread):
                 body_bytes = len(body.encode("utf-8"))
                 etype = str(payload.get("type") or "")
                 sid = str(payload.get("sessionId") or "")
+                self._last_outbound_event_type = etype
 
                 # Large frames can trigger server/proxy closes; skip instead of forcing reconnect loops.
                 if body_bytes > _MAX_SEND_BODY_BYTES:
@@ -238,8 +256,8 @@ class CollabStompWorker(QThread):
                         raw = self._socket.recv()
                     except self._websocket_module.WebSocketTimeoutException:
                         continue
-                    except (self._websocket_module.WebSocketConnectionClosedException, OSError, socket.error):
-                        raise RuntimeError("WebSocket disconnected")
+                    except (self._websocket_module.WebSocketConnectionClosedException, OSError, socket.error) as exc:
+                        raise exc
 
                     if not raw or raw.strip() == "":
                         continue
@@ -255,6 +273,7 @@ class CollabStompWorker(QThread):
             except Exception as exc:
                 if self._stop_requested:
                     break
+                self.debug_log.emit(f"WS error {self._format_error_cause(exc)}")
                 self.connection_error.emit(str(exc))
             finally:
                 self._close_socket()

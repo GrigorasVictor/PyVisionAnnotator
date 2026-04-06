@@ -1,7 +1,9 @@
 """Collaboration handlers for ChatWindow."""
 from __future__ import annotations
 
+import base64
 from datetime import datetime, timezone
+import json
 import mimetypes
 import tempfile
 import uuid
@@ -16,6 +18,12 @@ from core.chat.collab_rest import CollabRestClient
 from core.chat.collab_stomp_worker import CollabStompWorker
 
 
+_CHUNK_TRIGGER_BYTES = 24 * 1024
+# Keep chunk data conservative; WS envelope/headers add overhead on top of the chunk payload.
+_CHUNK_SIZE_CHARS = 8 * 1024
+_CHUNK_MAX_RETRIES = 2
+
+
 def _ensure_sync_state(window) -> None:
     if not hasattr(window, "_collab_processed_event_ids"):
         window._collab_processed_event_ids = set()
@@ -23,6 +31,152 @@ def _ensure_sync_state(window) -> None:
         window._collab_last_version_by_session = {}
     if not hasattr(window, "_collab_synced_sessions"):
         window._collab_synced_sessions = set()
+    if not hasattr(window, "_collab_chunk_transfers"):
+        window._collab_chunk_transfers = {}
+    if not hasattr(window, "_collab_chunk_by_original_event"):
+        window._collab_chunk_by_original_event = {}
+
+
+def _build_event_envelope(window, event_type: str, payload: dict[str, Any], sid: str) -> dict[str, Any]:
+    return {
+        "eventId": str(uuid.uuid4()),
+        "type": str(event_type),
+        "sessionId": sid,
+        "projectId": str(window._collab_session.get("projectId") or ""),
+        "imageId": str(window._collab_session.get("imageId") or ""),
+        "cameraId": str(window._collab_session.get("cameraId") or ""),
+        "actorId": window._user_id,
+        "version": window._collab_version,
+        "timestamp": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+        "payload": payload,
+    }
+
+
+def _chunkify_text(text: str, chunk_size: int) -> list[str]:
+    size = max(1024, int(chunk_size))
+    return [text[i:i + size] for i in range(0, len(text), size)] or [""]
+
+
+def _send_chunked_event(window, original_envelope: dict[str, Any], retry_count: int = 0) -> bool:
+    etype = str(original_envelope.get("type") or "")
+    if etype == "annotation.chunk":
+        window._append_system("Cannot sync annotation right now.")
+        return False
+
+    sid = str(original_envelope.get("sessionId") or "").strip()
+    if not sid:
+        window._append_system("Cannot sync annotation: missing session.")
+        return False
+
+    try:
+        original_json = json.dumps(original_envelope, ensure_ascii=True, separators=(",", ":"))
+    except Exception:
+        window._append_system("Cannot sync annotation right now.")
+        return False
+
+    b64 = base64.b64encode(original_json.encode("utf-8")).decode("ascii")
+    chunks = _chunkify_text(b64, _CHUNK_SIZE_CHARS)
+    total = len(chunks)
+    if total <= 0:
+        window._append_system("Cannot sync annotation right now.")
+        return False
+
+    chunk_id = str(uuid.uuid4())
+    original_event_id = str(original_envelope.get("eventId") or "")
+    if original_event_id:
+        window._collab_worker._seen_event_ids.add(original_event_id)
+
+    window._collab_chunk_transfers[chunk_id] = {
+        "original": original_envelope,
+        "retry": int(retry_count),
+        "total": total,
+    }
+    if original_event_id:
+        window._collab_chunk_by_original_event[original_event_id] = chunk_id
+
+    for index, segment in enumerate(chunks):
+        chunk_payload = {
+            "chunkId": chunk_id,
+            "sessionId": sid,
+            "originalType": etype,
+            "index": index,
+            "total": total,
+            "encoding": "base64",
+            "data": segment,
+        }
+        # Keep same version for all chunks belonging to the same logical event.
+        chunk_envelope = dict(original_envelope)
+        chunk_envelope["eventId"] = str(uuid.uuid4())
+        chunk_envelope["type"] = "annotation.chunk"
+        chunk_envelope["payload"] = chunk_payload
+        window._collab_worker._seen_event_ids.add(chunk_envelope["eventId"])
+        window._collab_worker.send_event(chunk_envelope)
+
+    return True
+
+
+def _maybe_send_chunked(window, envelope: dict[str, Any]) -> bool:
+    etype = str(envelope.get("type") or "")
+    if etype not in ("annotation.create", "annotation.update", "annotation.delete"):
+        return False
+
+    payload = envelope.get("payload")
+    if not isinstance(payload, dict):
+        return False
+
+    # Always chunk mask create/update events to avoid large inline WS payloads.
+    payload_type = str(payload.get("type") or "").strip().lower()
+    if etype in ("annotation.create", "annotation.update") and payload_type == "mask":
+        return _send_chunked_event(window, envelope, retry_count=0)
+
+    # Chunk only large annotation events; small events stay regular WS sends.
+    try:
+        payload_size = len(json.dumps(payload, ensure_ascii=True, separators=(",", ":")).encode("utf-8"))
+    except Exception:
+        return False
+    if payload_size < _CHUNK_TRIGGER_BYTES:
+        return False
+
+    return _send_chunked_event(window, envelope, retry_count=0)
+
+
+def _handle_chunk_error(window, envelope: dict[str, Any]) -> None:
+    data = envelope.get("payload") if isinstance(envelope.get("payload"), dict) else {}
+    chunk_id = str(data.get("chunkId") or "").strip()
+    if not chunk_id:
+        return
+
+    transfer = window._collab_chunk_transfers.get(chunk_id)
+    if not isinstance(transfer, dict):
+        return
+
+    retry_count = int(transfer.get("retry") or 0)
+    original = transfer.get("original") if isinstance(transfer.get("original"), dict) else None
+    window._collab_chunk_transfers.pop(chunk_id, None)
+
+    if not isinstance(original, dict):
+        return
+    if retry_count >= _CHUNK_MAX_RETRIES:
+        window._append_system("Sync failed. Please try again.")
+        return
+
+    next_try = retry_count + 1
+    window._append_system("Retrying sync...")
+    _send_chunked_event(window, original, retry_count=next_try)
+
+
+def _handle_chunk_ack(window, envelope: dict[str, Any]) -> None:
+    data = envelope.get("payload") if isinstance(envelope.get("payload"), dict) else {}
+    chunk_id = str(data.get("chunkId") or "").strip()
+    if not chunk_id:
+        return
+    transfer = window._collab_chunk_transfers.pop(chunk_id, None)
+    if not isinstance(transfer, dict):
+        return
+    original = transfer.get("original") if isinstance(transfer.get("original"), dict) else {}
+    original_event_id = str(original.get("eventId") or "").strip()
+    if original_event_id:
+        window._collab_chunk_by_original_event.pop(original_event_id, None)
 
 
 def _session_id_from_event(envelope: dict[str, Any]) -> str:
@@ -95,7 +249,6 @@ def start_collab_worker(window) -> None:
     window._collab_worker.connected.connect(_on_connected)
     window._collab_worker.disconnected.connect(lambda reason: window._append_system(f"Collab: {reason}"))
     window._collab_worker.connection_error.connect(lambda m: window._append_system(f"Collab error: {m}"))
-    window._collab_worker.debug_log.connect(lambda msg: window._append_system(f"[collab] {msg}"))
     window._collab_worker.event_received.connect(window._on_collab_event_received)
     window._collab_worker.start()
 
@@ -342,34 +495,29 @@ def download_image_from_event(window, envelope: dict) -> tuple[bool, str, str]:
 
 def send_collab_event(window, event_type: str, payload: dict[str, Any]) -> bool:
     if not window._collab_worker:
-        window._append_system(f"[collab] send skipped ({event_type}): worker not connected")
+        window._append_system("Cannot sync now: not connected.")
         return False
     if not window._collab_session:
-        window._append_system(f"[collab] send skipped ({event_type}): no active session")
+        window._append_system("Join a collaboration session first.")
         return False
     sid = str(window._collab_session.get("sessionId") or "").strip()
     if not sid:
-        window._append_system(f"[collab] send skipped ({event_type}): missing sessionId")
+        window._append_system("Cannot sync now: session is missing.")
         return False
     window._collab_version = max(0, int(window._collab_version)) + 1
-    envelope = {
-        "eventId": str(uuid.uuid4()),
-        "type": str(event_type),
-        "sessionId": sid,
-        "projectId": str(window._collab_session.get("projectId") or ""),
-        "imageId": str(window._collab_session.get("imageId") or ""),
-        "cameraId": str(window._collab_session.get("cameraId") or ""),
-        "actorId": window._user_id,
-        "version": window._collab_version,
-        "timestamp": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
-        "payload": payload,
-    }
+    envelope = _build_event_envelope(window, str(event_type), payload, sid)
+
+    if _maybe_send_chunked(window, envelope):
+        if event_type.startswith("annotation."):
+            action = event_type.split(".")[-1]
+            label = payload.get("label", "") or "unlabeled"
+            shape_type = payload.get("type", "shape")
+            window._append_system(f"You {action}d {shape_type} '{label}'")
+        return True
+
     window._collab_worker._seen_event_ids.add(envelope["eventId"])
     window._collab_worker.send_event(envelope)
-    window._append_system(
-        f"[collab] queued {event_type} -> /app/collab.event (sessionId={sid})"
-    )
-    
+
     if event_type.startswith("annotation."):
         action = event_type.split(".")[-1]
         label = payload.get("label", "") or "unlabeled"
@@ -391,6 +539,15 @@ def on_collab_event_received(window, payload: dict) -> None:
 
     etype = str(payload.get("type") or "")
     ws_dest = str(payload.get("_wsDestination") or "").strip()
+
+    if etype == "annotation.chunk":
+        return
+    if etype == "annotation.chunk.error":
+        _handle_chunk_error(window, payload)
+        return
+    if etype == "annotation.chunk.ack":
+        _handle_chunk_ack(window, payload)
+        return
 
     if etype in ("session.created", "session.updated"):
         evt_payload = payload.get("payload") if isinstance(payload.get("payload"), dict) else {}

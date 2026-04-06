@@ -10,8 +10,6 @@ import annotation_server.annotation_service.dto.SessionsResponseDto;
 import annotation_server.annotation_service.dto.WsEventEnvelope;
 import annotation_server.annotation_service.entity.SessionState;
 import annotation_server.annotation_service.entity.SessionUserState;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,7 +30,6 @@ import java.util.concurrent.ThreadLocalRandom;
 public class CollaborationService {
 
     private static final Logger log = LoggerFactory.getLogger(CollaborationService.class);
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     private static final String SESSION_CODE_ALPHABET = "abcdefghijklmnopqrstuvwxyz0123456789";
     private static final int SESSION_CODE_LENGTH = 5;
@@ -199,27 +196,19 @@ public class CollaborationService {
         Instant now = Instant.now();
         String type = incoming.type();
 
+        if (!EventType.ANNOTATION_CREATE.value().equals(type)
+                && !EventType.ANNOTATION_UPDATE.value().equals(type)
+                && !EventType.ANNOTATION_DELETE.value().equals(type)) {
+            throw new IllegalArgumentException("Unsupported annotation event type: " + type);
+        }
+
         if (EventType.ANNOTATION_DELETE.value().equals(type)) {
             Object id = incoming.payload() == null ? null : incoming.payload().get("id");
             if (id != null) {
                 session.getAnnotations().remove(String.valueOf(id));
                 log.info("annotation.delete sessionId={} actor={} annotationId={}", incoming.sessionId(), actorId, id);
             }
-            // TODO delete: temporary payload visibility for client-side debugging.
-            log.info("annotation.payload.tmp eventId={} type={} sessionId={} actor={} payloadJson={}",
-                    incoming.eventId(),
-                    type,
-                    incoming.sessionId(),
-                    actorId,
-                    toJson(incoming.payload()));
         } else {
-            // TODO delete: temporary payload visibility for client-side debugging.
-            log.info("annotation.payload.tmp eventId={} type={} sessionId={} actor={} payloadJson={}",
-                    incoming.eventId(),
-                    type,
-                    incoming.sessionId(),
-                    actorId,
-                    toJson(incoming.payload()));
             Map<String, Object> payload = validateAnnotationPayload(incoming.payload());
             Object id = payload.get("id");
             session.getAnnotations().put(String.valueOf(id), payload);
@@ -439,15 +428,5 @@ public class CollaborationService {
         return userId == null ? "" : userId.trim().toLowerCase();
     }
 
-    private String toJson(Object value) {
-        if (value == null) {
-            return "null";
-        }
-        try {
-            return OBJECT_MAPPER.writeValueAsString(value);
-        } catch (JsonProcessingException ex) {
-            return String.valueOf(value);
-        }
-    }
 }
 

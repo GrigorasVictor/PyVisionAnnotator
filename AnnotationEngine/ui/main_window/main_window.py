@@ -408,14 +408,6 @@ class MainWindow(QMainWindow):
         if not isinstance(payload, dict):
             return
         payload = self._normalize_collab_annotation_payload(payload)
-        if self._chat_window and etype.startswith("annotation."):
-            try:
-                payload_json = json.dumps(payload, separators=(",", ":"))
-            except Exception:
-                payload_json = str(payload)
-            self._chat_window._append_system(
-                f"[collab] incoming {etype} payloadJson={payload_json}"
-            )
         if etype == "image.available":
             self._load_collab_image_event(envelope)
             return
@@ -427,10 +419,6 @@ class MainWindow(QMainWindow):
 
                 # Ignore non-drawable masks (missing or empty points after normalization).
                 if is_empty_mask_annotation(payload):
-                    if self._chat_window:
-                        self._chat_window._append_system(
-                            f"[collab] ignored {etype} for mask id={ann_id or '?'} (empty points)"
-                        )
                     return
 
                 # Replace existing item first so manager keeps the incoming item,
@@ -509,23 +497,11 @@ class MainWindow(QMainWindow):
             return
         payload = self._build_collab_annotation_payload(event_type, ann_id)
         if payload is None:
-            if self._chat_window:
-                self._chat_window._append_system(
-                    f"[collab] payload build failed for {event_type} id={ann_id}"
-                )
+            self._status.showMessage("Could not prepare collaboration update.")
             return
-        try:
-            payload_json = json.dumps(payload, separators=(",", ":"))
-        except Exception:
-            payload_json = str(payload)
-        self._chat_window._append_system(
-            f"[collab] local emit {event_type} id={ann_id} payloadJson={payload_json}"
-        )
         sent = self._chat_window.send_collab_event(event_type, payload)
         if not sent:
-            self._chat_window._append_system(
-                f"[collab] send blocked for {event_type} id={ann_id}"
-            )
+            self._status.showMessage("Collaboration update was not sent.")
 
     def _schedule_mask_update_emit(self, annotation_id: str) -> None:
         ann_id = str(annotation_id or "").strip()
