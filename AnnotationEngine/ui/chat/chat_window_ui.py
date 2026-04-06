@@ -13,7 +13,9 @@ from PyQt6.QtWidgets import (
     QLabel,
     QLineEdit,
     QListWidget,
+    QMenu,
     QPushButton,
+    QToolButton,
     QVBoxLayout,
 )
 
@@ -41,6 +43,16 @@ def build_chat_ui(window) -> None:
     window.btn_reload_session = QPushButton("Reload Session")
     window.btn_connect = QPushButton("Connect")
     window.btn_disconnect = QPushButton("Disconnect")
+    window.btn_export = QToolButton()
+    window.btn_export.setText("Export")
+    window.btn_export.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
+    window.menu_export = QMenu(window)
+    window.act_export_json = window.menu_export.addAction("Save JSON")
+    window.act_export_coco = window.menu_export.addAction("Export COCO")
+    window.act_export_yolo = window.menu_export.addAction("Export YOLO")
+    window.menu_export.addSeparator()
+    window.act_export_photo = window.menu_export.addAction("Save Annotated Photo")
+    window.btn_export.setMenu(window.menu_export)
     window.btn_advanced = QPushButton("Advanced")
 
     window.combo_collab_sessions = QComboBox()
@@ -63,6 +75,7 @@ def build_chat_ui(window) -> None:
     toolbar_layout.addWidget(window.btn_reload_session)
     toolbar_layout.addWidget(window.btn_connect)
     toolbar_layout.addWidget(window.btn_disconnect)
+    toolbar_layout.addWidget(window.btn_export)
     toolbar_layout.addWidget(window.btn_advanced)
     root.addWidget(toolbar)
 
@@ -154,6 +167,10 @@ def bind_chat_signals(window) -> None:
     )
     window.btn_connect.clicked.connect(window._on_connect_requested)
     window.btn_disconnect.clicked.connect(window._on_disconnect_requested)
+    window.act_export_json.triggered.connect(lambda: window._on_export_action_requested("json"))
+    window.act_export_coco.triggered.connect(lambda: window._on_export_action_requested("coco"))
+    window.act_export_yolo.triggered.connect(lambda: window._on_export_action_requested("yolo"))
+    window.act_export_photo.triggered.connect(lambda: window._on_export_action_requested("photo"))
     window.btn_advanced.clicked.connect(window._open_advanced_popup)
     window.btn_send.clicked.connect(window._on_send)
     window.btn_load_history.clicked.connect(window._on_history)

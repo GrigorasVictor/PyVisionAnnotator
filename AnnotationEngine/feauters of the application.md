@@ -95,3 +95,20 @@
 - [x] Parsare automată JSON din stdout (tolerant la log-uri suplimentare)
 - [x] Suport variabile de mediu custom
 
+## 11. Mod Colaborativ (Realtime + Auth)
+- [x] **Autentificare cont** (Login/Register) direct din aplicație
+  - Persistență endpoint-uri de auth în `Settings`
+  - Salvare payload autentificare după succes
+- [x] **Chat realtime** cu conectare WebSocket/STOMP
+  - Mesaje private, prezență utilizatori, istoric conversații
+- [x] **Colaborare pe adnotări** în sesiuni comune
+  - Creare/Join sesiune, sincronizare imagine curentă
+  - Evenimente `annotation.create/update/delete` trimise și recepționate live
+  - Debounce pentru update-urile de mask (trafic WS mai eficient)
+- [x] **Normalizare payload colaborativ**
+  - Acceptă variații de format pentru tipuri/culori/puncte
+  - Compatibilitate cu payload-uri mask în puncte și fallback-uri existente
+- [x] **Backend custom (server făcut de mine)**
+  - Fluxul de colaborare este compatibil cu serverul personalizat (Auth + REST + WS/STOMP)
+  - Endpoint-urile și URL-urile sunt configurabile din aplicație
+

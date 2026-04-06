@@ -69,6 +69,7 @@ _APP = "PyVisionAnnotator"
 class ChatWindow(QWidget):
     collab_event_received = pyqtSignal(dict)
     collab_snapshot_received = pyqtSignal(dict)
+    export_requested = pyqtSignal(str)
 
     def __init__(self, parent=None, current_image_path_fn=None) -> None:
         super().__init__(parent)
@@ -109,6 +110,7 @@ class ChatWindow(QWidget):
         self.btn_collab_refresh.setEnabled(connected)
         self.btn_collab_create.setEnabled(connected)
         self.btn_collab_join.setEnabled(connected)
+        self.btn_export.setEnabled(True)
 
     def _bind_signals(self) -> None:
         bind_chat_signals(self)
@@ -120,6 +122,11 @@ class ChatWindow(QWidget):
 
     def _open_advanced_popup(self) -> None:
         open_advanced_popup(self)
+
+    def _on_export_action_requested(self, export_type: str) -> None:
+        kind = str(export_type or "").strip().lower()
+        if kind:
+            self.export_requested.emit(kind)
 
     def _load_saved_session(self, show_message: bool, session_name: str | None = None) -> None:
         load_saved_session(self, show_message=show_message, session_name=session_name)

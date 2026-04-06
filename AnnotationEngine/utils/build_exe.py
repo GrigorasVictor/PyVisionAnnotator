@@ -11,6 +11,21 @@ import subprocess
 import shutil
 from pathlib import Path
 
+
+def _copy_inference_backends(project_root: Path, app_folder: Path) -> Path | None:
+    """Copy shared dist backends into packaged app folder, if available."""
+    src = project_root.parent / "research" / "others" / "dist"
+    if not src.exists() or not src.is_dir():
+        print(f"  - Backends folder not found (skip): {src}")
+        return None
+
+    dst = app_folder / "inference_backends"
+    if dst.exists():
+        shutil.rmtree(dst)
+    shutil.copytree(src, dst)
+    print(f"  ✓ Copied inference backends: {src} -> {dst}")
+    return dst
+
 def build():
     # 1. Identify paths
     current_dir = Path(__file__).resolve().parent
@@ -119,6 +134,10 @@ def build():
                 shutil.copy2(src, dst)
                 print(f"  ✓ Copied {file}")
 
+        # 6b. Copy external model/runtime backends (mask2former / yoloe dist)
+        print("\nCopying external inference backends...")
+        backends_path = _copy_inference_backends(project_root, app_folder)
+
         # 7. Create a README for the installation
         readme_content = """# PyVisionAnnotator - Installation
 
@@ -143,6 +162,7 @@ This folder contains a complete, standalone installation of PyVisionAnnotator.
 - JSON export + COCO/YOLO template export of annotations
 - Image brightness/contrast/gamma adjustments
 - Crosshair cursor for precise alignment
+- Bundled inference backends auto-detected at first run (if packaged in inference_backends/)
 
 ## Folder Structure
 
@@ -171,6 +191,8 @@ For more help, see the feature documentation file.
         print("="*50)
         print(f"\n✓ Installation folder: {installation_dir}")
         print(f"✓ Executable:         {exe_path}")
+        if backends_path is not None:
+            print(f"✓ Backends folder:    {backends_path}")
         print(f"\nTo run the application:")
         print(f"  1. Open: {installation_dir}")
         print(f"  2. Open: PyVisionAnnotator folder")

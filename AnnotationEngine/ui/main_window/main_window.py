@@ -8,17 +8,22 @@ outward signals together, and manages the remaining cross-cutting state
 from __future__ import annotations
 
 import json
+import os
 import shlex
+import shutil
 from typing import Optional
 
-from PyQt6.QtCore import Qt, QTimer
-from PyQt6.QtGui import QKeySequence, QShortcut, QCloseEvent
+from PyQt6.QtCore import Qt, QTimer, QRectF
+from PyQt6.QtGui import QKeySequence, QShortcut, QCloseEvent, QImage, QPainter
 from PyQt6.QtWidgets import (
+    QFileDialog,
     QMainWindow,
-    QWidget,
+    QProgressDialog,
     QSplitter,
     QStatusBar,
-    QProgressDialog,
+    QInputDialog,
+    QMessageBox,
+    QWidget,
 )
 
 from core.annotation.annotation_manager import AnnotationManager
@@ -78,6 +83,7 @@ class MainWindow(QMainWindow):
         self._auth_progress: Optional[QProgressDialog] = None
         self._auth_mode: str = "login"
         self._chat_window: Optional[ChatWindow] = None
+        self._chat_export_root: Optional[str] = None
         self._applying_remote_collab: bool = False
         self._collab_mask_update_timer: Optional[QTimer] = None
         self._pending_mask_update_ids: set[str] = set()
@@ -220,9 +226,153 @@ class MainWindow(QMainWindow):
             self._chat_window = ChatWindow(current_image_path_fn=lambda: self._manager.image_path)
             self._chat_window.collab_snapshot_received.connect(self._on_collab_snapshot_received)
             self._chat_window.collab_event_received.connect(self._on_collab_event_received)
+            self._chat_window.export_requested.connect(self._on_chat_export_requested)
         self._chat_window.show()
         self._chat_window.raise_()
         self._chat_window.activateWindow()
+
+    def _on_chat_export_requested(self, export_type: str) -> None:
+        if not self._manager.image_path:
+            QMessageBox.warning(self, "No image", "Load an image first.")
+            return
+
+        kind = str(export_type or "").strip().lower()
+        if kind in {"json", "coco", "yolo"}:
+            self._export_annotations_from_chat(kind)
+            return
+        if kind == "photo":
+            self._export_annotated_photo_from_chat()
+
+    def _choose_chat_export_dir(self) -> str:
+        if self._chat_export_root and os.path.isdir(self._chat_export_root):
+            return self._chat_export_root
+        start_dir = os.path.dirname(self._manager.image_path) if self._manager.image_path else ""
+        chosen = QFileDialog.getExistingDirectory(self, "Select Export Directory", start_dir)
+        if not chosen:
+            return ""
+        self._chat_export_root = chosen
+        return chosen
+
+    def _export_annotations_from_chat(self, export_type: str) -> None:
+        out_dir = self._choose_chat_export_dir()
+        if not out_dir:
+            return
+        annotations = self._manager.get_all_dicts()
+        try:
+            if export_type == "json":
+                from utils.io_handler import save_dataset_structure
+
+                saved = save_dataset_structure(
+                    output_dir=out_dir,
+                    image_full_path=self._manager.image_path,
+                    width=self._manager.image_width,
+                    height=self._manager.image_height,
+                    annotations=annotations,
+                    format="json",
+                )
+            else:
+                from utils.io_handler import export_template_structure
+
+                saved = export_template_structure(
+                    output_dir=out_dir,
+                    image_full_path=self._manager.image_path,
+                    width=self._manager.image_width,
+                    height=self._manager.image_height,
+                    annotations=annotations,
+                    template=export_type,
+                )
+        except Exception as exc:
+            QMessageBox.critical(self, "Export Error", f"Failed to export {export_type.upper()}:\n{exc}")
+            return
+
+        copied_photo = self._copy_source_photo_for_chat_export(out_dir)
+
+        if not saved:
+            self._status.showMessage(f"No files exported for {export_type.upper()}.")
+            return
+        total_saved = len(saved) + (1 if copied_photo else 0)
+        self._status.showMessage(f"Saved {total_saved} file(s) to {out_dir}")
+
+    def _copy_source_photo_for_chat_export(self, out_dir: str) -> str:
+        src = str(self._manager.image_path or "").strip()
+        if not src:
+            return ""
+        photo_dir = os.path.join(out_dir, "photo")
+        try:
+            os.makedirs(photo_dir, exist_ok=True)
+            dst = os.path.join(photo_dir, os.path.basename(src))
+            shutil.copy2(src, dst)
+            return dst
+        except Exception as exc:
+            QMessageBox.warning(
+                self,
+                "Photo Copy Warning",
+                f"Annotations were exported, but original image copy failed:\n{exc}",
+            )
+            return ""
+
+    def _export_annotated_photo_from_chat(self) -> None:
+        if self._canvas._pixmap_item is None:
+            QMessageBox.warning(self, "No image", "Load an image first.")
+            return
+
+        chosen_opacity, ok = QInputDialog.getInt(
+            self,
+            "Mask Opacity",
+            "Mask opacity for exported photo (0-100):",
+            int(self._manager.settings_mask_opacity),
+            0,
+            100,
+            1,
+        )
+        if not ok:
+            return
+
+        image_name = os.path.splitext(os.path.basename(self._manager.image_path))[0] or "image"
+        start_dir = self._chat_export_root or os.path.dirname(self._manager.image_path)
+        save_path, _ = QFileDialog.getSaveFileName(
+            self,
+            "Save Annotated Photo",
+            os.path.join(start_dir, f"{image_name}_annotated.png"),
+            "PNG (*.png);;JPEG (*.jpg *.jpeg);;BMP (*.bmp)",
+        )
+        if not save_path:
+            return
+
+        source_rect = self._canvas._pixmap_item.sceneBoundingRect()
+        width = max(1, int(round(source_rect.width())))
+        height = max(1, int(round(source_rect.height())))
+
+        image = QImage(width, height, QImage.Format.Format_ARGB32)
+        image.fill(Qt.GlobalColor.transparent)
+
+        previously_selected = list(self._canvas.scene().selectedItems())
+        for item in previously_selected:
+            item.setSelected(False)
+
+        previous_mask_opacity = int(self._manager.settings_mask_opacity)
+        self._manager.set_mask_opacity(chosen_opacity)
+
+        try:
+            painter = QPainter(image)
+            try:
+                self._canvas.scene().render(
+                    painter,
+                    target=QRectF(0.0, 0.0, float(width), float(height)),
+                    source=source_rect,
+                )
+            finally:
+                painter.end()
+        finally:
+            self._manager.set_mask_opacity(previous_mask_opacity)
+            for item in previously_selected:
+                item.setSelected(True)
+
+        if not image.save(save_path):
+            QMessageBox.critical(self, "Save Error", "Failed to save annotated image.")
+            return
+        self._chat_export_root = os.path.dirname(save_path)
+        self._status.showMessage(f"Saved annotated image to {save_path}")
 
     def _on_collab_snapshot_received(self, snapshot: dict) -> None:
         if not isinstance(snapshot, dict):

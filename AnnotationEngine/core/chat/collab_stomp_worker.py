@@ -1,7 +1,7 @@
 """STOMP worker for annotation collaboration events.
 
 Background thread managing STOMP subscriptions to collab topics, deduplicates incoming events,
-routes payloads, sends outbound annotation events. Max send 256KB/frame to avoid proxy timeouts.
+routes payloads, sends outbound annotation events. Max send 2MB/frame to avoid proxy timeouts.
 Key: set_active_session, send_event (queue), _route_message (dedup via eventId), 
 _open_connection (CONNECT+SUBSCRIBE), run (recv loop + reconnect with backoff).
 """
@@ -19,7 +19,7 @@ from PyQt6.QtCore import QThread, pyqtSignal
 from core.chat.collab_protocol import COLLAB_DEST_SEND_EVENT, COLLAB_TOPIC_SESSIONS
 
 
-_MAX_SEND_BODY_BYTES = 256 * 1024
+_MAX_SEND_BODY_BYTES = 2 * 1024 * 1024
 
 
 class CollabStompWorker(QThread):
