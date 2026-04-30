@@ -85,20 +85,19 @@ def build():
         "--paths", str(project_root),
     ]
 
-    # Ensure PyInstaller bundles websocket-client: dynamic imports may be missed.
-    # Add common websocket-client modules as hidden imports so the built exe contains them.
+    # Ensure PyInstaller bundles modules loaded dynamically at runtime.
+    # websocket-client and ollama can be imported indirectly, so add explicit hidden imports.
     hidden = [
         "websocket",
         "websocket._app",
         "websocket._core",
         "websocket._socket",
+        "ollama",
     ]
     for mod in hidden:
         cmd.extend(["--hidden-import", mod])
 
-    # Pre-build sanity check: ensure the environment has websocket-client (not a conflicting
-    # package named 'websocket' with different API). This helps avoid runtime failures in the
-    # packaged app where an incompatible websocket module gets bundled.
+    # Pre-build sanity checks for runtime dependencies that are imported dynamically.
     try:
         import importlib
         ws_mod = importlib.import_module("websocket")
@@ -108,6 +107,16 @@ def build():
             print("Please install 'websocket-client' in the build environment: python -m pip install websocket-client")
     except ModuleNotFoundError:
         print("WARNING: 'websocket-client' not found in build environment. Installing it is recommended.")
+
+    try:
+        import importlib
+        ollama_mod = importlib.import_module("ollama")
+        has_client = hasattr(ollama_mod, "Client")
+        if not has_client:
+            print("WARNING: 'ollama' module found but Client API is missing.")
+            print("Please install/upgrade it in the build environment: python -m pip install -U ollama")
+    except ModuleNotFoundError:
+        print("WARNING: 'ollama' not found in build environment. Install it before build: python -m pip install ollama")
 
     print("\nStarting build process... (this may take a minute)")
     print("Executing:", " ".join(cmd))

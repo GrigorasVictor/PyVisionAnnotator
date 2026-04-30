@@ -27,6 +27,7 @@ from PyQt6.QtWidgets import (
     QLabel,
     QVBoxLayout,
     QDoubleSpinBox,
+    QSizePolicy,
 )
 
 from core.subprocess_handler import SubprocessHandler
@@ -302,6 +303,8 @@ class ToolbarPanel(QToolBar):
     annotations_loaded = pyqtSignal(str, list)     # image_path, annotation dicts
     auth_requested = pyqtSignal()
     chat_requested = pyqtSignal()
+    chatbot_requested = pyqtSignal()
+    export_requested = pyqtSignal(str)
 
     def __init__(
         self,
@@ -320,21 +323,40 @@ class ToolbarPanel(QToolBar):
         self._act_save_json: QAction = self.addAction("💾 Save JSON")
         self._act_export_coco: QAction = self.addAction("🧩 Export COCO Template")
         self._act_export_yolo: QAction = self.addAction("🧩 Export YOLO Template")
+        self._act_export_mask_image: QAction = self.addAction("🖼 Save Mask Image")
         self._act_load_json: QAction = self.addAction("📥 Load JSON")
-        self.addSeparator()
+        self._add_big_separator()
         self._act_auth: QAction = self.addAction("👤 Account")
         self._act_chat: QAction = self.addAction("💬 Chat")
+        self._act_chatbot: QAction = self.addAction("🤖 Chatbot")
+        self._add_big_separator()
+        self._add_flexible_spacer()
         self._act_settings: QAction   = self.addAction("⚙ Settings")
         self._act_help: QAction       = self.addAction("❓ Help")
 
         self._act_save_json.triggered.connect(self._on_save_json)
         self._act_export_coco.triggered.connect(self._on_export_coco_template)
         self._act_export_yolo.triggered.connect(self._on_export_yolo_template)
+        self._act_export_mask_image.triggered.connect(lambda: self.export_requested.emit("mask_photo"))
         self._act_load_json.triggered.connect(self._on_load_json)
         self._act_auth.triggered.connect(self.auth_requested.emit)
         self._act_chat.triggered.connect(self.chat_requested.emit)
+        self._act_chatbot.triggered.connect(self.chatbot_requested.emit)
         self._act_settings.triggered.connect(self._on_settings)
         self._act_help.triggered.connect(self._on_help)
+
+    def _add_big_separator(self, spacer_width: int = 26) -> None:
+        """Add a visual group split with extra horizontal spacing."""
+        self.addSeparator()
+        spacer = QWidget(self)
+        spacer.setFixedWidth(max(0, int(spacer_width)))
+        self.addWidget(spacer)
+
+    def _add_flexible_spacer(self) -> None:
+        """Push following actions to the right side of the toolbar."""
+        spacer = QWidget(self)
+        spacer.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
+        self.addWidget(spacer)
 
     # ------------------------------------------------------------------ #
     #  Public API
@@ -496,7 +518,7 @@ class ToolbarPanel(QToolBar):
                 "• <b>Ctrl+O</b>: Open Image Folder<br>"
                 "• <b>Ctrl+S</b>: Save JSON<br>"
                 "• <b>Delete</b>: Remove selected annotation<br>"
-                "• <b>Toolbar</b>: Export COCO / YOLO templates<br>"
+                "• <b>Toolbar</b>: Export COCO / YOLO templates / Save Mask Image<br>"
                 "<br>"
                 "<b>Mouse Controls:</b><br>"
                 "• <b>Wheel</b>: Zoom In/Out<br>"

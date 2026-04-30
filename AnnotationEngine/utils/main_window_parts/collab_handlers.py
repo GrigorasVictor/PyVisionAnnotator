@@ -6,8 +6,6 @@ on_collab_event_received, emit_collab_annotation, schedule_mask_update_emit, syn
 """
 from __future__ import annotations
 
-import json
-
 from PyQt6.QtCore import QTimer
 
 from ui.chat.chat_window import ChatWindow
@@ -70,12 +68,11 @@ def on_collab_event_received(window, envelope: dict) -> None:
     payload = normalize_collab_annotation_payload(payload)
 
     if window._chat_window and etype.startswith("annotation."):
-        try:
-            payload_json = json.dumps(payload, separators=(",", ":"))
-        except Exception:
-            payload_json = str(payload)
+        ann_id = str(payload.get("id") or "?").strip() or "?"
+        ann_type = str(payload.get("type") or "shape")
+        label = str(payload.get("label") or "unlabeled")
         window._chat_window._append_system(
-            f"[collab] incoming {etype} payloadJson={payload_json}"
+            f"[collab] incoming {etype} id={ann_id} type={ann_type} label='{label}'"
         )
 
     window._applying_remote_collab = True
@@ -171,12 +168,10 @@ def emit_collab_annotation(window, event_type: str, annotation_id: str) -> None:
         )
         return
 
-    try:
-        payload_json = json.dumps(payload, separators=(",", ":"))
-    except Exception:
-        payload_json = str(payload)
+    ann_type = str(payload.get("type") or "shape")
+    label = str(payload.get("label") or "unlabeled")
     window._chat_window._append_system(
-        f"[collab] local emit {event_type} id={ann_id} payloadJson={payload_json}"
+        f"[collab] queued {event_type} id={ann_id} type={ann_type} label='{label}'"
     )
 
     sent = window._chat_window.send_collab_event(event_type, payload)
@@ -233,4 +228,3 @@ def on_collab_annotation_updated(window, annotation_id: str) -> None:
         return
 
     emit_collab_annotation(window, "annotation.update", ann_id)
-

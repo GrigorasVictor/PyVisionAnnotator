@@ -147,11 +147,10 @@ public class CollaborationWsController {
                         incomingForApply.sessionId(),
                         actor);
             } catch (RuntimeException ex) {
-                log.warn("ws.chunk.error chunkId={} sessionId={} actor={} message={}",
+                 log.warn("ws.chunk.error chunkId={} sessionId={} actor={} code=chunk_invalid",
                         chunkMeta.chunkId,
                         event.sessionId(),
-                        actor,
-                        ex.getMessage());
+                        actor);
                 sendChunkError(actor, event.sessionId(), chunkMeta, "chunk_invalid", ex.getMessage());
                 return;
             }
@@ -163,11 +162,10 @@ public class CollaborationWsController {
             applied = collaborationService.applyAnnotationEvent(incomingForApply, actor);
         } catch (RuntimeException ex) {
             if (isChunk) {
-                log.warn("ws.chunk.error chunkId={} sessionId={} actor={} message={}",
+                log.warn("ws.chunk.error chunkId={} sessionId={} actor={} code=chunk_apply_failed",
                         chunkMeta.chunkId,
                         incomingForApply.sessionId(),
-                        actor,
-                        ex.getMessage());
+                        actor);
                 sendChunkError(actor, incomingForApply.sessionId(), chunkMeta, "chunk_apply_failed", ex.getMessage());
                 return;
             }
@@ -278,10 +276,9 @@ public class CollaborationWsController {
                 payload
         );
         messagingTemplate.convertAndSendToUser(actor, "/queue/collab.errors", error);
-        log.warn("ws.error.out actor={} code={} message={}",
+        log.warn("ws.error.out actor={} code={}",
                 actor,
-                payload.get("code"),
-                payload.get("message"));
+                payload.get("code"));
     }
 
     private void emitSessionUpdated(String sessionId, String actor, String reason) {

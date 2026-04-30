@@ -11,12 +11,13 @@ import json
 import os
 import shlex
 import shutil
-from typing import Optional
+from typing import Optional, cast
 
 from PyQt6.QtCore import Qt, QTimer, QRectF
 from PyQt6.QtGui import QKeySequence, QShortcut, QCloseEvent, QImage, QPainter
 from PyQt6.QtWidgets import (
     QFileDialog,
+    QGraphicsItem,
     QMainWindow,
     QProgressDialog,
     QSplitter,
@@ -27,11 +28,13 @@ from PyQt6.QtWidgets import (
 )
 
 from core.annotation.annotation_manager import AnnotationManager
+from core.annotation.mask_item import MaskItem
 from core.workers.auth_worker import AuthWorker
 from core.workers.autoseg_worker import AutoSegWorker as AutoSegYoloWorker
 from core.workers.automask_worker import AutoMaskWorker
 from ui.main_window.canvas import AnnotationCanvas
 from ui.chat.chat_window import ChatWindow
+from ui.chatbot import ChatbotWindow
 from ui.main_window.panels.left_panel import LeftPanel
 from ui.main_window.panels.toolbar_panel import ToolbarPanel
 from ui.main_window.panels.right_panel import RightPanel
@@ -83,6 +86,7 @@ class MainWindow(QMainWindow):
         self._auth_progress: Optional[QProgressDialog] = None
         self._auth_mode: str = "login"
         self._chat_window: Optional[ChatWindow] = None
+        self._chatbot_window: Optional[ChatbotWindow] = None
         self._chat_export_root: Optional[str] = None
         self._applying_remote_collab: bool = False
         self._collab_mask_update_timer: Optional[QTimer] = None
@@ -137,6 +141,8 @@ class MainWindow(QMainWindow):
         self._toolbar.settings_applied.connect(self._on_visual_settings_applied)
         self._toolbar.auth_requested.connect(self._on_auth_requested)
         self._toolbar.chat_requested.connect(self._on_chat_requested)
+        self._toolbar.chatbot_requested.connect(self._on_chatbot_requested)
+        self._toolbar.export_requested.connect(self._on_toolbar_export_requested)
 
         self._right.status_message.connect(self._status.showMessage)
         self._right.tool_changed.connect(self._canvas.set_tool)
@@ -231,6 +237,13 @@ class MainWindow(QMainWindow):
         self._chat_window.raise_()
         self._chat_window.activateWindow()
 
+    def _on_chatbot_requested(self) -> None:
+        if self._chatbot_window is None:
+            self._chatbot_window = ChatbotWindow(self)
+        self._chatbot_window.show()
+        self._chatbot_window.raise_()
+        self._chatbot_window.activateWindow()
+
     def _on_chat_export_requested(self, export_type: str) -> None:
         if not self._manager.image_path:
             QMessageBox.warning(self, "No image", "Load an image first.")
@@ -242,6 +255,75 @@ class MainWindow(QMainWindow):
             return
         if kind == "photo":
             self._export_annotated_photo_from_chat()
+
+    def _on_toolbar_export_requested(self, export_type: str) -> None:
+        kind = str(export_type or "").strip().lower()
+        if kind == "mask_photo":
+            self._export_mask_photo_from_main()
+
+    def _export_mask_photo_from_main(self) -> None:
+        if self._canvas._pixmap_item is None:
+            QMessageBox.warning(self, "No image", "Load an image first.")
+            return
+
+        mask_items = [item for item in self._manager.get_all() if isinstance(item, MaskItem)]
+        if not mask_items:
+            QMessageBox.information(self, "No masks", "There are no mask annotations to export.")
+            return
+
+        image_name = os.path.splitext(os.path.basename(self._manager.image_path))[0] or "image"
+        start_dir = os.path.dirname(self._manager.image_path) if self._manager.image_path else ""
+        save_path, _ = QFileDialog.getSaveFileName(
+            self,
+            "Save Mask Image",
+            os.path.join(start_dir, f"{image_name}_mask.png"),
+            "PNG (*.png)",
+        )
+        if not save_path:
+            return
+
+        source_rect = self._canvas._pixmap_item.sceneBoundingRect()
+        width = max(1, int(round(source_rect.width())))
+        height = max(1, int(round(source_rect.height())))
+
+        image = QImage(width, height, QImage.Format.Format_ARGB32)
+        image.fill(Qt.GlobalColor.transparent)
+
+        previously_selected = list(self._canvas.scene().selectedItems())
+        for item in previously_selected:
+            item.setSelected(False)
+
+        non_mask_items = [item for item in self._manager.get_all() if not isinstance(item, MaskItem)]
+        hidden_before: list[tuple[QGraphicsItem, bool]] = []
+        for item in non_mask_items:
+            gfx_item = cast(QGraphicsItem, item)
+            hidden_before.append((gfx_item, gfx_item.isVisible()))
+            gfx_item.setVisible(False)
+
+        pixmap_visible = self._canvas._pixmap_item.isVisible()
+        self._canvas._pixmap_item.setVisible(False)
+
+        try:
+            painter = QPainter(image)
+            try:
+                self._canvas.scene().render(
+                    painter,
+                    target=QRectF(0.0, 0.0, float(width), float(height)),
+                    source=source_rect,
+                )
+            finally:
+                painter.end()
+        finally:
+            self._canvas._pixmap_item.setVisible(pixmap_visible)
+            for item, was_visible in hidden_before:
+                item.setVisible(bool(was_visible))
+            for item in previously_selected:
+                item.setSelected(True)
+
+        if not image.save(save_path):
+            QMessageBox.critical(self, "Save Error", "Failed to save mask image.")
+            return
+        self._status.showMessage(f"Saved mask image to {save_path}")
 
     def _choose_chat_export_dir(self) -> str:
         if self._chat_export_root and os.path.isdir(self._chat_export_root):

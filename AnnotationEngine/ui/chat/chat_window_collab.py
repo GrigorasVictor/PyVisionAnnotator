@@ -18,7 +18,8 @@ from core.chat.collab_rest import CollabRestClient
 from core.chat.collab_stomp_worker import CollabStompWorker
 
 
-_CHUNK_TRIGGER_BYTES = 24 * 1024
+# Route annotation events to chunked transfer once they exceed 2KB.
+_CHUNK_TRIGGER_BYTES = 2 * 1024
 # Keep chunk data conservative; WS envelope/headers add overhead on top of the chunk payload.
 _CHUNK_SIZE_CHARS = 8 * 1024
 _CHUNK_MAX_RETRIES = 2
@@ -131,10 +132,10 @@ def _maybe_send_chunked(window, envelope: dict[str, Any]) -> bool:
 
     # Chunk only large annotation events; small events stay regular WS sends.
     try:
-        payload_size = len(json.dumps(payload, ensure_ascii=True, separators=(",", ":")).encode("utf-8"))
+        envelope_size = len(json.dumps(envelope, ensure_ascii=True, separators=(",", ":")).encode("utf-8"))
     except Exception:
         return False
-    if payload_size < _CHUNK_TRIGGER_BYTES:
+    if envelope_size < _CHUNK_TRIGGER_BYTES:
         return False
 
     return _send_chunked_event(window, envelope, retry_count=0)

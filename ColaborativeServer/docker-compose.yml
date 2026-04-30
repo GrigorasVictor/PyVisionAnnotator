@@ -59,27 +59,6 @@ services:
       retries: 10
     restart: unless-stopped
 
-  postgres-chat:
-    image: postgres:15
-    container_name: chat-db
-    environment:
-      POSTGRES_DB: chat_db
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    ports:
-      - "5434:5432"
-    volumes:
-      - postgres-chat-data:/var/lib/postgresql/data
-      - ./chat_module/db/init:/docker-entrypoint-initdb.d
-    networks:
-      - server-network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d chat_db"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-    restart: unless-stopped
-
   auth-service:
     container_name: auth-service
     build:
@@ -121,13 +100,6 @@ services:
       - .env
     environment:
       SERVER_PORT: 8084
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-chat:5432/chat_db?currentSchema=customer_db
-      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
-      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
-      SPRING_JPA_HIBERNATE_DDL_AUTO: update
-      SPRING_JPA_SHOW_SQL: "false"
-      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
-      SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_SCHEMA: customer_db
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
       RABBITMQ_USERNAME: ${RABBITMQ_USERNAME}
@@ -135,8 +107,6 @@ services:
     expose:
       - "8084"
     depends_on:
-      postgres-chat:
-        condition: service_healthy
       rabbitmq:
         condition: service_healthy
     networks:
@@ -168,7 +138,6 @@ services:
 
 volumes:
   postgres-auth-data:
-  postgres-chat-data:
   rabbitmq-data:
 
 networks:

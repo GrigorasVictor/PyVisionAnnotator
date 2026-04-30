@@ -114,3 +114,11 @@
   - Fluxul de colaborare este compatibil cu serverul personalizat (Auth + REST + WS/STOMP)
   - Endpoint-urile și URL-urile sunt configurabile din aplicație
 
+## 12. Chatbot Local (Ollama)
+- [x] Buton `Chatbot` în toolbar care deschide o fereastră dedicată
+- [x] Conectare la Ollama prin pachetul Python `ollama`
+- [x] Listare modele disponibile (`Refresh Models`) + selecție model
+- [x] Trimitere/primire mesaje cu istoric de conversație în aceeași sesiune
+- [x] Prompt de sesiune dedicat în `ui/chatbot/prompt.py` (rol de asistent pentru aplicație)
+- [x] Răspunsuri stream-ing token cu token în interfață
+
