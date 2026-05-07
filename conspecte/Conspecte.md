@@ -348,23 +348,23 @@ Platforma este open-source și adaptată pentru date sensibile, cu control al ac
 
 
 
-Lucrarea propune LabelMe, o bază de date și un instrument web pentru adnotarea imaginilor digitale.  
+Lucrarea propune LabelMe, o bază de date și un instrument web pentru adnotarea imaginilor digitale.
 
-Abordează lipsa seturilor de date masive, diversificate și etichetate necesare pentru recunoașterea obiectelor.  
+Abordează lipsa seturilor de date masive, diversificate și etichetate necesare pentru recunoașterea obiectelor.
 
-Contribuția tehnică constă într-o interfață online care permite adnotarea prin poligoane detaliate.  
+Contribuția tehnică constă într-o interfață online care permite adnotarea prin poligoane detaliate.
 
-Sistemul facilitează partajarea datelor între cercetători, asigurând o creștere continuă a volumului de imagini.  
+Sistemul facilitează partajarea datelor între cercetători, asigurând o creștere continuă a volumului de imagini.
 
-Utilizatorii pot adăuga, edita și interoga obiecte în timp real, folosind instrumente de desenare intuitive.  
+Utilizatorii pot adăuga, edita și interoga obiecte în timp real, folosind instrumente de desenare intuitive.
 
-Lucrarea analizează distribuția etichetelor, observând un model heavy-tailed conform legii lui Zipf.  
+Lucrarea analizează distribuția etichetelor, observând un model heavy-tailed conform legii lui Zipf.
 
-Datele colectate includ clase frecvente (ferestre, mașini) și o multitudine de categorii rare.  
+Datele colectate includ clase frecvente (ferestre, mașini) și o multitudine de categorii rare.
 
-Implementarea permite vizualizarea și descărcarea seturilor pentru antrenarea algoritmilor de viziune artificială.  
+Implementarea permite vizualizarea și descărcarea seturilor pentru antrenarea algoritmilor de viziune artificială.
 
-Rezultatele demonstrează eficiența colaborării deschise în construirea unei resurse bogate pentru cercetare.  
+Rezultatele demonstrează eficiența colaborării deschise în construirea unei resurse bogate pentru cercetare.
 
 Concluzia subliniază că LabelMe este un cadru sustenabil pentru scalarea calitativă a adnotării.
 
@@ -374,23 +374,23 @@ Concluzia subliniază că LabelMe este un cadru sustenabil pentru scalarea calit
 
 
 
-Lucrarea propune LabelMe, o bază de date și un instrument web pentru adnotarea imaginilor digitale.  
+Lucrarea propune LabelMe, o bază de date și un instrument web pentru adnotarea imaginilor digitale.
 
-Abordează lipsa seturilor de date masive, diversificate și etichetate necesare pentru recunoașterea obiectelor.  
+Abordează lipsa seturilor de date masive, diversificate și etichetate necesare pentru recunoașterea obiectelor.
 
-Contribuția tehnică constă într-o interfață online care permite adnotarea prin poligoane detaliate.  
+Contribuția tehnică constă într-o interfață online care permite adnotarea prin poligoane detaliate.
 
-Sistemul facilitează partajarea datelor între cercetători, asigurând o creștere continuă a volumului de imagini.  
+Sistemul facilitează partajarea datelor între cercetători, asigurând o creștere continuă a volumului de imagini.
 
-Utilizatorii pot adăuga, edita și interoga obiecte în timp real, folosind instrumente de desenare intuitive.  
+Utilizatorii pot adăuga, edita și interoga obiecte în timp real, folosind instrumente de desenare intuitive.
 
-Lucrarea analizează distribuția etichetelor, observând un model heavy-tailed conform legii lui Zipf.  
+Lucrarea analizează distribuția etichetelor, observând un model heavy-tailed conform legii lui Zipf.
 
-Datele colectate includ clase frecvente (ferestre, mașini) și o multitudine de categorii rare.  
+Datele colectate includ clase frecvente (ferestre, mașini) și o multitudine de categorii rare.
 
-Implementarea permite vizualizarea și descărcarea seturilor pentru antrenarea algoritmilor de viziune artificială.  
+Implementarea permite vizualizarea și descărcarea seturilor pentru antrenarea algoritmilor de viziune artificială.
 
-Rezultatele demonstrează eficiența colaborării deschise în construirea unei resurse bogate pentru cercetare.  
+Rezultatele demonstrează eficiența colaborării deschise în construirea unei resurse bogate pentru cercetare.
 
 Concluzia subliniază că LabelMe este un cadru sustenabil pentru scalarea calitativă a adnotării.
 
@@ -418,5 +418,211 @@ Informațiile de tip overlay includ calcularea automată a ariei și centrului d
 
 Extensibilitatea tool-ului a fost demonstrată prin adaptarea acestuia pentru imagini MRI și spectroscopie de prostată.
 
-Concluzia subliniază eficiența instrumentului în crearea bazei de date MammoDB pentru e-learning și suport decizional. 
+Concluzia subliniază eficiența instrumentului în crearea bazei de date MammoDB pentru e-learning și suport decizional.
+
+
+
+**Markup\_SVGAn\_Online\_Content-Aware\_Image\_Abstraction\_and\_Annotation\_Tool**
+
+
+
+Markup SVG propune un cadru de lucru pentru colectarea și structurarea asistată a datelor de imagine adnotate.
+
+Abordează ineficiența proceselor manuale de segmentare și lipsa unei structuri unificate pentru metadate complexe.
+
+Utilizează un strat de abstracție bazat pe SVG pentru a integra caracteristicile numerice cu etichetele semantice.
+
+Implementează patru clase de module: procesare de bază, semantice, date eterogene și agenți de acțiune.
+
+Include extracție automată de trăsături prin histograme de culoare, filtre Gabor și descriptori de tip SIFT.
+
+Utilizează algoritmi Active Contours și Interactive Graph Cuts pentru segmentarea precisă a regiunilor.
+
+Sugerează etichete folosind o formulare Bayesiană ce corelează trăsăturile regiunii cu contextul imaginii.
+
+Optimizează viteza de procesare prin accelerare NVIDIA GPU (CUDA), facilitând interacțiunea în timp real.
+
+Garantează scalabilitatea prin tehnici de compresie SVG bazate pe ajustări polinomiale pentru seturi de date mari.
+
+Contribuția majoră constă în reducerea efortului de adnotare manuală printr-un sistem interactiv, căutabil și extensibil.
+
+
+
+**Semi-automatic\_image\_annotation\_of\_street\_scenes**
+
+
+
+Lucrarea propune un instrument de adnotare semi-automată pentru scene rutiere folosite în conducerea autonomă.
+
+Problema abordată este timpul mare și efortul necesar pentru etichetarea manuală la nivel de pixel.
+
+Contribuția principală este un cadru care combină superpixeli, CRF dens și corecții manuale.
+
+Se utilizează algoritmul SLIC pentru segmentarea inițială în superpixeli.
+
+Sistemul integrează și informații 3D din LIDAR/stereo pentru localizare mai precisă.
+
+Un clasificator Adaboost decide fuziunea superpixelilor în funcție de clasă.
+
+CRF-ul dens propagă etichetele în mod automat în întreaga imagine.
+
+Utilizatorul poate ajusta parametri în timp real pentru control mai bun.
+
+Rezultatele arată o reducere semnificativă a timpului de adnotare.
+
+În concluzie, contribuția majoră este un sistem semi-automat eficient pentru segmentare semantică.
+
+
+
+**Clara: Semi-Automatic Annotation Algorithm for Medical Image Recognition**
+
+
+
+Lucrarea propune o metodă semi-automată pentru adnotarea imaginilor medicale destinate recunoașterii automate.
+
+Problema abordată este faptul că adnotarea manuală este lentă, costisitoare și necesită personal specializat.
+
+Contribuția principală este integrarea algoritmului Live-Wire pentru creșterea vitezei și preciziei adnotării.
+
+Metoda introduce „loss mask” și „complete mask” pentru eliminarea caracteristicilor irelevante.
+
+Sistemul permite interacțiune om-mașină pentru corectarea rapidă a erorilor de etichetare.
+
+Comparativ cu LabelMe, metoda obține adnotări mai stabile și mai precise.
+
+Rezultatele arată îmbunătățiri ale eficienței de peste 60% și creșteri ale acurateții cu aproximativ 10%.
+
+Datele generate sunt utilizate pentru antrenarea modelelor precum Mask R-CNN și BlendMask.
+
+Metoda este portabilă și poate fi aplicată și în computer vision sau robotică.
+
+În concluzie, contribuția majoră este un sistem semi-automat care îmbunătățește atât viteza, cât și calitatea adnotării medicale.
+
+
+
+**PiPo-Net: A Semi-automatic and Polygon-based Annotation Method for Pathological Images**
+
+
+
+Lucrarea propune PiPo-Net, o metodă semi-automată bazată pe poligoane pentru adnotarea imaginilor patologice.
+
+Abordează problema procesului laborios și consumator de timp al segmentării manuale a metastazelor ganglionare.
+
+Contribuția tehnică principală constă în arhitectura duală ce îmbină sub-rețelele Pi-Net și Po-Net.
+
+Pi-Net execută segmentarea la nivel de pixel folosind o structură optimizată de tip encoder-decoder.
+
+Po-Net utilizează o rețea recurentă pentru a genera secvențial vârfurile poligoanelor de adnotare.
+
+Este introdusă o nouă funcție de pierdere (loss function) pentru a optimiza precizia ambelor sarcini.
+
+Sistemul permite interacțiunea umană pentru rafinarea rezultatelor, asigurând un control calitativ superior.
+
+Rezultatele experimentale demonstrează obținerea unui scor Dice de 91% încă de la prima iterație.
+
+Metoda transformă predicțiile de tip raster în contururi vectoriale strânse, ușor de manipulat de experți.
+
+Contribuția majoră este eficientizarea fluxului de lucru prin reducerea drastică a sarcinii de etichetare manuală.
+
+
+
+**SegBuilder: A Semi-Automatic Annotation Tool for Segmentation**
+
+
+
+Lucrarea propune SegBuilder, un cadru semi-automat bazat pe modelul de fundație Segment Anything (SAM).
+
+Problema vizată este efortul uman masiv și timpul necesar pentru adnotarea pixel-cu-pixel a imaginilor.
+
+Contribuția tehnică majoră constă în integrarea SAM pentru generarea automată a măștilor de segmentare.
+
+Sistemul permite utilizatorilor să eticheteze segmentele generate printr-o listă de selecție rapidă și intuitivă.
+
+Funcționalitatea include procesarea eficientă a scenelor complexe prin interacțiunea minimă a operatorului uman.
+
+Metoda a fost validată prin crearea unui set de date inedit pentru medii subacvatice dificile.
+
+Rezultatele demonstrează o accelerare semnificativă a procesului de etichetare față de metodele tradiționale.
+
+Instrumentul suportă diverse categorii de obiecte, de la animale marine la structuri în medii dificile.
+
+Arhitectura facilitează rafinarea segmentelor, asigurând o precizie ridicată necesară antrenării modelelor profunde.
+
+Concluzia evidențiază succesul utilizării modelelor pre-antrenate în eficientizarea fluxurilor pentru viziune artificială.
+
+
+
+**Semi-automatic image annotation using sparse coding**
+
+
+
+Lucrarea propune o tehnică de adnotare semi-automată bazată pe un mecanism de transfer de etichete (label transfer).
+
+Problema vizată este dificultatea atribuirii automate de cuvinte cheie și necesitatea unei reprezentări eficiente a imaginilor.
+
+Contribuția tehnică majoră constă în utilizarea codificării rare (sparse coding) integrate cu potrivirea piramidală spațială (ScSPM).
+
+Metoda extrage descriptori SIFT denși, care sunt codificați printr-un dicționar învățat pentru a reduce eroarea de reconstrucție.
+
+Funcționalitatea de „spatial pyramid matching” utilizează „max pooling” pentru a păstra informațiile geometrice și contextul spațial.
+
+Sistemul clasifică inițial imaginile în categorii generale folosind un clasificator Linear Support Vector Machine (SVM).
+
+Recomandarea cuvintelor cheie (tag-uri) se realizează prin transferul etichetelor de la imaginile cele mai apropiate din categoria prezisă.
+
+Modelarea prin codificare rară permite obținerea unor reprezentări mai discriminative comparativ cu metodele vectoriale tradiționale.
+
+Rezultatele experimentale pe seturile de date Corel5K și IAPR TC-12 demonstrează o precizie și o reamintire superioare.
+
+Concluzia subliniază eficiența codificării rare în reducerea decalajului semantic pentru organizarea marilor colecții de date vizuale.
+
+
+
+**Semi-Automatic Semantic Annotation of Images**
+
+
+
+Lucrarea propune o metodă semi-automată pentru adnotarea semantică a imaginilor științifice și medicale.
+
+Problema abordată este dificultatea realizării manuale a unor adnotări consistente și precise pentru volume mari de imagini.
+
+Contribuția principală este introducerea unui lanț generic de procesare pentru maparea caracteristicilor low-level către termeni semantici.
+
+Sistemul utilizează rețele neuronale artificiale pentru clasificarea regiunilor segmentate din imagini.
+
+Metoda extrage caracteristici precum formă, arie, culoare și excentricitate ale obiectelor.
+
+Autorii subliniază importanța termenilor intermediari („circular”, „long”, „adjacent”) înainte de clasificarea semantică finală.
+
+Lucrarea introduce și conceptul de mapare multi-etapă între low-level features și semantică de domeniu.
+
+Evaluarea pe imagini micrografice celulare demonstrează fezabilitatea clasificării semi-automate.
+
+Rezultatele arată că relațiile spațiale și descriptorii semantici intermediari cresc acuratețea clasificării.
+
+
+
+**Video Annotation System Using a Voice User Interface**
+
+
+
+Lucrarea propune un sistem de adnotare video semi-automată bazat pe o interfață vocală (VUI).
+
+Vizează reducerea efortului manual în analiza sportivă prin captarea datelor „când, cine, ce”.
+
+Timpul evenimentului este extras automat din cadrul corespunzător începutului rostirii utilizatorului.
+
+Tehnologia include WebRTC VAD pentru detecție și faster-whisper pentru recunoașterea vorbirii.
+
+Sistemul utilizează word embedding chiVe și modele SVM pentru clasificarea informațiilor în etichete.
+
+Metoda oferă flexibilitate și precizie ridicată comparativ cu sistemele tradiționale bazate pe butoane.
+
+Testele pe secvențe de baschet au raportat o rată de eroare a etichetelor (TER) de 9,20%.
+
+Precizia sincronizării temporale a înregistrat un RMSE de 1,36 secunde în cadrul experimentelor.
+
+Aproximativ 98,8% dintre adnotări au avut o deviație temporală sub 3 secunde față de ideal.
+
+Soluția este considerată eficientă pentru diverse sporturi care necesită indexare temporală precisă.
 
