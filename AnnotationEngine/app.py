@@ -4,6 +4,17 @@ PyVisionAnnotator — Entry point.
 Launches the main application window.
 """
 import sys
+
+# ---------------------------------------------------------
+# WORKAROUND FOR LLAMA_CPP CRASH (Access Violation 0x000000)
+# Must import llama_cpp before torch/numpy/pandas so that 
+# llama_cpp can load its native OpenMP/BLAS DLLs first.
+# ---------------------------------------------------------
+try:
+    import llama_cpp
+except ImportError:
+    pass
+
 from pathlib import Path
 
 from PyQt6.QtCore import QSettings
@@ -97,4 +108,3 @@ if __name__ == "__main__":
     window.show()
 
     sys.exit(app.exec())
-

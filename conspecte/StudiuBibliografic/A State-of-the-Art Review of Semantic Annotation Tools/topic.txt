@@ -1,0 +1,25 @@
+A State-of-the-Art Review of Semantic Annotation Tools
+A State-of-the-Art Review of Semantic Annotation Tools is a 2017 technical report from Freie Universität Berlin, authored by André Breitenfeld and Claudia Müller-Birn. It surveys existing tools for semantic annotation—software that links text or other resources to formal vocabularies and knowledge bases—within the broader context of the Semantic Web and digital research infrastructures. 
+
+Key facts
+Authors: André Breitenfeld, Claudia Müller-Birn 
+
+Institution: Freie Universität Berlin, Human-Centered Computing group 
+
+Year: 2017 
+
+Type: Technical report / working paper (Arbeitspapier) 
+
+Focus: Comparative review of semantic annotation tools for research settings 
+
+Background and purpose
+The report appears in the context of growing interest in semantic technologies for managing research data, digital humanities corpora, and collaborative knowledge bases. It aims to give practitioners and researchers an overview of available semantic annotation tools, clarifying which tools suit particular use cases such as web document annotation, collaborative tagging, or structured data generation. 
+
+Scope and methodology
+Breitenfeld and Müller-Birn survey a range of tools that support semantic annotation against controlled vocabularies, ontologies, or linked open data sources. They analyze tools along dimensions such as target users (technical vs. nontechnical), supported data formats, underlying knowledge sources (e.g., RDF stores, SKOS vocabularies), interaction models, and deployment context (browser-based, desktop, or integrated into research infrastructures). 
+
+Main contributions and findings
+The report highlights how tool design strongly affects who can perform semantic annotation: many systems target technically skilled users, while only a subset support nontechnical domain experts through user-friendly interfaces and guided workflows. It also underscores gaps such as limited support for collaboration, provenance tracking, and integration with research data lifecycles. These observations inform later work from the same group on tools and services like semantic annotation platforms and terminology services. 
+
+Role in later research
+Subsequent publications in areas such as web annotation client customization, research data management, and semantic services cite this review as a reference point for tool capabilities and design trade-offs, using it to motivate new systems and product lines that better support data curation and interdisciplinary research workflows.
