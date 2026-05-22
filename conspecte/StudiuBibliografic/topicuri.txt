@@ -1,0 +1,30 @@
+1. State of the art in image annotation tools (desktop vs web).
+2. Collaborative annotation systems and real‑time sync architectures.
+3. Annotation data models: bbox, polygon, mask, keypoints.
+4. File formats and standards: COCO, YOLO, Pascal VOC, CVAT JSON.
+5. Versioning and provenance of annotations.
+6. Quality assurance in annotation: inter‑annotator agreement, audits.
+7. Active learning for annotation efficiency.
+8. Human‑in‑the‑loop workflows for segmentation.
+9. Panoptic segmentation: methods and evaluation.
+10. Instance segmentation: methods and evaluation.
+11. Semantic segmentation: methods and evaluation.
+12. Zero‑shot/open‑vocabulary segmentation.
+13. Promptable segmentation models (point/box/text prompts).
+14. Object detection + segmentation pipelines (hybrid approaches).
+15. Pretrained foundation models for vision tasks.
+16. Transfer learning and fine‑tuning for a LLM.
+17. On‑device/local inference vs cloud inference tradeoffs.
+18. Model compression/optimization for interactive tools.
+19. Real‑time inference constraints in annotation UIs.
+20. UI/UX patterns for efficient annotation (shortcuts, overlays, zoom/pan).
+21. Visual aid techniques (heatmaps, masks, opacity controls).
+22. Error correction tools and post‑editing of masks.
+23. Dataset bias and annotation errors: causes and mitigation.
+24. Security and privacy in collaborative annotation platforms.
+25. Authentication and authorization in multi‑user annotation.
+26. Data storage: structured metadata vs unstructured media.
+27. Event‑driven architectures for collaboration (WebSocket, STOMP, etc.).
+28. Evaluation metrics for segmentation and annotation quality.
+29. Benchmark datasets for segmentation and annotation tools.
+30. Integration of LLM assistants in annotation software.

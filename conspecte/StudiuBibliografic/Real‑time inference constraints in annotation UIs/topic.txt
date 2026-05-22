@@ -1,0 +1,24 @@
+Real-time inference constraints în annotation user interfaces impun optimizarea modelelor AI pentru latență redusă și feedback instantaneu, astfel încât interacțiunea dintre utilizator și sistem să rămână fluentă și eficientă.
+
+ScribbleBox
+ScribbleBox is an interactive annotation framework designed for video object segmentation tasks. It provides a user interface that enables efficient creation and refinement of segmentation masks through scribble-based input, combining human guidance with automated computer vision algorithms. The framework is primarily used in computer vision research to develop and evaluate interactive segmentation models.
+
+Key facts
+Type: Interactive annotation framework
+
+Domain: Video object segmentation
+
+Core method: Scribble-based user input
+
+Goal: Efficient and accurate video segmentation
+
+Applications: Computer vision research, dataset annotation, model evaluation
+
+Design and Functionality
+ScribbleBox enables users to interact with video frames by drawing quick scribbles that indicate foreground and background regions. These annotations guide underlying segmentation algorithms to generate object masks. The iterative feedback process allows refinement, reducing manual labeling effort while maintaining high segmentation quality.
+
+Research and Development Context
+Developed within the context of interactive computer vision research, ScribbleBox supports evaluation of human-in-the-loop segmentation methods. It provides standardized tools and interfaces to measure user effort, algorithmic responsiveness, and segmentation accuracy—helping benchmark models that rely on limited human input for complex video data.
+
+Impact and Use Cases
+The framework is widely adopted in academic research on video object segmentation, particularly for exploring real-time, interactive annotation strategies. It aids in creating high-quality datasets for training and testing segmentation models and contributes to advancements in tasks like video editing, object tracking, and autonomous systems.

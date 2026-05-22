@@ -1,0 +1,53 @@
+Quality Assurance in Annotation: Inter-Annotator Agreement and Audits
+
+Quality assurance (QA) is a critical component of annotation systems because machine learning model performance strongly depends on annotation reliability and consistency. Modern annotation pipelines employ multiple QA mechanisms, including:
+
+inter-annotator agreement (IAA),
+consensus labeling,
+review workflows,
+auditing systems,
+and statistical quality metrics.
+
+These mechanisms are especially important in domains such as:
+
+medical imaging,
+autonomous driving,
+NLP corpora,
+satellite imagery,
+and safety-critical AI systems.
+
+
+“A Study of Biases in Object Detection Datasets” (better known by its published title, “Unbiased Look at Dataset Bias”) is a 2011 CVPR paper by Antonio Torralba and Alexei A. Efros, presented at CVPR. It systematically analyzes how popular object and scene recognition datasets are biased and how these biases affect cross-dataset generalization.
+
+Key facts
+Authors: Antonio Torralba, Alexei A. Efros
+
+Venue & year: CVPR, 2011
+
+Main focus: Dataset bias in object/scene recognition benchmarks
+
+Key idea: Evaluate models via cross-dataset generalization instead of single-dataset accuracy
+
+Influence: Thousands of citations; foundational for dataset bias and domain shift work
+
+Methodology and experiments
+They conduct a comparison study across several popular datasets (e.g., Caltech-101, PASCAL VOC, SUN, LabelMe), training classifiers and detectors on one dataset and testing them both in-domain and cross-dataset.
+
+Key experimental components include:
+
+Dataset classification (“Name That Dataset”): A classifier is trained to predict which dataset an image came from. High accuracy indicates strong dataset-specific signatures.
+
+Cross-dataset generalization tests: Train on dataset A, test on dataset B for the same categories, and compare against in-dataset performance to quantify bias and domain shift.
+
+Closed-world assumption effects: They highlight that using a dataset’s own negative set can give overly optimistic performance relative to a more realistic, open-world negative set.
+
+Types of dataset bias
+While not always formalized with today’s terminology, the paper discusses several recurring bias types:
+
+Selection / content bias: Certain object poses, backgrounds, or contexts are over-represented.
+
+Capture bias: Image source and acquisition process (web queries, photographers’ styles) induce systematic regularities.
+
+Negative set bias: Non-target (“background”) images come from a narrow distribution, making recognition unrealistically easy.
+
+These biases mean that performance numbers on one benchmark may be poor indicators of real-world robustness.

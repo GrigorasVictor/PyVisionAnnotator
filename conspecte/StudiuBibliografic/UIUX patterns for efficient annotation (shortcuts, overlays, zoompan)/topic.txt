@@ -1,0 +1,11 @@
+UI/UX patterns pentru annotation tools urmăresc optimizarea interacțiunii utilizatorului prin shortcut-uri, overlays vizuale și mecanisme eficiente de navigare precum zoom și pan, reducând timpul necesar procesului de adnotare.
+
+LabelMe
+Unul dintre primele annotation tools interactive pentru image segmentation și polygon labeling.
+Introduce pattern-uri importante precum zoom/pan și editarea directă a contururilor.
+CVAT (Computer Vision Annotation Tool)
+Platformă open-source foarte utilizată pentru image și video annotation.
+Include shortcut-uri, overlays, interpolation și navigare rapidă pentru eficiență crescută în labeling workflows.
+Label Studio
+Oferă interfețe configurabile pentru NLP, vision și audio annotation.
+Accent pe UX modular și integrarea AI-assisted annotation.

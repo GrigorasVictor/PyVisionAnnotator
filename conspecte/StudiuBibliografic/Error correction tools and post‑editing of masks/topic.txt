@@ -1,0 +1,27 @@
+Error correction tools și tehnicile de post-editare a măștilor permit rafinarea segmentărilor generate automat prin interacțiuni asistate de utilizator, îmbunătățind acuratețea și eficiența procesului de adnotare.
+
+Deep Extreme Cut
+Deep Extreme Cut: From Extreme Points to Object Segmentation is a 2018 computer vision research paper that introduced a novel method for interactive object segmentation. It demonstrated that specifying just four extreme points (top, bottom, left, right) on an object enables a deep network to produce accurate segmentation masks with minimal human input.
+
+Key facts
+Authors: Kevin Maninis, Sergi Caelles, Jordi Pont-Tuset, Luc Van Gool
+
+Published at: IEEE Conference on Computer Vision and Pattern Recognition
+
+Year: 2018
+
+Framework: Deep Extreme Cut (DEXTR)
+
+Domain: Interactive object segmentation
+
+Method and approach
+Deep Extreme Cut (DEXTR) uses a deep convolutional neural network that takes an image and four user-provided extreme points as input. These points are encoded as additional channels, guiding the network to localize object boundaries precisely. This approach avoids full-pixel annotation while achieving results close to fully supervised methods.
+
+Significance and contributions
+DEXTR showed that extreme-point guidance could significantly reduce annotation time for segmentation datasets—down to seconds per instance. Its efficiency made it influential for downstream tasks such as semi-supervised labeling, dataset bootstrapping, and human-in-the-loop segmentation pipelines.
+
+Results and benchmarks
+The paper reported competitive performance on major benchmarks including PASCAL VOC, COCO, and GrabCut. With only four clicks per object, DEXTR’s segmentation accuracy rivaled that of fully annotated models, highlighting the power of minimal interactive cues in deep learning-based vision tasks.
+
+Impact and legacy
+Deep Extreme Cut influenced subsequent research in interactive and weakly supervised segmentation. Its core idea of using spatially informative, lightweight human input inspired extensions such as point-based refinement networks and region-proposal-free interactive systems. The paper remains a standard reference for interactive deep segmentation frameworks.

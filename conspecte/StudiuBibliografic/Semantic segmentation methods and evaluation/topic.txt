@@ -1,0 +1,49 @@
+Semantic Segmentation: Methods and Evaluation
+
+Semantic segmentation is a dense prediction task in which every pixel in an image is assigned a semantic class label. Unlike instance segmentation, semantic segmentation does not distinguish between separate object instances of the same class.
+
+For example:
+
+all road pixels → “road”
+all car pixels → “car”
+all sky pixels → “sky”
+
+Semantic segmentation is fundamental in:
+
+autonomous driving,
+medical imaging,
+robotics,
+remote sensing,
+scene understanding,
+and augmented reality.
+
+
+
+
+
+
+U-Net: Convolutional Networks for Biomedical Image Segmentation
+U-Net: Convolutional Networks for Biomedical Image Segmentation is a 2015 research paper by Olaf Ronneberger, Philipp Fischer, and Thomas Brox, introduced at MICCAI. The paper proposed U-Net, a convolutional neural network architecture specifically designed for fast and accurate segmentation of biomedical images, even when only limited annotated data are available.
+
+Its symmetric encoder–decoder design and skip connections have made it a foundational model in medical image analysis and a blueprint for modern segmentation networks.
+
+Key facts
+Authors: Olaf Ronneberger, Philipp Fischer, Thomas Brox
+
+Published: 2015 (MICCAI conference)
+
+Architecture type: Encoder–decoder convolutional neural network
+
+Primary domain: Biomedical image segmentation
+
+Citation impact: Among the most-cited papers in medical AI
+
+
+
+U-Net follows a U-shaped topology composed of a contracting path (encoder) and an expansive path (decoder). The encoder captures context through successive convolutions and down-sampling, while the decoder enables precise localization via up-convolutions and concatenation of corresponding feature maps from the encoder. These skip connections preserve spatial information lost during pooling, making the model highly effective for dense pixel-wise prediction.
+
+Training and data efficiency
+The original implementation demonstrated strong performance on biomedical microscopy datasets using aggressive data augmentation (elastic deformations) to overcome limited training data. This made U-Net particularly suitable for medical settings where manual annotation is costly and datasets are small.
+
+Influence and extensions
+Since its release, U-Net has inspired numerous variants—such as 3D U-Net, Attention U-Net, and U-Net++—and has been applied far beyond medicine, including satellite imagery, agriculture, and materials science. Its principles underpin many modern segmentation frameworks and continue to inform architecture design in computer vision research.

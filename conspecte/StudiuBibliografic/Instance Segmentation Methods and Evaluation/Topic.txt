@@ -1,0 +1,46 @@
+Instance segmentation is a computer vision task that combines:
+
+object detection
+and semantic segmentation
+
+Unlike semantic segmentation, which assigns a class label to each pixel, instance segmentation distinguishes between individual object instances belonging to the same class.
+
+For example:
+
+semantic segmentation → all cars labeled as “car”
+instance segmentation → each car receives a separate mask
+
+Instance segmentation is fundamental in:
+
+autonomous driving,
+robotics,
+medical imaging,
+surveillance,
+video understanding,
+and image annotation systems
+
+
+
+Simultaneous Detection and Segmentation
+Simultaneous Detection and Segmentation is a 2014 research paper by Bharath Hariharan, Pablo Arbelaez, Ross Girshick, and Jitendra Malik, presented at European Conference on Computer Vision. The work introduced a unified framework that combines object detection and instance segmentation, forming an early foundation for modern instance-level visual recognition systems.
+
+Key facts
+Authors: Hariharan, Arbelaez, Girshick, Malik
+
+Conference: ECCV 2014
+
+Core idea: Jointly predict object bounding boxes and segmentation masks
+
+Dataset used: PASCAL VOC 2012
+
+Influence: Precursor to methods like Mask R-CNN
+
+
+Context and Motivation
+Prior to this paper, object detection and semantic segmentation were treated as separate tasks. Detection identified object locations via bounding boxes, while segmentation labeled pixels without distinguishing instances. The authors argued for a unified approach capable of localizing and delineating individual object instances, enabling richer scene understanding.
+
+Method and Approach
+The method extends region-based detection frameworks by introducing region features that support simultaneous box- and mask-level classification. It leverages selective search proposals and per-region features derived from convolutional representations. A learned model then outputs both object category scores and binary masks, aligning pixel-accurate segmentation with detection-level localization.
+
+Impact and Legacy
+This work marked a key conceptual step toward instance segmentation. Its ideas directly influenced later region-based architectures, including Fully Convolutional Instance-aware Semantic Segmentation and Mask R-CNN. By framing detection and segmentation as mutually reinforcing tasks, it shaped how computer vision models jointly reason about object presence and precise spatial extent.

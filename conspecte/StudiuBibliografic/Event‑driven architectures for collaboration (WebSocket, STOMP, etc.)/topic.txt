@@ -1,0 +1,27 @@
+Arhitecturile event-driven permit sincronizarea și colaborarea în timp real între utilizatori prin transmiterea asincronă a evenimentelor folosind tehnologii precum WebSocket și STOMP.
+
+STOMP
+The Streaming Text Oriented Messaging Protocol (STOMP) is a simple, interoperable wire format used for asynchronous messaging between clients and message brokers. Designed for text-based communication, it allows systems written in different languages to exchange data over a common messaging interface.
+
+Key facts
+Type: Text-based messaging protocol
+
+Initial release: 2005
+
+Typical transport: TCP
+
+Supported brokers: ActiveMQ, RabbitMQ, Apollo, and others
+
+Specification maintained by: Stomp Community (open standard)
+
+Purpose and design
+STOMP was created to offer a straightforward alternative to complex binary protocols such as Advanced Message Queuing Protocol. It defines a minimal set of frames—CONNECT, SEND, SUBSCRIBE, MESSAGE, ACK, and DISCONNECT—each represented as plain text. The simplicity of STOMP’s frame-based structure makes it easily implemented across languages and platforms, fostering interoperability in distributed systems.
+
+How it works
+A STOMP client establishes a TCP connection to a message broker and communicates using command frames terminated by line breaks. Headers carry metadata such as destination queues, while the body carries the payload. This format is well suited for asynchronous publish–subscribe or point-to-point messaging patterns. STOMP can also operate over WebSocket, enabling integration with web applications.
+
+Use and ecosystem
+STOMP is implemented in numerous client libraries and message brokers, including Apache ActiveMQ and RabbitMQ. It serves as a bridge between heterogeneous systems, allowing applications written in Java, Python, JavaScript, or C++ to exchange messages without protocol-specific coupling. Its human-readable structure aids debugging and rapid development in enterprise and IoT messaging environments.
+
+Evolution and status
+Since its introduction, STOMP has remained stable through minor revisions, with version 1.2 formalized as the latest specification. It continues to see adoption in lightweight messaging scenarios where ease of implementation and compatibility are prioritized over high-performance binary transport.

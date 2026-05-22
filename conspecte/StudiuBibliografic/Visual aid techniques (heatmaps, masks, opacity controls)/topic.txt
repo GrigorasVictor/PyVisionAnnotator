@@ -1,0 +1,27 @@
+Visual aid techniques, precum heatmaps, segmentation masks și controalele de opacitate, sunt utilizate în interfețele AI pentru a îmbunătăți interpretabilitatea modelelor și eficiența procesului de adnotare vizuală.
+
+Grad-CAM
+Gradient-weighted Class Activation Mapping (Grad-CAM) is a computer vision technique introduced in a 2017 research paper by Ramprasaath R. Selvaraju and colleagues. It provides visual explanations for convolutional neural network (CNN) decisions by producing heatmaps that highlight the regions most influential to a model’s prediction. The method helps interpret deep learning models, improving transparency and trust.
+
+Key facts
+Full title: “Grad-CAM: Visual Explanations from Deep Networks via Gradient-based Localization”
+
+Published: 2017 (arXiv, later in ICCV 2017)
+
+Authors: Ramprasaath R. Selvaraju et al.
+
+Primary domain: Explainable artificial intelligence (XAI)
+
+Core output: Class-discriminative localization map
+
+Background
+Grad-CAM extends earlier visualization methods like Class Activation Mapping (CAM) by removing the need for architectural modifications. Instead of retraining a network with a global average pooling layer, Grad-CAM leverages the gradients flowing into any convolutional layer to assign importance weights to feature maps.
+
+Method and Mechanism
+The technique computes the gradients of the target class score with respect to the feature maps of a chosen convolutional layer. These gradients are averaged to obtain weights representing each map’s importance, then combined through a weighted sum followed by a ReLU activation. The resulting heatmap is upsampled to the original image size, visually indicating where the model “looked” when making its decision.
+
+Impact and Applications
+Grad-CAM is widely used in model interpretability, debugging, and fairness analysis. It enables practitioners to identify dataset biases, spurious correlations, and model failure cases. The approach has inspired numerous extensions, including Grad-CAM++, Score-CAM, and LayerCAM, expanding its use beyond vision tasks to natural language and multimodal models.
+
+Reception and Influence
+Since publication, Grad-CAM has become a benchmark in explainable deep learning research and is included in many interpretability toolkits. Its straightforward gradient-based approach makes it a standard reference for visualizing model attention and a foundation for developing more sophisticated explainability techniques.

@@ -1,0 +1,19 @@
+Microsoft COCO: Common Objects in Context
+Microsoft COCO: Common Objects in Context is a 2014 computer vision benchmark dataset and research paper introduced by Tsung-Yi Lin and colleagues at Microsoft Research. Published in the European Conference on Computer Vision (ECCV 2014), it defined a new standard for object detection, segmentation, and captioning by emphasizing everyday scenes containing multiple objects in natural contexts.
+
+Key facts
+Authors: Tsung-Yi Lin et al. (Microsoft Research and collaborators)
+
+Published: 2014 (ECCV)
+
+Images: 330,000+ labeled images
+
+Categories: 80 object classes
+
+Annotations: Instance segmentation, bounding boxes, captions
+
+Dataset Composition
+COCO comprises over 2.5 million labeled instances across 80 object categories grouped into 12 supercategories (e.g., person, vehicle, animal). Each image typically contains multiple annotated objects with precise polygonal masks rather than simple bounding boxes. The dataset also includes five human-generated captions per image, supporting multimodal tasks.
+
+Benchmark and Evaluation
+COCO popularized the “average precision at multiple IoU thresholds” metric, making evaluations more robust to localization accuracy. Its annual COCO Challenge at CVPR has become a major competition for models in detection, segmentation, and captioning, driving advancements in architectures like Faster R-CNN and Mask R-CNN.

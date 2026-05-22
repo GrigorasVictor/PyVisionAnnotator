@@ -1,0 +1,26 @@
+Autentificarea și autorizarea în sistemele multi-user de annotation sunt esențiale pentru gestionarea securizată a accesului utilizatorilor și protejarea dataset-urilor colaborative.
+
+
+Privacy-Preserving Collaborative Learning
+Privacy-Preserving Collaborative Learning is a research paper focused on enabling multiple parties to collaboratively train artificial intelligence models without exposing their private data. The work sits at the intersection of machine learning, cryptography, and data privacy, addressing how secure multi-party computation and differential privacy can protect participants while maintaining model performance. It is notable for advancing techniques that underpin secure and trustworthy collaborative AI systems.
+
+Key facts
+Research area: Secure and privacy-preserving machine learning
+
+Core methods: Federated learning, differential privacy, homomorphic encryption
+
+Goal: Train shared AI models without centralizing sensitive data
+
+Applications: Healthcare, finance, cross-organization AI collaborations
+
+Background and Motivation
+Traditional machine learning relies on centralized data collection, which risks exposure of sensitive information. This paper was motivated by the need to balance data utility and privacy, allowing institutions or devices to jointly improve models without sharing raw data. The authors identify privacy leakage as a barrier to collaboration across sectors that manage confidential information.
+
+Technical Approach
+The paper explores mechanisms that ensure privacy through distributed learning frameworks. Techniques such as secure aggregation, differential privacy noise injection, and homomorphic encryption are applied so that gradients or updates are shared securely. It builds upon federated learning, extending it with stronger cryptographic guarantees to resist inference and reconstruction attacks.
+
+Contributions and Impact
+The work formalizes the concept of collaborative learning with privacy guarantees, presenting theoretical proofs of security and experimental validation on benchmark datasets. Its framework influenced later developments in secure federated learning and privacy-preserving analytics, shaping standards for data governance in AI research and industry collaborations.
+
+Applications and Outlook
+Privacy-preserving collaborative learning has seen adoption in fields requiring strict data protection, such as medical diagnosis, fraud detection, and personalized recommendation systems. The paper’s principles continue to inform the design of secure collaborative AI systems that comply with data regulations like the General Data Protection Regulation and promote ethical AI deployment.

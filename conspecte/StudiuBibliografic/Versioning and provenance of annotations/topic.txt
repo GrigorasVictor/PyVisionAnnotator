@@ -1,0 +1,41 @@
+5. Versioning and Provenance of Annotations
+
+Versioning and provenance mechanisms are critical in modern annotation systems because datasets evolve continuously through correction, refinement, collaboration, and model-assisted labeling. Annotation provenance refers to the ability to track:
+
+who created an annotation,
+when it was modified,
+how it evolved,
+and which model or human generated it.
+
+These mechanisms are essential for:
+
+reproducibility,
+auditability,
+collaborative annotation,
+dataset quality control,
+and machine learning lifecycle management.
+
+
+
+PROV-DM: The PROV Data Model
+PROV-DM: The PROV Data Model is a formal specification published as a World Wide Web Consortium Recommendation in 2013 by Luc Moreau, Paul Groth, and colleagues. It defines a structured data model for representing provenance—information about the origins, context, and derivation of digital entities—on the web. The model underpins the broader W3C PROV family, enabling interoperability and accountability in data exchange.
+
+Key facts
+Authors: Luc Moreau et al.
+
+Publisher: World Wide Web Consortium (W3C)
+
+Publication date: April 30, 2013
+
+Document type: W3C Recommendation
+
+Purpose: Standardized representation of provenance information
+
+Background
+Provenance data describes how entities, activities, and agents influence the production of digital artifacts. Before PROV-DM, such information lacked a common vocabulary or interchange format. The W3C Provenance Working Group developed PROV-DM to unify multiple community efforts, creating a shared, web-compatible conceptual framework for tracking data lineage.4
+
+Core Model
+PROV-DM structures provenance around three primary elements—Entity, Activity, and Agent—and their relationships, such as wasGeneratedBy, wasDerivedFrom, and wasAssociatedWith. This graph-based abstraction allows representation of complex causal chains linking datasets, processes, and responsible parties, forming the semantic foundation for serializations like PROV-XML and PROV-JSON.
+
+Impact and Use
+Since 2013, PROV-DM has become a cornerstone for data provenance in scientific workflows, digital preservation, and open data infrastructures. It influences numerous frameworks, including Open Provenance Model successors and government data portals. By standardizing provenance semantics, it facilitates trust, reproducibility, and traceability across heterogeneous information systems.

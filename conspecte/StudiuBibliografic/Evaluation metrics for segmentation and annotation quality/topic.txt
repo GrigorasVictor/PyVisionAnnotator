@@ -1,0 +1,35 @@
+Evaluation metrics pentru segmentation și annotation quality sunt utilizate pentru măsurarea acurateței, consistenței și calității adnotărilor, folosind indicatori precum IoU, Dice Score și inter-annotator agreement.
+
+
+Inter-Annotator Agreement
+Inter-Annotator Agreement (IAA) is a foundational paper in the field of computational linguistics and data annotation, focusing on quantifying how consistently multiple human annotators label or categorize data. It is central to evaluating the reliability of labeled datasets used in machine learning and linguistic research.
+
+Key Facts
+Domain: Computational linguistics, data annotation
+
+Core topic: Measuring agreement among human annotators
+
+Common metrics: Cohen’s kappa, Fleiss’ kappa, Krippendorff’s alpha
+
+Primary goal: Assess annotation reliability and reduce subjectivity
+
+Concept and Purpose
+IAA measures the extent to which independent annotators assign the same labels to a set of items. High agreement indicates that the annotation scheme is clear and reproducible, while low agreement suggests ambiguity or insufficient training. It serves as a quality control measure before using data for model training or evaluation.
+
+Metrics and Methods
+The paper discusses several statistical measures for agreement correction beyond raw accuracy.
+
+Cohen’s kappa: For two annotators, adjusts for chance agreement.
+
+Fleiss’ kappa: Extends Cohen’s approach to multiple annotators.
+
+Krippendorff’s alpha: Handles various data types and missing values.
+These coefficients provide a standardized way to compare annotation consistency across tasks and domains.
+
+Impact and Applications
+IAA metrics are now standard in natural language processing, computer vision, and medical image analysis. They underpin dataset validation efforts such as those in sentiment analysis, part-of-speech tagging, and named entity recognition, ensuring that observed model performance reflects real learning rather than annotation noise.
+
+Critiques and Developments
+Later research has expanded on limitations noted in the paper, including sensitivity to class imbalance and the interpretation of “chance agreement.” Newer approaches, such as Bayesian models of annotator reliability and task-specific agreement analyses, continue to evolve from the foundations laid by this work.
+
+
