@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.5) (preloaded format=pdflatex 2026.5.22)  23 MAY 2026 14:21
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.5) (preloaded format=pdflatex 2026.5.22)  23 MAY 2026 14:56
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -534,7 +534,7 @@ LaTeX Font Info:    Font shape `T1/aess/b/n' in size <6> not available
 
 
 pdfTeX warning: pdflatex (file ./figs/AntetUTCNRom.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<figs/AntetUTCNRom.pdf, id=67, 2182.1525pt x 353.32pt>
+<figs/AntetUTCNRom.pdf, id=75, 2182.1525pt x 353.32pt>
 File: figs/AntetUTCNRom.pdf Graphic file (type pdf)
 <use figs/AntetUTCNRom.pdf>
 Package pdftex.def Info: figs/AntetUTCNRom.pdf  used on input line 51.
@@ -652,7 +652,7 @@ Capitolul 1.
 pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.20 
+l.24 
       [1
 
 
@@ -705,7 +705,7 @@ LaTeX Font Warning: Font shape `TS1/aer/m/n' undefined
 (Font)              using `TS1/cmr/m/n' instead
 (Font)              for symbol `textbullet' on input line 10.
 
-<figs/test.jpg, id=161, 333.245pt x 220.825pt>
+<figs/test.jpg, id=171, 333.245pt x 220.825pt>
 File: figs/test.jpg Graphic file (type jpg)
 <use figs/test.jpg>
 Package pdftex.def Info: figs/test.jpg  used on input line 58.
@@ -785,20 +785,20 @@ L3 programming layer <2026-03-20>
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
 Package rerunfilecheck Info: File `licenta.out' has not changed.
-(rerunfilecheck)             Checksum: 6FD7199AD569A335CA8B97F7CE54E32A;3340.
+(rerunfilecheck)             Checksum: A6910D559655919EA32C1AFE6315696E;3750.
  ) 
 Here is how much of TeX's memory you used:
- 15294 strings out of 467691
- 247614 string characters out of 5414503
- 783890 words of memory out of 5000000
- 43898 multiletter control sequences out of 15000+600000
+ 15298 strings out of 467691
+ 247662 string characters out of 5414503
+ 785892 words of memory out of 5000000
+ 43900 multiletter control sequences out of 15000+600000
  691854 words of font info for 173 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  75i,17n,79p,892b,472s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\Victor\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1200.pk><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmb10.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr6.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsl12.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsl8.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmssbx10.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti12.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti7.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on licenta.pdf (19 pages, 216182 bytes).
+Output written on licenta.pdf (19 pages, 220354 bytes).
 PDF statistics:
- 269 PDF objects out of 1000 (max. 8388607)
- 52 named destinations out of 1000 (max. 500000)
- 139 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 279 PDF objects out of 1000 (max. 8388607)
+ 54 named destinations out of 1000 (max. 500000)
+ 155 words of extra memory for PDF output out of 10000 (max. 10000000)
 
