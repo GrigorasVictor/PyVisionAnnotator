@@ -1,0 +1,17 @@
+\babel@toc {romanian}{}\relax 
+\contentsline {chapter}{Capitolul{} \numberline {1}Introducere}{1}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Context și motivație}{1}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Domeniul și delimitarea temei}{1}{section.1.2}%
+\contentsline {chapter}{Capitolul{} \numberline {2}Obiectivele proiectului}{3}{chapter.2}%
+\contentsline {chapter}{Capitolul{} \numberline {3}Studiu bibliografic}{4}{chapter.3}%
+\contentsline {chapter}{Capitolul{} \numberline {4}Analiză și fundamentare teoretică}{5}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Nume de secțiune}{5}{section.4.1}%
+\contentsline {subsection}{\numberline {4.1.1}Nume de subsecțiune}{5}{subsection.4.1.1}%
+\contentsline {chapter}{Capitolul{} \numberline {5}Proiectare de detaliu și implementare}{7}{chapter.5}%
+\contentsline {chapter}{Capitolul{} \numberline {6}Testare și validare}{8}{chapter.6}%
+\contentsline {chapter}{Capitolul{} \numberline {7}Manual de instalare și utilizare}{9}{chapter.7}%
+\contentsline {chapter}{Capitolul{} \numberline {8}Concluzii}{10}{chapter.8}%
+\contentsline {chapter}{Bibliografie}{11}{chapter*.2}%
+\contentsline {chapter}{Anexa{} \numberline {A}Secțiuni relevante din cod}{12}{chapter.A}%
+\contentsline {chapter}{Anexa{} \numberline {B}Alte informații relevante (demonstrații etc.)}{13}{chapter.B}%
+\contentsline {chapter}{Anexa{} \numberline {C}Lucrări publicate (dacă există)}{14}{chapter.C}%

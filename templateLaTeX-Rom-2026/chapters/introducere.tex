@@ -1,0 +1,24 @@
+\chapter{Introducere}\label{ch:intro}
+\pagestyle{fancy}
+
+\section{Context și motivație}
+În ultimii ani, aplicațiile de viziune artificială au devenit uzuale în industrie și cercetare, iar calitatea lor depinde direct de seturile de date etichetate. Procesul de adnotare vizuală implică trasarea manuală a obiectelor în imagini, fie prin dreptunghiuri de încadrare, fie prin poligoane sau măști. Pentru seturi mari de date, această muncă este consumatoare de timp și necesită atenție constantă pentru a menține consistența între adnotări. În practică, multe proiecte întârzie sau cresc în cost tocmai din cauza efortului de etichetare.
+
+Motivația lucrării pornește din nevoia de a reduce timpul și efortul necesare adnotării, fără a pierde controlul uman asupra rezultatului final. O abordare semi-automată, în care un model de inteligență artificială propune contururi sau măști, poate accelera semnificativ procesul. Utilizatorul rămâne totuși responsabil de validare și corectare, ceea ce păstrează calitatea datelor. În plus, exportul adnotărilor în formate standard ajută la integrarea rapidă a datelor în fluxuri de antrenare.
+
+Un alt aspect important este colaborarea între mai mulți utilizatori. În proiectele reale, adnotarea se face de obicei în echipă, iar lipsa sincronizării duce la duplicarea muncii și la inconsistențe. Printr-un mecanism de lucru colaborativ, cu actualizări în timp real și gestionarea sesiunilor, echipa poate lucra pe același proiect în mod coordonat. Astfel, se obține un proces mai rapid, mai controlat și mai ușor de urmărit.
+
+\section{Domeniul și delimitarea temei}
+Lucrarea se încadrează în domeniul adnotării vizuale pentru date de tip imagine, cu accent pe segmentare și detecție de obiecte. Sunt vizate adnotări realizate prin dreptunghiuri, poligoane și măști, deoarece acestea acoperă cele mai folosite reprezentări în seturile de date moderne. În acest cadru, utilizatorul poate încărca imagini, poate naviga între ele și poate edita adnotările direct pe canvas.
+
+Domeniul ales include și gestionarea practică a etichetelor. Adnotările sunt asociate cu nume și culori, pot fi selectate, modificate sau șterse, iar aplicația păstrează o listă clară a acestora. Pentru a sprijini precizia, interfața oferă funcții de zoom și pan, precum și ajustări vizuale ale imaginii (luminozitate, contrast, gamma) care nu modifică datele, ci doar modul de afișare.
+
+Aplicația include și funcții de tip quality of life, menite să reducă erorile și timpul pierdut. La închiderea aplicației sau la schimbarea imaginii, utilizatorul este întrebat dacă dorește să salveze modificările, iar fiecare adnotare are un identificator unic care permite editarea și urmărirea clară a elementelor.
+Datele rezultate sunt salvate într-un format intern și pot fi exportate în formate standard, precum COCO (Common Objects in Context) și YOLO (You Only Look Once). Astfel, seturile de date pot fi folosite ușor în fluxuri de antrenare, fără pași suplimentari de conversie. Structura de export este gândită pentru a păstra separarea între tipurile de adnotări și pentru a face reutilizarea cât mai simplă.
+
+Tema este delimitată la un instrument desktop de adnotare, care integrează metode semi-automate prin apelarea unor modele externe. Modelul nu este antrenat în cadrul lucrării, ci este folosit ca suport pentru propunerea contururilor, iar utilizatorul confirmă sau corectează rezultatele. Pentru segmentare asistată este folosit un model de tip Mask2Former, iar pentru detecție și segmentare completă se folosește un model de tip YOLOE. Execuția acestor modele se face asincron, astfel încât interfața să rămână responsivă.
+
+Colaborarea este tratată ca un flux de lucru în timp real, în care utilizatorii lucrează în sesiuni comune și sincronizează adnotările. Aplicația are acces la un server colaborativ securizat cu JWT (JSON Web Token), care oferă autentificare și schimb de evenimente prin servicii REST (Representational State Transfer) și WebSocket. Acest aspect susține lucrul în echipă și reduce riscul de suprapunere a muncii.
+
+Nu sunt urmărite subiecte precum optimizarea arhitecturilor de rețele neuronale, compararea extensivă a modelelor sau dezvoltarea unui serviciu cloud pentru adnotare. Accentul este pe realizarea unui instrument practic, ușor de folosit, care reduce efortul de etichetare și permite colaborarea eficientă între membri ai aceleiași echipe.
+
