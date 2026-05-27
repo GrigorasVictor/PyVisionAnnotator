@@ -28,7 +28,7 @@ Gestionarea adnotărilor se face printr-un manager central, care păstrează toa
 
 Aplicația include facilități de tip quality of life, menite să reducă erorile și timpul pierdut. La închiderea aplicației sau la schimbarea imaginii, utilizatorul este întrebat dacă dorește să salveze modificările. În plus, aplicația include chat în timp real și suport de tip chatbot local pentru asistență.
 
-Componenta de inteligență artificială este integrată prin AutoSeg și AutoMask, care rulează modele externe ca subprocessuri asincrone. Rezultatele sunt transformate în adnotări editabile, iar utilizatorul le poate corecta imediat. Astfel, aplicația combină propunerea automată cu controlul manual, obținând un echilibru între viteză și acuratețe.
+Componenta de inteligență artificială este integrată prin AutoSeg și AutoMask, care rulează modele externe ca subprocese asincrone. Rezultatele sunt transformate în adnotări editabile, iar utilizatorul le poate corecta imediat. Astfel, aplicația combină propunerea automată cu controlul manual, obținând un echilibru între viteză și acuratețe.
 
 Contribuțiile principale constau în integrarea unui flux complet de adnotare cu suport pentru segmentare semi-automată, organizarea clară a interfeței și mecanismele de sincronizare în colaborare. Rezultatul este un instrument practic, adaptat nevoilor de etichetare din proiecte reale.
 
@@ -37,5 +37,5 @@ Backend-ul aplicației este separat pe servicii dedicate pentru autentificare, c
 
 Sincronizarea se bazează pe două tipuri de comunicație. Prin REST, clientul listează sesiunile, obține un snapshot al stării curente și poate încărca sau descărca imagini temporare. Prin WebSocket, clienții primesc evenimente în timp real, precum crearea, actualizarea sau ștergerea adnotărilor. Când o imagine este actualizată într-o sesiune, ceilalți utilizatori primesc un eveniment de tip „image available” și sincronizează automat datele.
 
-Modelul de colaborare este centrat pe sesiuni, fiecare sesiune având o stare curentă și o versiune a adnotărilor. Astfel, modificările sunt propagate rapid, iar utilizatorii văd același conținut fără conflicte majore. Autentificarea prin JWT limitează accesul doar la utilizatorii autorizați, iar token-ul este salvat local pentru a evita relogarea repetată.
+Modelul de colaborare este centrat pe sesiuni, fiecare sesiune având o stare curentă și o versiune a adnotărilor. Astfel, modificările sunt propagate rapid, iar utilizatorii văd același conținut fără conflicte majore. Autentificarea prin JWT (JSON Web Token) limitează accesul doar la utilizatorii autorizați, iar token-ul este salvat local pentru a evita relogarea repetată.
 

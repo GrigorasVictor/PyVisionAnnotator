@@ -421,6 +421,13 @@ OUTPUT chapters\obiective.aux
 INPUT .\chapters\obiective.tex
 INPUT .\chapters\obiective.tex
 INPUT chapters\obiective.tex
+INPUT C:\Users\Victor\AppData\Local\Programs\MiKTeX\fonts\tfm\jknappen\ec\tcrm1200.tfm
+INPUT C:\Users\Victor\AppData\Local\Programs\MiKTeX\fonts\tfm\public\ae\aesl8.tfm
+INPUT C:\Users\Victor\AppData\Local\Programs\MiKTeX\fonts\vf\public\ae\aesl8.vf
+INPUT C:\Users\Victor\AppData\Local\Programs\MiKTeX\fonts\tfm\public\cm\cmmi8.tfm
+INPUT C:\Users\Victor\AppData\Local\Programs\MiKTeX\fonts\tfm\public\cm\cmmi8.tfm
+INPUT C:\Users\Victor\AppData\Local\Programs\MiKTeX\fonts\tfm\public\cm\cmsy8.tfm
+INPUT C:\Users\Victor\AppData\Local\Programs\MiKTeX\fonts\tfm\public\cm\cmti8.tfm
 INPUT .\chapters\studiu_biblio.tex
 INPUT .\chapters\studiu_biblio.tex
 OUTPUT chapters\studiu_biblio.aux
@@ -441,7 +448,6 @@ INPUT C:\Users\Victor\AppData\Local\Programs\MiKTeX\fonts\tfm\public\latex-fonts
 INPUT C:\Users\Victor\AppData\Local\Programs\MiKTeX\fonts\tfm\public\amsfonts\symbols\msam10.tfm
 INPUT C:\Users\Victor\AppData\Local\Programs\MiKTeX\fonts\tfm\public\amsfonts\symbols\msbm10.tfm
 INPUT C:\Users\Victor\AppData\Local\Programs\MiKTeX\fonts\tfm\public\ae\aeb10.tfm
-INPUT C:\Users\Victor\AppData\Local\Programs\MiKTeX\fonts\tfm\jknappen\ec\tcrm1200.tfm
 INPUT .\figs\test.jpg
 INPUT .\figs\test.jpg
 INPUT .\figs\test.jpg
@@ -454,12 +460,6 @@ INPUT C:\Users\Victor\AppData\Local\Programs\MiKTeX\fonts\tfm\public\cm\cmb10.tf
 INPUT C:\Users\Victor\AppData\Local\Programs\MiKTeX\fonts\tfm\public\cm\cmmib10.tfm
 INPUT C:\Users\Victor\AppData\Local\Programs\MiKTeX\fonts\tfm\public\cm\cmmib10.tfm
 INPUT C:\Users\Victor\AppData\Local\Programs\MiKTeX\fonts\tfm\public\cm\cmbsy10.tfm
-INPUT C:\Users\Victor\AppData\Local\Programs\MiKTeX\fonts\tfm\public\ae\aesl8.tfm
-INPUT C:\Users\Victor\AppData\Local\Programs\MiKTeX\fonts\vf\public\ae\aesl8.vf
-INPUT C:\Users\Victor\AppData\Local\Programs\MiKTeX\fonts\tfm\public\cm\cmmi8.tfm
-INPUT C:\Users\Victor\AppData\Local\Programs\MiKTeX\fonts\tfm\public\cm\cmmi8.tfm
-INPUT C:\Users\Victor\AppData\Local\Programs\MiKTeX\fonts\tfm\public\cm\cmsy8.tfm
-INPUT C:\Users\Victor\AppData\Local\Programs\MiKTeX\fonts\tfm\public\cm\cmti8.tfm
 INPUT .\chapters\proiectare_implementare.tex
 INPUT .\chapters\proiectare_implementare.tex
 OUTPUT chapters\proiectare_implementare.aux

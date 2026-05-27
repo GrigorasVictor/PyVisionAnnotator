@@ -5,15 +5,22 @@
 \contentsline {section}{\numberline {1.3}Soluția propusă și contribuții}{2}{section.1.3}%
 \contentsline {section}{\numberline {1.4}Arhitectură colaborativă}{2}{section.1.4}%
 \contentsline {chapter}{Capitolul{} \numberline {2}Obiectivele proiectului}{3}{chapter.2}%
-\contentsline {chapter}{Capitolul{} \numberline {3}Studiu bibliografic}{4}{chapter.3}%
-\contentsline {chapter}{Capitolul{} \numberline {4}Analiză și fundamentare teoretică}{5}{chapter.4}%
-\contentsline {section}{\numberline {4.1}Nume de secțiune}{5}{section.4.1}%
-\contentsline {subsection}{\numberline {4.1.1}Nume de subsecțiune}{5}{subsection.4.1.1}%
-\contentsline {chapter}{Capitolul{} \numberline {5}Proiectare de detaliu și implementare}{7}{chapter.5}%
-\contentsline {chapter}{Capitolul{} \numberline {6}Testare și validare}{8}{chapter.6}%
-\contentsline {chapter}{Capitolul{} \numberline {7}Manual de instalare și utilizare}{9}{chapter.7}%
-\contentsline {chapter}{Capitolul{} \numberline {8}Concluzii}{10}{chapter.8}%
-\contentsline {chapter}{Bibliografie}{11}{chapter*.2}%
-\contentsline {chapter}{Anexa{} \numberline {A}Secțiuni relevante din cod}{12}{chapter.A}%
-\contentsline {chapter}{Anexa{} \numberline {B}Alte informații relevante (demonstrații etc.)}{13}{chapter.B}%
-\contentsline {chapter}{Anexa{} \numberline {C}Lucrări publicate (dacă există)}{14}{chapter.C}%
+\contentsline {section}{\numberline {2.1}Introducere}{3}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Obiectivul general}{3}{section.2.2}%
+\contentsline {section}{\numberline {2.3}Obiective principale}{3}{section.2.3}%
+\contentsline {section}{\numberline {2.4}Obiective secundare}{4}{section.2.4}%
+\contentsline {section}{\numberline {2.5}Cerințe funcționale și non-funcționale}{5}{section.2.5}%
+\contentsline {subsection}{\numberline {2.5.1}Cerințe funcționale}{5}{subsection.2.5.1}%
+\contentsline {subsection}{\numberline {2.5.2}Cerințe non-funcționale}{5}{subsection.2.5.2}%
+\contentsline {chapter}{Capitolul{} \numberline {3}Studiu bibliografic}{6}{chapter.3}%
+\contentsline {chapter}{Capitolul{} \numberline {4}Analiză și fundamentare teoretică}{7}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Nume de secțiune}{7}{section.4.1}%
+\contentsline {subsection}{\numberline {4.1.1}Nume de subsecțiune}{7}{subsection.4.1.1}%
+\contentsline {chapter}{Capitolul{} \numberline {5}Proiectare de detaliu și implementare}{9}{chapter.5}%
+\contentsline {chapter}{Capitolul{} \numberline {6}Testare și validare}{10}{chapter.6}%
+\contentsline {chapter}{Capitolul{} \numberline {7}Manual de instalare și utilizare}{11}{chapter.7}%
+\contentsline {chapter}{Capitolul{} \numberline {8}Concluzii}{12}{chapter.8}%
+\contentsline {chapter}{Bibliografie}{13}{chapter*.2}%
+\contentsline {chapter}{Anexa{} \numberline {A}Secțiuni relevante din cod}{14}{chapter.A}%
+\contentsline {chapter}{Anexa{} \numberline {B}Alte informații relevante (demonstrații etc.)}{15}{chapter.B}%
+\contentsline {chapter}{Anexa{} \numberline {C}Lucrări publicate (dacă există)}{16}{chapter.C}%
