@@ -13,14 +13,14 @@
 \contentsline {subsection}{\numberline {2.5.1}Cerințe funcționale}{5}{subsection.2.5.1}%
 \contentsline {subsection}{\numberline {2.5.2}Cerințe non-funcționale}{5}{subsection.2.5.2}%
 \contentsline {chapter}{Capitolul{} \numberline {3}Studiu bibliografic}{6}{chapter.3}%
-\contentsline {chapter}{Capitolul{} \numberline {4}Analiză și fundamentare teoretică}{7}{chapter.4}%
-\contentsline {section}{\numberline {4.1}Nume de secțiune}{7}{section.4.1}%
-\contentsline {subsection}{\numberline {4.1.1}Nume de subsecțiune}{7}{subsection.4.1.1}%
-\contentsline {chapter}{Capitolul{} \numberline {5}Proiectare de detaliu și implementare}{9}{chapter.5}%
-\contentsline {chapter}{Capitolul{} \numberline {6}Testare și validare}{10}{chapter.6}%
-\contentsline {chapter}{Capitolul{} \numberline {7}Manual de instalare și utilizare}{11}{chapter.7}%
-\contentsline {chapter}{Capitolul{} \numberline {8}Concluzii}{12}{chapter.8}%
-\contentsline {chapter}{Bibliografie}{13}{chapter*.2}%
-\contentsline {chapter}{Anexa{} \numberline {A}Secțiuni relevante din cod}{14}{chapter.A}%
-\contentsline {chapter}{Anexa{} \numberline {B}Alte informații relevante (demonstrații etc.)}{15}{chapter.B}%
-\contentsline {chapter}{Anexa{} \numberline {C}Lucrări publicate (dacă există)}{16}{chapter.C}%
+\contentsline {chapter}{Capitolul{} \numberline {4}Analiză și fundamentare teoretică}{11}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Nume de secțiune}{11}{section.4.1}%
+\contentsline {subsection}{\numberline {4.1.1}Nume de subsecțiune}{11}{subsection.4.1.1}%
+\contentsline {chapter}{Capitolul{} \numberline {5}Proiectare de detaliu și implementare}{13}{chapter.5}%
+\contentsline {chapter}{Capitolul{} \numberline {6}Testare și validare}{14}{chapter.6}%
+\contentsline {chapter}{Capitolul{} \numberline {7}Manual de instalare și utilizare}{15}{chapter.7}%
+\contentsline {chapter}{Capitolul{} \numberline {8}Concluzii}{16}{chapter.8}%
+\contentsline {chapter}{Bibliografie}{17}{chapter*.2}%
+\contentsline {chapter}{Anexa{} \numberline {A}Secțiuni relevante din cod}{19}{chapter.A}%
+\contentsline {chapter}{Anexa{} \numberline {B}Alte informații relevante (demonstrații etc.)}{20}{chapter.B}%
+\contentsline {chapter}{Anexa{} \numberline {C}Lucrări publicate (dacă există)}{21}{chapter.C}%
