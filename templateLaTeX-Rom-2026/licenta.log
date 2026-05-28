@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.5) (preloaded format=pdflatex 2026.5.22)  27 MAY 2026 21:15
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.5) (preloaded format=pdflatex 2026.5.22)  28 MAY 2026 17:29
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -716,31 +716,41 @@ Capitolul 3.
 
 
 ] [7] [8]
-Overfull \hbox (22.1843pt too wide) in paragraph at lines 49--50
+Overfull \hbox (9.00731pt too wide) in paragraph at lines 55--56
+[]\T1/aer/m/n/12 Evolu[]ia pattern-urilor UI/UX arat  tre-ce-rea de la ad-no-ta-rea ma-nu-al  la interac[]iune
+ []
+
+
+Overfull \hbox (1.08286pt too wide) in paragraph at lines 59--60
+[]\T1/aer/m/n/12 Pentru QA []i ma-na-ge-men-tul ero-ri-lor, pattern-urile de tip is-sues/comentarii (CVAT)
+ []
+
+[9]
+Overfull \hbox (22.1843pt too wide) in paragraph at lines 75--76
 []\T1/aer/m/n/12 Lucrarea eviden[]iaz  []i ro-lul prompt en-gi-ne-e-ring: for-mu-l -rile con-tex-tu-ale []i ensembling-
  []
 
-[9]) [10]
+[10] [11]) [12]
 \openout2 = `chapters/analiza_fundamentare.aux'.
 
  (chapters/analiza_fundamentare.tex
 Capitolul 4.
-<figs/test.jpg, id=259, 333.245pt x 220.825pt>
+<figs/test.jpg, id=292, 333.245pt x 220.825pt>
 File: figs/test.jpg Graphic file (type jpg)
 <use figs/test.jpg>
 Package pdftex.def Info: figs/test.jpg  used on input line 58.
 (pdftex.def)             Requested size: 333.24417pt x 220.82445pt.
-) [11
+) [13
 
 
 
 
-] [12 <./figs/test.jpg>]
+] [14 <./figs/test.jpg>]
 \openout2 = `chapters/proiectare_implementare.aux'.
 
  (chapters/proiectare_implementare.tex
 Capitolul 5.
-) [13
+) [15
 
 
 
@@ -750,7 +760,7 @@ Capitolul 5.
 
  (chapters/testare_validare.tex
 Capitolul 6.
-) [14
+) [16
 
 
 
@@ -760,7 +770,7 @@ Capitolul 6.
 
  (chapters/instalare_utilizare.tex
 Capitolul 7.
-) [15
+) [17
 
 
 
@@ -770,30 +780,30 @@ Capitolul 7.
 
  (chapters/concluzii.tex
 Capitolul 8.
-) [16
+) [18
 
 
 
 
-] (licenta.bbl [17
+] (licenta.bbl [19
 
 
 
-]) [18]
+]) [20]
 \openout2 = `backmatter/anexe.aux'.
 
  (backmatter/anexe.tex
 Anexa A.
-[19
+[21
 
 
 ]
 Anexa B.
-[20
+[22
 
 ]
 Anexa C.
-) [21
+) [23
 
 ] (licenta.aux (frontmatter/foi_de_capat.aux) (frontmatter/ghid.aux) (frontmatter/cuprins.aux) (chapters/introducere.aux) (chapters/obiective.aux) (chapters/studiu_biblio.aux) (chapters/analiza_fundamentare.aux) (chapters/proiectare_implementare.aux) (chapters/testare_validare.aux) (chapters/instalare_utilizare.aux) (chapters/concluzii.aux) (backmatter/anexe.aux))
  ***********
@@ -808,17 +818,17 @@ Package rerunfilecheck Info: File `licenta.out' has not changed.
 (rerunfilecheck)             Checksum: 70B08EA6343EB6A544708E4436762B25;4937.
  ) 
 Here is how much of TeX's memory you used:
- 15343 strings out of 467691
- 248971 string characters out of 5414503
- 791676 words of memory out of 5000000
- 43919 multiletter control sequences out of 15000+600000
+ 15361 strings out of 467691
+ 249351 string characters out of 5414503
+ 791015 words of memory out of 5000000
+ 43927 multiletter control sequences out of 15000+600000
  691854 words of font info for 173 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  75i,17n,79p,1292b,601s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\Victor\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1200.pk><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmb10.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr6.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsl12.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsl8.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmssbx10.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti12.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti7.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on licenta.pdf (26 pages, 294495 bytes).
+Output written on licenta.pdf (28 pages, 312121 bytes).
 PDF statistics:
- 397 PDF objects out of 1000 (max. 8388607)
- 80 named destinations out of 1000 (max. 500000)
+ 438 PDF objects out of 1000 (max. 8388607)
+ 90 named destinations out of 1000 (max. 500000)
  211 words of extra memory for PDF output out of 10000 (max. 10000000)
 
