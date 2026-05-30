@@ -40,45 +40,45 @@ Database file #1: licenta.bib
 Warning--empty booktitle in 10.1145/3037697.3037698
 
 Done.
-You've used 25 entries,
+You've used 27 entries,
             4087 wiz_defined-function locations,
-            972 strings with 12873 characters,
-and the built_in function-call counts, 14512 in all, are:
-= -- 1089
-> -- 473
-< -- 37
-+ -- 235
-- -- 107
-* -- 686
-:= -- 2306
-add.period$ -- 51
-call.type$ -- 25
-change.case$ -- 25
-chr.to.int$ -- 69
-cite$ -- 26
-duplicate$ -- 1100
-empty$ -- 1198
-format.name$ -- 127
-if$ -- 3277
+            983 strings with 13233 characters,
+and the built_in function-call counts, 16050 in all, are:
+= -- 1210
+> -- 520
+< -- 49
++ -- 261
+- -- 116
+* -- 761
+:= -- 2532
+add.period$ -- 55
+call.type$ -- 27
+change.case$ -- 27
+chr.to.int$ -- 96
+cite$ -- 28
+duplicate$ -- 1208
+empty$ -- 1312
+format.name$ -- 138
+if$ -- 3634
 int.to.chr$ -- 0
-int.to.str$ -- 25
-missing$ -- 264
-newline$ -- 140
-num.names$ -- 23
-pop$ -- 760
+int.to.str$ -- 27
+missing$ -- 286
+newline$ -- 148
+num.names$ -- 25
+pop$ -- 816
 preamble$ -- 1
 purify$ -- 0
 quote$ -- 2
-skip$ -- 1080
+skip$ -- 1196
 stack$ -- 0
-substring$ -- 221
-swap$ -- 777
-text.length$ -- 14
+substring$ -- 286
+swap$ -- 868
+text.length$ -- 17
 text.prefix$ -- 0
 top$ -- 5
-type$ -- 25
+type$ -- 27
 warning$ -- 1
-while$ -- 35
-width$ -- 27
-write$ -- 281
+while$ -- 40
+width$ -- 29
+write$ -- 302
 (There was 1 warning)

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.5) (preloaded format=pdflatex 2026.5.22)  28 MAY 2026 17:29
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.5) (preloaded format=pdflatex 2026.5.22)  30 MAY 2026 14:33
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -534,7 +534,7 @@ LaTeX Font Info:    Font shape `T1/aess/b/n' in size <6> not available
 
 
 pdfTeX warning: pdflatex (file ./figs/AntetUTCNRom.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<figs/AntetUTCNRom.pdf, id=103, 2182.1525pt x 353.32pt>
+<figs/AntetUTCNRom.pdf, id=139, 2182.1525pt x 353.32pt>
 File: figs/AntetUTCNRom.pdf Graphic file (type pdf)
 <use figs/AntetUTCNRom.pdf>
 Package pdftex.def Info: figs/AntetUTCNRom.pdf  used on input line 51.
@@ -710,47 +710,65 @@ Underfull \hbox (badness 1424) in paragraph at lines 75--76
 
  (chapters/studiu_biblio.tex
 Capitolul 3.
+
+Overfull \hbox (7.34093pt too wide) in paragraph at lines 11--12
+[]\T1/aer/m/n/12 În ra-por-tul teh-nic din 2017 al lui Bre-i-ten-feld []i Muller-Birn se re-a-li-zeaz  o compara[]ie
+ []
+
 [6
 
 
 
 
-] [7] [8]
-Overfull \hbox (9.00731pt too wide) in paragraph at lines 55--56
-[]\T1/aer/m/n/12 Evolu[]ia pattern-urilor UI/UX arat  tre-ce-rea de la ad-no-ta-rea ma-nu-al  la interac[]iune
+] [7]
+Overfull \hbox (16.78426pt too wide) in paragraph at lines 42--43
+[]\T1/aer/m/n/12 Modelele vizual-lingvistice au schim-bat pa-ra-digma ad-no-t -rii prin eli-mi-na-rea necesit []ii
+ []
+
+[8] [9]
+Overfull \hbox (12.19824pt too wide) in paragraph at lines 52--53
+[]\T1/aer/m/n/12 DistilBERT re-duce di-men-siu-nea mo-de-lu-lui BERT cu 40% prin dis-ti-la-rea cuno[]tin[]elor
  []
 
 
-Overfull \hbox (1.08286pt too wide) in paragraph at lines 59--60
-[]\T1/aer/m/n/12 Pentru QA []i ma-na-ge-men-tul ero-ri-lor, pattern-urile de tip is-sues/comentarii (CVAT)
+Overfull \hbox (4.50836pt too wide) in paragraph at lines 57--58
+[]\T1/aer/m/n/12 Adnotarea asis-tat  com-bin  inferen[]a auto-mat  a mo-de-le-lor cu ve-ri-fi-ca-rea []i corec[]ia
  []
 
-[9]
-Overfull \hbox (22.1843pt too wide) in paragraph at lines 75--76
-[]\T1/aer/m/n/12 Lucrarea eviden[]iaz  []i ro-lul prompt en-gi-ne-e-ring: for-mu-l -rile con-tex-tu-ale []i ensembling-
+[10]
+Underfull \vbox (badness 1270) has occurred while \output is active []
+
+ [11]
+Overfull \hbox (1.58865pt too wide) in paragraph at lines 72--73
+\T1/aer/m/n/12 consisten[]a re-zul-ta-te-lor []i ca-pa-ci-ta-tea sis-te-mu-lui de a in-te-gra asisten[]a auto-mat . Evolu[]ia
  []
 
-[10] [11]) [12]
+[12] [13])
+Overfull \hbox (4.96417pt too wide) in paragraph at lines 105--95
+[]\T1/aer/m/n/12 Lucrarea ^^RPrivacy-Preserving Co-l-la-bo-ra-tive Lear-ning" pro-pune o schem  de înv []are
+ []
+
+[14] [15]
 \openout2 = `chapters/analiza_fundamentare.aux'.
 
  (chapters/analiza_fundamentare.tex
 Capitolul 4.
-<figs/test.jpg, id=292, 333.245pt x 220.825pt>
+<figs/test.jpg, id=341, 333.245pt x 220.825pt>
 File: figs/test.jpg Graphic file (type jpg)
 <use figs/test.jpg>
 Package pdftex.def Info: figs/test.jpg  used on input line 58.
 (pdftex.def)             Requested size: 333.24417pt x 220.82445pt.
-) [13
+) [16
 
 
 
 
-] [14 <./figs/test.jpg>]
+] [17 <./figs/test.jpg>]
 \openout2 = `chapters/proiectare_implementare.aux'.
 
  (chapters/proiectare_implementare.tex
 Capitolul 5.
-) [15
+) [18
 
 
 
@@ -760,7 +778,7 @@ Capitolul 5.
 
  (chapters/testare_validare.tex
 Capitolul 6.
-) [16
+) [19
 
 
 
@@ -770,7 +788,7 @@ Capitolul 6.
 
  (chapters/instalare_utilizare.tex
 Capitolul 7.
-) [17
+) [20
 
 
 
@@ -780,30 +798,30 @@ Capitolul 7.
 
  (chapters/concluzii.tex
 Capitolul 8.
-) [18
+) [21
 
 
 
 
-] (licenta.bbl [19
+] (licenta.bbl [22
 
 
 
-]) [20]
+]) [23]
 \openout2 = `backmatter/anexe.aux'.
 
  (backmatter/anexe.tex
 Anexa A.
-[21
+[24
 
 
 ]
 Anexa B.
-[22
+[25
 
 ]
 Anexa C.
-) [23
+) [26
 
 ] (licenta.aux (frontmatter/foi_de_capat.aux) (frontmatter/ghid.aux) (frontmatter/cuprins.aux) (chapters/introducere.aux) (chapters/obiective.aux) (chapters/studiu_biblio.aux) (chapters/analiza_fundamentare.aux) (chapters/proiectare_implementare.aux) (chapters/testare_validare.aux) (chapters/instalare_utilizare.aux) (chapters/concluzii.aux) (backmatter/anexe.aux))
  ***********
@@ -815,20 +833,20 @@ L3 programming layer <2026-03-20>
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
 Package rerunfilecheck Info: File `licenta.out' has not changed.
-(rerunfilecheck)             Checksum: 70B08EA6343EB6A544708E4436762B25;4937.
+(rerunfilecheck)             Checksum: 7EF8914A0861663FE47A315A50C3EB05;6908.
  ) 
 Here is how much of TeX's memory you used:
- 15361 strings out of 467691
- 249351 string characters out of 5414503
- 791015 words of memory out of 5000000
- 43927 multiletter control sequences out of 15000+600000
+ 15386 strings out of 467691
+ 249678 string characters out of 5414503
+ 793102 words of memory out of 5000000
+ 43938 multiletter control sequences out of 15000+600000
  691854 words of font info for 173 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,17n,79p,1292b,601s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,17n,79p,1723b,599s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\Victor\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1200.pk><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmb10.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr6.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsl12.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsl8.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmssbx10.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti12.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti7.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on licenta.pdf (28 pages, 312121 bytes).
+Output written on licenta.pdf (31 pages, 335113 bytes).
 PDF statistics:
- 438 PDF objects out of 1000 (max. 8388607)
- 90 named destinations out of 1000 (max. 500000)
- 211 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 491 PDF objects out of 1000 (max. 8388607)
+ 104 named destinations out of 1000 (max. 500000)
+ 283 words of extra memory for PDF output out of 10000 (max. 10000000)
 
