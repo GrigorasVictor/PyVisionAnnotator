@@ -201,4 +201,23 @@ X.~Wang, H.~Zhang, M.~Yang, X.~Wu, and P.~Cheng, ``Privacy-preserving
   collaborative learning: A scheme providing heterogeneous protection,''
   \emph{IEEE Internet of Things Journal}, vol.~11, no.~2, pp. 1840--1853, 2024.
 
+\bibitem{vaswani2017attentionneed}
+\BIBentryALTinterwordspacing
+A.~Vaswani, N.~Shazeer, N.~Parmar, J.~Uszkoreit, L.~Jones, A.~N. Gomez,
+  L.~Kaiser, and I.~Polosukhin, ``Attention is all you need,'' 2017. [Online].
+  Available: \url{https://arxiv.org/abs/1706.03762}
+\BIBentrySTDinterwordspacing
+
+\bibitem{llamacpp2026}
+\BIBentryALTinterwordspacing
+G.~Gerganov and contributors, ``llama.cpp,'' GitHub repository, 2026. [Online].
+  Available: \url{https://github.com/ggml-org/llama.cpp}
+\BIBentrySTDinterwordspacing
+
+\bibitem{ollama2026}
+\BIBentryALTinterwordspacing
+O.~contributors, ``Ollama,'' Local model runtime and client, 2026. [Online].
+  Available: \url{https://ollama.com/}
+\BIBentrySTDinterwordspacing
+
 \end{thebibliography}

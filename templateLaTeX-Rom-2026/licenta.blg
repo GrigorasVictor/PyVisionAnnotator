@@ -40,45 +40,45 @@ Database file #1: licenta.bib
 Warning--empty booktitle in 10.1145/3037697.3037698
 
 Done.
-You've used 27 entries,
+You've used 30 entries,
             4087 wiz_defined-function locations,
-            983 strings with 13233 characters,
-and the built_in function-call counts, 16050 in all, are:
-= -- 1210
-> -- 520
+            996 strings with 13629 characters,
+and the built_in function-call counts, 17500 in all, are:
+= -- 1321
+> -- 566
 < -- 49
-+ -- 261
-- -- 116
-* -- 761
-:= -- 2532
-add.period$ -- 55
-call.type$ -- 27
-change.case$ -- 27
++ -- 283
+- -- 127
+* -- 825
+:= -- 2784
+add.period$ -- 61
+call.type$ -- 30
+change.case$ -- 30
 chr.to.int$ -- 96
-cite$ -- 28
-duplicate$ -- 1208
-empty$ -- 1312
-format.name$ -- 138
-if$ -- 3634
+cite$ -- 31
+duplicate$ -- 1318
+empty$ -- 1438
+format.name$ -- 151
+if$ -- 3955
 int.to.chr$ -- 0
-int.to.str$ -- 27
-missing$ -- 286
-newline$ -- 148
-num.names$ -- 25
-pop$ -- 816
+int.to.str$ -- 30
+missing$ -- 315
+newline$ -- 163
+num.names$ -- 28
+pop$ -- 904
 preamble$ -- 1
 purify$ -- 0
 quote$ -- 2
-skip$ -- 1196
+skip$ -- 1303
 stack$ -- 0
-substring$ -- 286
-swap$ -- 868
+substring$ -- 289
+swap$ -- 938
 text.length$ -- 17
 text.prefix$ -- 0
 top$ -- 5
-type$ -- 27
+type$ -- 30
 warning$ -- 1
-while$ -- 40
-width$ -- 29
-write$ -- 302
+while$ -- 43
+width$ -- 32
+write$ -- 334
 (There was 1 warning)

@@ -1,32 +1,82 @@
 \appendix
-\chapter{Secțiuni relevante din cod}
+\chapter{Sursele și proveniența figurilor}
+\label{anexa:surse-figuri}
 \pagestyle{fancy}
 
-\begin{verbatim}
- /** Maps are easy to use in Scala. */
-object Maps {
-  val colors = Map("red" -> 0xFF0000,
-                   "turquoise" -> 0x00FFFF,
-                   "black" -> 0x000000,
-                   "orange" -> 0xFF8040,
-                   "brown" -> 0x804000)
-  def main(args: Array[String]) {
-    for (name <- args) println(
-      colors.get(name) match {
-        case Some(code) =>
-          name + " has code: " + code
-        case None =>
-          "Unknown color: " + name
-      }
-    )
-  }
-}
-\end{verbatim}
+Tabelele de mai jos indică sursele și proveniența imaginilor folosite în lucrare.
+Numele figurii este un link intern către figura corespunzătoare din capitolul în care este folosită.
 
-\chapter{Alte informații relevante (demonstrații etc.)}
+\begin{table}[ht]
+    \caption{Sursele figurilor folosite în capitolul de analiză}
+    \centering
+    \footnotesize
+    \begin{tabular}{|p{0.58\textwidth}|p{0.30\textwidth}|}
+        \hline
+        Figură & Link sursă \\
+        \hline
+        \hyperref[fig:yoloe-architecture]{Figura~\ref*{fig:yoloe-architecture} -- Arhitectura YOLOE} &
+        \href{https://docs.ultralytics.com/models/yoloe/#architecture-overview}{Sursă YOLOE} \\
+        \hline
+        \hyperref[fig:mask2former-architecture]{Figura~\ref*{fig:mask2former-architecture} -- Arhitectura Mask2Former} &
+        \href{https://arxiv.org/pdf/2112.01527}{Sursă Mask2Former} \\
+        \hline
+        \hyperref[fig:transformer-decoder-only]{Figura~\ref*{fig:transformer-decoder-only} -- Transformer decoder-only} &
+        \href{https://substack-post-media.s3.amazonaws.com/public/images/f6133c18-bfaf-4578-8c5a-e5ac7809f65b_1632x784.png}{Sursă Transformer} \\
+        \hline
+        \hyperref[fig:jwt-structure]{Figura~\ref*{fig:jwt-structure} -- Structura JWT} &
+        \href{https://monsterlessons-academy.com/posts/jwt-authentication-beginners-guide-with-real-application}{Sursă JWT} \\
+        \hline
+    \end{tabular}
+    \label{tab:surse-figuri-ai}
+\end{table}
 
-{\color{blue}Se va elimina dacă nu există}
-
-\chapter{Lucrări publicate (dacă există)}
-
-{\color{blue}Se va elimina dacă nu există}
+\begin{table}[ht]
+    \caption{Proveniența figurilor folosite în capitolul de proiectare și implementare}
+    \centering
+    \footnotesize
+    \begin{tabular}{|p{0.78\textwidth}|p{0.08\textwidth}|}
+        \hline
+        Figură & Proveniență \\
+        \hline
+        \hyperref[fig:arhitectura-generala-aplicatie]{Figura~\ref*{fig:arhitectura-generala-aplicatie} -- Arhitectura generală a aplicației} &
+        - \\
+        \hline
+        \hyperref[fig:pyvisionannotator-interfata-principala]{Figura~\ref*{fig:pyvisionannotator-interfata-principala} -- Interfața principală a aplicației PyVisionAnnotator} &
+        - \\
+        \hline
+        \hyperref[fig:organizare-mainwindow]{Figura~\ref*{fig:organizare-mainwindow} -- Organizarea internă a ferestrei principale} &
+        - \\
+        \hline
+        \hyperref[fig:setari-autoseg-automask]{Figura~\ref*{fig:setari-autoseg-automask} -- Panoul de setări pentru AutoSeg și AutoMask} &
+        - \\
+        \hline
+        \hyperref[fig:panou-proprietati-adnotari]{Figura~\ref*{fig:panou-proprietati-adnotari} -- Panoul de proprietăți și lista de adnotări} &
+        - \\
+        \hline
+        \hyperref[fig:flux-evenimente-canvas]{Figura~\ref*{fig:flux-evenimente-canvas} -- Fluxul de evenimente în canvas} &
+        - \\
+        \hline
+        \hyperref[fig:clase-principale-adnotari]{Figura~\ref*{fig:clase-principale-adnotari} -- Clasele principale pentru adnotări} &
+        - \\
+        \hline
+        \hyperref[fig:flux-autoseg-yolo-client]{Figura~\ref*{fig:flux-autoseg-yolo-client} -- Fluxul AutoSeg YOLO în client} &
+        - \\
+        \hline
+        \hyperref[fig:flux-automask-punct-client]{Figura~\ref*{fig:flux-automask-punct-client} -- Fluxul AutoMask pe baza unui punct selectat} &
+        - \\
+        \hline
+        \hyperref[fig:fereastra-chat-colaborare]{Figura~\ref*{fig:fereastra-chat-colaborare} -- Fereastra de chat și colaborare} &
+        - \\
+        \hline
+        \hyperref[fig:fereastra-chatbot-local]{Figura~\ref*{fig:fereastra-chatbot-local} -- Fereastra chatbot local cu Ollama sau llama.cpp} &
+        - \\
+        \hline
+        \hyperref[fig:flux-incarcare-protectie-nesalvat]{Figura~\ref*{fig:flux-incarcare-protectie-nesalvat} -- Fluxul de încărcare imagine și protecția modificărilor nesalvate} &
+        - \\
+        \hline
+        \hyperref[fig:flux-operational-colaborare]{Figura~\ref*{fig:flux-operational-colaborare} -- Fluxul operațional al colaborării dintre utilizator, clientul desktop și backend} &
+        - \\
+        \hline
+    \end{tabular}
+    \label{tab:provenienta-figuri-implementare}
+\end{table}
