@@ -18,7 +18,7 @@ Obiectivele principale urmăresc să definească funcționalitățile cheie ale 
 	\item \textbf{Interfață de adnotare completă.} Realizarea unui canvas interactiv cu zoom și pan, care permite desenarea de adnotări de tip bounding box, poligon și mască. Interfața trebuie să susțină navigarea rapidă între imagini și un control vizual clar.
 	\item \textbf{Gestionarea coerentă a adnotărilor.} Păstrarea unei structuri clare pentru etichete și elemente, cu identificatori unici, listare și operații de editare sau ștergere. Această structură reduce erorile și facilitează modificările ulterioare.
 	\item \textbf{Export standardizat al datelor.} Oferirea de export în formatele COCO și YOLO, cu organizare predictibilă a fișierelor. Astfel, dataset-urile pot fi folosite direct în antrenare, fără conversii suplimentare.
-	\item \textbf{Integrare AI semi-automată.} Folosirea AutoSeg și AutoMask pentru a genera propuneri de segmentare care pot fi corectate imediat de utilizator. Scopul este accelerarea procesului fără a compromite calitatea adnotărilor.
+	\item \textbf{Integrare AI (Artificial Intelligence) semi-automată.} Folosirea AutoSeg și AutoMask pentru a genera propuneri de segmentare care pot fi corectate imediat de utilizator. Scopul este accelerarea procesului fără a compromite calitatea adnotărilor.
 	\item \textbf{Modularizarea execuției AI.} Rularea modelelor ca aplicații separate, prin procese dedicate, pentru a izola erorile și a permite actualizări independente. Această abordare crește stabilitatea și flexibilitatea sistemului.
 	\item \textbf{Colaborare în timp real.} Realizarea unui server separat pentru colaborare, cu suport de conectare și sesiuni comune, apoi sincronizare a evenimentelor de tip create, update și delete. Actualizarea imaginii între utilizatori se face prin REST și WebSocket pentru a evita duplicarea muncii.
 	\item \textbf{Comunicare între utilizatori.} Oferirea unei interfețe de chat care permite schimbul de mesaje între utilizatori în timpul sesiunilor de lucru.
@@ -32,7 +32,7 @@ Obiectivele secundare completează funcționalitățile principale prin îmbună
 
 \begin{itemize}
 	\item \textbf{Benchmarking pentru modele alternative.} Analizarea unor modele open-vocabulary (YOLO-World, LLMDet, SAM2) pentru a observa potențialul de generalizare și a justifica alegerea finală.
-	\item \textbf{Validarea suportului local de tip VLM/LLM.} Compararea mai multor modele rulate local (Ollama) pentru a susține componenta de chatbot și a stabili un compromis calitate-viteză. Chatbotul are rolul de a ajuta utilizatorul cu întrebări și de a oferi sugestii pentru remedieri ale erorilor întâlnite.
+	\item \textbf{Validarea suportului local de tip VLM (Vision-Language Model)/LLM (Large Language Model).} Compararea mai multor modele rulate local (Ollama) pentru a susține componenta de chatbot și a stabili un compromis calitate-viteză. Chatbotul are rolul de a ajuta utilizatorul cu întrebări și de a oferi sugestii pentru remedieri ale erorilor întâlnite.
 	\item \textbf{Experiență de utilizare și prevenirea erorilor.} Confirmare la schimbarea imaginii și la închidere pentru a evita pierderea adnotărilor.
 	\item \textbf{Persistența setărilor vizuale.} Salvarea preferințelor (grosime contur, dimensiune font, opacitate mască) între sesiuni.
 	\item \textbf{Îmbunătățirea vizuală a imaginii.} Ajustări de luminozitate, contrast și gamma fără a altera datele originale.
@@ -104,4 +104,3 @@ Portabilitate & Rulare locală pe Windows cu configurare minimă. \\
 \end{tabular}
 \end{center}
 \renewcommand{\arraystretch}{1.0}
-

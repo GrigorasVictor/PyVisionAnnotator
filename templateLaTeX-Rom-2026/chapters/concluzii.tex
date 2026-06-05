@@ -1,13 +1,12 @@
 \chapter{Concluzii}
 \pagestyle{fancy}
 
-{\noindent\color{blue} Între 1 și 2 pagini.\\}
+Lucrarea a urmărit realizarea unui sistem complet pentru adnotarea imaginilor, construit în jurul aplicației desktop PyVisionAnnotator și al unui backend colaborativ separat. Contribuția principală constă în integrarea mai multor direcții într-un singur flux de lucru: adnotare manuală prin bounding box, poligon și mască, export în formate utile pentru dataseturi, integrare cu modele externe de tip AutoSeg și AutoMask, autentificare, chat și colaborare în timp real. Aplicația nu propune un model AI nou, ci oferă un cadru practic în care modele diferite pot fi apelate prin worker-e și procese externe, atât timp cât respectă contractul de intrare și ieșire așteptat de client.
 
-Capitolul ar trebui sa conțină (nu se rezumă neapărat la):
-\begin{itemize}
-	\item un rezumat al contribuțiilor voastre
-	\item analiză critică a rezultatelor obținute
-	\item descriere a posibilelor dezvoltări și îmbunătățiri ulterioare
-\end{itemize}
+Din punct de vedere funcțional, sistemul rezultat permite lucrul local fără dependență de server, dar poate fi extins prin pornirea backend-ului pentru scenarii colaborative. Separarea dintre clientul PyQt, serviciile Spring Boot și procesele AI externe a ajutat la menținerea responsabilităților clare: interfața rămâne orientată spre utilizator, backend-ul gestionează autentificarea și sincronizarea, iar modelele pot fi înlocuite fără modificarea directă a canvasului. În plus, mecanismul de transmitere în pachete pentru payload-uri mari rezolvă una dintre problemele practice ale colaborării pe măști, unde o adnotare poate deveni mult mai mare decât un mesaj WebSocket obișnuit.
 
+Rezultatele trebuie privite și critic. Aplicația validează fluxurile principale și demonstrează integrarea componentelor, însă nu reprezintă încă o platformă matură de producție. Colaborarea este păstrată în memorie, deci sesiunile active se pierd la repornirea serviciului de annotation. Testarea clientului desktop este în mare parte manuală, deoarece interacțiunile de canvas și worker-ele externe sunt mai dificil de acoperit automat. De asemenea, calitatea segmentărilor AutoSeg și AutoMask depinde de modelele configurate, de imaginile folosite și de resursele disponibile pe sistem. Prin urmare, contribuția este mai puternică în zona de integrare și proiectare a fluxului decât în evaluarea experimentală a performanței modelelor AI.
 
+Dezvoltările ulterioare pot merge în mai multe direcții. O primă îmbunătățire ar fi persistarea sesiunilor colaborative într-o bază de date, împreună cu un istoric de versiuni pentru adnotări. O a doua direcție este extinderea testării automate pentru client, în special pentru salvare, export, încărcare și sincronizare. Pe partea AI, aplicația poate primi suport pentru mai multe backend-uri de segmentare sau detecție, benchmark-uri pe dataseturi mai mari și configurare mai flexibilă a modelelor. În final, sistemul poate fi îmbunătățit printr-un mecanism de management al proiectelor și dataseturilor, astfel încât exporturile locale, sesiunile colaborative și rezultatele modelelor să fie urmărite într-un mod mai coerent.
+
+În forma actuală, proiectul demonstrează că un instrument de adnotare desktop poate combina lucrul local cu funcții colaborative și asistență AI fără a bloca utilizatorul într-un singur model sau într-o singură arhitectură de server. Această modularitate reprezintă baza pentru dezvoltări viitoare și pentru adaptarea aplicației la scenarii diferite de construire a dataseturilor.

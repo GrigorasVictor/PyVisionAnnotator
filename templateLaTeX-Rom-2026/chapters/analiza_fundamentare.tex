@@ -190,9 +190,9 @@ Ambele variante susțin aceeași decizie arhitecturală: asistența conversațio
 \label{sec:protocoale-utilizate}
 
 Aplicația folosește protocoale diferite pentru tipuri diferite de comunicare.
-Operațiile punctuale, precum autentificarea sau obținerea stării unei sesiuni, sunt tratate prin HTTP/REST.
+Operațiile punctuale, precum autentificarea sau obținerea stării unei sesiuni, sunt tratate prin HTTP (Hypertext Transfer Protocol)/REST.
 Comunicarea continuă, precum chatul și sincronizarea adnotărilor, folosește WebSocket peste care este aplicat STOMP.
-Evenimentele interne dintre servicii sunt transmise prin RabbitMQ, folosind AMQP.
+Evenimentele interne dintre servicii sunt transmise prin RabbitMQ, folosind AMQP (Advanced Message Queuing Protocol).
 Astfel, fiecare protocol este folosit acolo unde se potrivește natural: cerere-răspuns, timp real sau mesagerie asincronă.
 
 \subsection{HTTP/REST}
@@ -294,7 +294,7 @@ Această decizie păstrează aplicația responsivă chiar și când un model ext
 
 PyTorch este relevant în proiect prin modelele externe de viziune.
 AutoSeg și AutoMask pot rula scripturi sau executabile construite în jurul unor modele de detecție și segmentare.
-Aceste modele folosesc frecvent PyTorch pentru încărcarea greutăților, inferență pe CPU sau GPU și prelucrarea tensorilor.
+Aceste modele folosesc frecvent PyTorch pentru încărcarea greutăților, inferență pe CPU (Central Processing Unit) sau GPU și prelucrarea tensorilor.
 Aplicația desktop nu depinde direct de structura internă a modelului, dar trebuie să îi poată transmite corect imaginea și să interpreteze rezultatul.
 
 Această separare între UI și model are două avantaje.
@@ -316,7 +316,7 @@ Spring Boot este folosit pentru expunerea endpointurilor REST, configurarea WebS
 În serviciul de chat, controllerul STOMP primește cereri de trimitere mesaj, istoric și prezență.
 Această organizare separă clar cererile punctuale de fluxurile în timp real.
 
-Un aspect important este folosirea obiectelor DTO pentru mesajele dintre client și server.
+Un aspect important este folosirea obiectelor DTO (Data Transfer Object) pentru mesajele dintre client și server.
 În loc ca fiecare serviciu să accepte structuri arbitrare, datele sunt împachetate în obiecte cu câmpuri explicite: cereri de creare sesiune, răspunsuri de sesiune, envelope-uri WebSocket, mesaje chat și metadate de imagine.
 Acest model reduce ambiguitatea și permite validarea datelor la intrarea în serviciu.
 
@@ -335,7 +335,7 @@ Postgres este folosit pentru persistența conturilor din serviciul de autentific
 RabbitMQ este folosit pentru evenimentele dintre servicii.
 Serviciul de chat folosește implicit o bază H2 în memorie pentru reprezentarea locală a utilizatorilor și păstrează conversațiile active într-o structură internă.
 Serviciul de adnotare păstrează colaborarea în memorie, inclusiv sesiunile, utilizatorii online, adnotările și imaginile temporare.
-Această alegere este adecvată pentru un MVP, unde scopul este validarea fluxului colaborativ înaintea introducerii unei persistențe complete pentru toate datele.
+Această alegere este adecvată pentru un MVP (Minimum Viable Product), unde scopul este validarea fluxului colaborativ înaintea introducerii unei persistențe complete pentru toate datele.
 
 \section{Modele abstracte}
 \label{sec:modele-abstracte}

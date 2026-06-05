@@ -34,6 +34,7 @@
 \usepackage{geometry}
 \usepackage{lipsum}
 \usepackage{enumitem}
+\usepackage{array}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \setlist{noitemsep,nolistsep}
@@ -103,6 +104,19 @@
 \include{chapters/instalare_utilizare} % \chapter{Manual de Instalare și Utilizare}
 
 \include{chapters/concluzii} % \chapter{Concluzii}
+
+% Citările sunt scrise în fișierele .aux ale capitolelor incluse.
+% Aceste linii păstrează bibliografia reproductibilă când se rulează BibTeX pe lucrarea principală.
+\nocite{Breitenfeld2017,10.1007/s11263-009-0275-4,lin2015microsoftcococommonobjects,5995347}
+\nocite{ronneberger2015unetconvolutionalnetworksbiomedical,hariharan2014simultaneousdetectionsegmentation,kirillov2019panopticsegmentation,cheng2022maskedattentionmasktransformeruniversal}
+\nocite{radford2021learningtransferablevisualmodels,liang2023openvocabularysemanticsegmentationmaskadapted,wang2025yoloerealtimeseeing,liu2023visualinstructiontuning}
+\nocite{sanh2020distilbertdistilledversionbert,settles.tr09,Selvaraju_2019,castrejon2017annotatingobjectinstancespolygonrnn}
+\nocite{maninis2018deepextremecutextreme,chen2020scribbleboxinteractiveannotationframework,5483185,cvat2025}
+\nocite{Sun2020OTCRDT,stomp_spec_1_2,james2026countingconsensusselectingright,Moreau2013PROVDM,postgresql_docs}
+\nocite{10.1145/3037697.3037698,10163938,vaswani2017attentionneed,llamacpp2026,ollama2026}
+\nocite{8746238,8457958,11008399,9593336,9506683,5606101,10579415,11099761}
+\nocite{7167466,10053084,10.1109/HISB.2012.72,6399703,9636146,10943988}
+\nocite{5940230,7995759,6359013,4476645,11274710,ijcai2024p1006}
 
 \bibliographystyle{IEEEtran}
 \bibliography{licenta}%same file name as for .bib

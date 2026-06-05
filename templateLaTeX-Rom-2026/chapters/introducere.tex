@@ -13,7 +13,7 @@ Lucrarea se încadrează în domeniul adnotării vizuale pentru date de tip imag
 
 Domeniul ales include și administrarea etichetelor și a adnotărilor, astfel încât acestea să poată fi organizate și verificate ușor.
 
-Datele rezultate sunt salvate într-un format intern și pot fi exportate în formate standard, precum COCO (Common Objects in Context) și YOLO (You Only Look Once). Astfel, seturile de date pot fi folosite ușor în fluxuri de antrenare, fără pași suplimentari de conversie. Structura de export este gândită pentru a păstra separarea între tipurile de adnotări și pentru a face reutilizarea cât mai simplă.
+Datele rezultate sunt salvate într-un format intern bazat pe JSON (JavaScript Object Notation) și pot fi exportate în formate standard, precum COCO (Common Objects in Context) și YOLO (You Only Look Once). Astfel, seturile de date pot fi folosite ușor în fluxuri de antrenare, fără pași suplimentari de conversie. Structura de export este gândită pentru a păstra separarea între tipurile de adnotări și pentru a face reutilizarea cât mai simplă.
 
 Tema este delimitată la un instrument desktop de adnotare, care integrează metode semi-automate prin apelarea unor modele externe. Modelul nu este antrenat în cadrul lucrării, ci este folosit ca suport pentru propunerea contururilor. Pentru segmentare asistată este folosit un model de tip Mask2Former, iar pentru detecție și segmentare completă se folosește un model de tip YOLOE.
 
@@ -35,7 +35,6 @@ Contribuțiile principale constau în integrarea unui flux complet de adnotare c
 \section{Arhitectură colaborativă}
 Backend-ul aplicației este separat pe servicii dedicate pentru autentificare, chat și colaborare pe adnotări. Un reverse proxy direcționează cererile către serviciul corespunzător, iar mesageria facilitează schimbul de informații între module. Această separare permite dezvoltarea și testarea componentelor în mod independent, păstrând totuși un flux unitar pentru utilizator.
 
-Sincronizarea se bazează pe două tipuri de comunicație. Prin REST, clientul listează sesiunile, obține un snapshot al stării curente și poate încărca sau descărca imagini temporare. Prin WebSocket, clienții primesc evenimente în timp real, precum crearea, actualizarea sau ștergerea adnotărilor. Când o imagine este actualizată într-o sesiune, ceilalți utilizatori primesc un eveniment de tip „image available” și sincronizează automat datele.
+Sincronizarea se bazează pe două tipuri de comunicație. Prin REST (Representational State Transfer), clientul listează sesiunile, obține un snapshot al stării curente și poate încărca sau descărca imagini temporare. Prin WebSocket, clienții primesc evenimente în timp real, precum crearea, actualizarea sau ștergerea adnotărilor. Când o imagine este actualizată într-o sesiune, ceilalți utilizatori primesc un eveniment de tip „image available” și sincronizează automat datele.
 
 Modelul de colaborare este centrat pe sesiuni, fiecare sesiune având o stare curentă și o versiune a adnotărilor. Astfel, modificările sunt propagate rapid, iar utilizatorii văd același conținut fără conflicte majore. Autentificarea prin JWT (JSON Web Token) limitează accesul doar la utilizatorii autorizați, iar token-ul este salvat local pentru a evita relogarea repetată.
-

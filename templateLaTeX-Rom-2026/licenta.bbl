@@ -220,4 +220,165 @@ O.~contributors, ``Ollama,'' Local model runtime and client, 2026. [Online].
   Available: \url{https://ollama.com/}
 \BIBentrySTDinterwordspacing
 
+\bibitem{8746238}
+D.~Hou, Z.~Miao, H.~Xing, and H.~Wu, ``V-rsir: An open access web-based image
+  annotation tool for remote sensing image retrieval,'' \emph{IEEE Access},
+  vol.~7, pp. 83\,852--83\,862, 2019.
+
+\bibitem{9506683}
+T.~Lahtinen, H.~Turtiainen, and A.~Costin, ``Brima: Low-overhead browser-only
+  image annotation tool (preprint),'' in \emph{2021 IEEE International
+  Conference on Image Processing (ICIP)}, 2021, pp. 2633--2637.
+
+\bibitem{11099761}
+M.~N, A.~S, A.~S, and R.~K. N, ``Webannocv: A lightweight opencv-based
+  annotation tool for interactive web applications,'' in \emph{2025
+  International Conference on Emerging Technologies in Engineering Applications
+  (ICETEA)}, 2025, pp. 1--5.
+
+\bibitem{5606101}
+G.~Schaefer and M.~Stuttard, ``Image browsing for efficient image annotation,''
+  in \emph{Proceedings ELMAR-2010}, 2010, pp. 123--125.
+
+\bibitem{9593336}
+E.~Smistad, A.~Østvik, and L.~Løvstakken, ``Annotation web - an open-source
+  web-based annotation tool for ultrasound images,'' in \emph{2021 IEEE
+  International Ultrasonics Symposium (IUS)}, 2021, pp. 1--4.
+
+\bibitem{7167466}
+D.~A. Moreira, C.~Hage, E.~F. Luque, D.~Willrett, and D.~L. Rubin, ``3d markup
+  of radiological images in epad, a web-based image annotation tool,'' in
+  \emph{2015 IEEE 28th International Symposium on Computer-Based Medical
+  Systems}, 2015, pp. 97--102.
+
+\bibitem{10.1109/HISB.2012.72}
+\BIBentryALTinterwordspacing
+B.~E. Chapman, M.~Wong, C.~Farcas, and P.~Reynolds, ``Annio: A web-based tool
+  for annotating medical images with ontologies,'' in \emph{Proceedings of the
+  2012 IEEE Second International Conference on Healthcare Informatics, Imaging
+  and Systems Biology}, ser. HISB '12.\hskip 1em plus 0.5em minus 0.4em\relax
+  USA: IEEE Computer Society, 2012, p. 147. [Online]. Available:
+  \url{https://doi.org/10.1109/HISB.2012.72}
+\BIBentrySTDinterwordspacing
+
+\bibitem{6399703}
+C.~Mata, A.~Oliver, A.~Torrent, and J.~Martí, ``Mammoapplet: An interactive
+  java applet tool for manual annotation in medical imaging,'' in \emph{2012
+  IEEE 12th International Conference on Bioinformatics \& Bioengineering
+  (BIBE)}, 2012, pp. 34--39.
+
+\bibitem{10053084}
+S.~Annadatha, M.~Fridberg, S.~Kold, O.~Rahbek, and M.~Shen, ``A tool for
+  thermal image annotation and automatic temperature extraction around
+  orthopedic pin sites,'' in \emph{2022 IEEE 5th International Conference on
+  Image Processing Applications and Systems (IPAS)}, vol. Five, 2022, pp. 1--5.
+
+\bibitem{11008399}
+M.~Paralič, P.~Kamencay, and R.~Hudec, ``Ai-enhanced annotation tool for
+  aneurysm medical image labeling,'' in \emph{2025 35th International
+  Conference Radioelektronika (RADIOELEKTRONIKA)}, 2025, pp. 1--5.
+
+\bibitem{8457958}
+A.~F. Said, V.~Kashyap, N.~Choudhury, and F.~Akhbari, ``A cost-effective, fast,
+  and robust annotation tool,'' in \emph{2017 IEEE Applied Imagery Pattern
+  Recognition Workshop (AIPR)}, 2017, pp. 1--6.
+
+\bibitem{10579415}
+S.~Prakljačić, R.~Grbić, M.~Vranješ, and M.~Herceg, ``Tool for image
+  annotation in context of modern object detection,'' in \emph{2024 Zooming
+  Innovation in Consumer Technologies Conference (ZINC)}, 2024, pp. 48--53.
+
+\bibitem{10943988}
+M.~A. Reza, E.~Manley, S.~Chen, S.~Chaudhary, and J.~Elafros, ``Segbuilder: A
+  semi-automatic annotation tool for segmentation,'' in \emph{2025 IEEE/CVF
+  Winter Conference on Applications of Computer Vision (WACV)}, 2025, pp.
+  8494--8503.
+
+\bibitem{9636146}
+Y.~Fang, D.~Zhu, N.~Zhou, L.~Liu, and J.~Yao, ``Pipo-net: A semi-automatic and
+  polygon-based annotation method for pathological images,'' in \emph{2021
+  IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)},
+  2021, pp. 2978--2984.
+
+\bibitem{5940230}
+E.~Kim, X.~Huang, and G.~Tan, ``Markup svg—an online content-aware image
+  abstraction and annotation tool,'' \emph{IEEE Transactions on Multimedia},
+  vol.~13, no.~5, pp. 993--1006, 2011.
+
+\bibitem{7995759}
+A.~Petrovai, A.~D. Costea, and S.~Nedevschi, ``Semi-automatic image annotation
+  of street scenes,'' in \emph{2017 IEEE Intelligent Vehicles Symposium (IV)},
+  2017, pp. 448--455.
+
+\bibitem{6359013}
+W.~Zhang, Z.~Qin, and T.~Wan, ``Semi-automatic image annotation using sparse
+  coding,'' in \emph{2012 International Conference on Machine Learning and
+  Cybernetics}, vol.~2, 2012, pp. 720--724.
+
+\bibitem{4476645}
+S.~Little, O.~Salvetti, and P.~Perner, ``Semi-automatic semantic annotation of
+  images,'' in \emph{Seventh IEEE International Conference on Data Mining
+  Workshops (ICDMW 2007)}, 2007, pp. 45--50.
+
+\bibitem{ijcai2024p1006}
+\BIBentryALTinterwordspacing
+P.~Hejabi, A.~K. Padte, P.~Golazizian, R.~Hebbar, J.~Trager, G.~Chochlakis,
+  A.~Kommineni, E.~Graeden, S.~Narayanan, B.~A. Graham, and M.~Dehghani,
+  ``Cvat-bwv: A web-based video annotation platform for police body-worn
+  video,'' in \emph{Proceedings of the Thirty-Third International Joint
+  Conference on Artificial Intelligence, {IJCAI-24}}, K.~Larson, Ed.\hskip 1em
+  plus 0.5em minus 0.4em\relax International Joint Conferences on Artificial
+  Intelligence Organization, 8 2024, pp. 8674--8678, demo Track. [Online].
+  Available: \url{https://doi.org/10.24963/ijcai.2024/1006}
+\BIBentrySTDinterwordspacing
+
+\bibitem{11274710}
+S.~Shinada and S.~Kawamoto, ``Video annotation system using a voice user
+  interface,'' in \emph{2025 IEEE 14th Global Conference on Consumer
+  Electronics (GCCE)}, 2025, pp. 953--954.
+
+\bibitem{roboflow_formats}
+{Roboflow}, ``{Computer Vision Annotation Formats},''
+  \url{https://roboflow.com/formats}, 2026.
+
+\bibitem{roboflow_export_docs}
+------, ``{Export a Dataset Version},''
+  \url{https://docs.roboflow.com/datasets/dataset-versions/exporting-data},
+  2026.
+
+\bibitem{labelbox_export_image_annotations}
+{Labelbox}, ``{Export Image Annotations},''
+  \url{https://docs.labelbox.com/reference/export-image-annotations}, 2026.
+
+\bibitem{encord_annotation_tools_2025}
+{Encord}, ``{18 Best Image Annotation Tools for Computer Vision [Updated
+  2025]},''
+  \url{https://encord.com/blog/9-best-image-annotation-tools-for-computer-vision-of-202311/},
+  2025.
+
+\bibitem{encord_export_labels_docs}
+------, ``{How To Export Labels},''
+  \url{https://docs.encord.com/platform-documentation/Annotate/annotate-export/annotate-how-to-export-labels},
+  2026.
+
+\bibitem{coco_annotator_github}
+J.~Brooks, ``{COCO Annotator},''
+  \url{https://github.com/jsbroks/coco-annotator}, 2019.
+
+\bibitem{coco_annotator_usage}
+------, ``{COCO Annotator Usage Wiki},''
+  \url{https://github-wiki-see.page/m/jsbroks/coco-annotator/wiki/Usage}, 2019.
+
+\bibitem{cvat_formats_docs}
+{CVAT.ai Corporation}, ``{Dataset Formats},''
+  \url{https://docs.cvat.ai/docs/dataset_management/formats/}, 2026.
+
+\bibitem{v7_export_docs}
+{V7 Labs}, ``{Create an Export Version},''
+  \url{https://docs.v7labs.com/docs/create-an-export-version}, 2026.
+
+\bibitem{labelstudio_export_docs}
+{HumanSignal}, ``{Label Studio Documentation -- Export Annotations},''
+  \url{https://labelstud.io/guide/export.html}, 2026.
+
 \end{thebibliography}

@@ -3,8 +3,6 @@
 \label{anexa:surse-figuri}
 \pagestyle{fancy}
 
-Tabelele de mai jos indică sursele și proveniența imaginilor folosite în lucrare.
-Numele figurii este un link intern către figura corespunzătoare din capitolul în care este folosită.
 
 \begin{table}[ht]
     \caption{Sursele figurilor folosite în capitolul de analiză}
@@ -31,52 +29,91 @@ Numele figurii este un link intern către figura corespunzătoare din capitolul 
 \end{table}
 
 \begin{table}[ht]
-    \caption{Proveniența figurilor folosite în capitolul de proiectare și implementare}
+    \caption{Indexul figurilor folosite în capitolul de proiectare și implementare}
     \centering
     \footnotesize
-    \begin{tabular}{|p{0.78\textwidth}|p{0.08\textwidth}|}
+    \begin{tabular}{|p{0.78\textwidth}|p{0.12\textwidth}|}
         \hline
-        Figură & Proveniență \\
+        Figură & Pagina \\
         \hline
         \hyperref[fig:arhitectura-generala-aplicatie]{Figura~\ref*{fig:arhitectura-generala-aplicatie} -- Arhitectura generală a aplicației} &
-        - \\
+        \pageref{fig:arhitectura-generala-aplicatie} \\
         \hline
         \hyperref[fig:pyvisionannotator-interfata-principala]{Figura~\ref*{fig:pyvisionannotator-interfata-principala} -- Interfața principală a aplicației PyVisionAnnotator} &
-        - \\
+        \pageref{fig:pyvisionannotator-interfata-principala} \\
         \hline
         \hyperref[fig:organizare-mainwindow]{Figura~\ref*{fig:organizare-mainwindow} -- Organizarea internă a ferestrei principale} &
-        - \\
+        \pageref{fig:organizare-mainwindow} \\
         \hline
         \hyperref[fig:setari-autoseg-automask]{Figura~\ref*{fig:setari-autoseg-automask} -- Panoul de setări pentru AutoSeg și AutoMask} &
-        - \\
+        \pageref{fig:setari-autoseg-automask} \\
         \hline
         \hyperref[fig:panou-proprietati-adnotari]{Figura~\ref*{fig:panou-proprietati-adnotari} -- Panoul de proprietăți și lista de adnotări} &
-        - \\
+        \pageref{fig:panou-proprietati-adnotari} \\
         \hline
         \hyperref[fig:flux-evenimente-canvas]{Figura~\ref*{fig:flux-evenimente-canvas} -- Fluxul de evenimente în canvas} &
-        - \\
+        \pageref{fig:flux-evenimente-canvas} \\
         \hline
         \hyperref[fig:clase-principale-adnotari]{Figura~\ref*{fig:clase-principale-adnotari} -- Clasele principale pentru adnotări} &
-        - \\
+        \pageref{fig:clase-principale-adnotari} \\
         \hline
         \hyperref[fig:flux-autoseg-yolo-client]{Figura~\ref*{fig:flux-autoseg-yolo-client} -- Fluxul AutoSeg YOLO în client} &
-        - \\
+        \pageref{fig:flux-autoseg-yolo-client} \\
         \hline
         \hyperref[fig:flux-automask-punct-client]{Figura~\ref*{fig:flux-automask-punct-client} -- Fluxul AutoMask pe baza unui punct selectat} &
-        - \\
+        \pageref{fig:flux-automask-punct-client} \\
         \hline
         \hyperref[fig:fereastra-chat-colaborare]{Figura~\ref*{fig:fereastra-chat-colaborare} -- Fereastra de chat și colaborare} &
-        - \\
+        \pageref{fig:fereastra-chat-colaborare} \\
         \hline
         \hyperref[fig:fereastra-chatbot-local]{Figura~\ref*{fig:fereastra-chatbot-local} -- Fereastra chatbot local cu Ollama sau llama.cpp} &
-        - \\
+        \pageref{fig:fereastra-chatbot-local} \\
         \hline
         \hyperref[fig:flux-incarcare-protectie-nesalvat]{Figura~\ref*{fig:flux-incarcare-protectie-nesalvat} -- Fluxul de încărcare imagine și protecția modificărilor nesalvate} &
-        - \\
+        \pageref{fig:flux-incarcare-protectie-nesalvat} \\
         \hline
         \hyperref[fig:flux-operational-colaborare]{Figura~\ref*{fig:flux-operational-colaborare} -- Fluxul operațional al colaborării dintre utilizator, clientul desktop și backend} &
-        - \\
+        \pageref{fig:flux-operational-colaborare} \\
         \hline
     \end{tabular}
     \label{tab:provenienta-figuri-implementare}
+\end{table}
+
+\chapter{Indexul tabelelor}
+\label{anexa:index-tabele}
+
+\begin{table}[ht]
+    \caption{Indexul tabelelor din lucrare}
+    \centering
+    \footnotesize
+    \begin{tabular}{|p{0.78\textwidth}|p{0.12\textwidth}|}
+        \hline
+        Tabel & Pagina \\
+        \hline
+        \hyperref[tab:componente-backend-docker]{Tabelul~\ref*{tab:componente-backend-docker} -- Componentele backend pornite prin Docker Compose} &
+        \pageref{tab:componente-backend-docker} \\
+        \hline
+        \hyperref[tab:persistenta-date-backend]{Tabelul~\ref*{tab:persistenta-date-backend} -- Persistența datelor pe componente} &
+        \pageref{tab:persistenta-date-backend} \\
+        \hline
+        \hyperref[tab:mediu-testare]{Tabelul~\ref*{tab:mediu-testare} -- Componentele principale din mediul de testare} &
+        \pageref{tab:mediu-testare} \\
+        \hline
+        \hyperref[tab:scenarii-client]{Tabelul~\ref*{tab:scenarii-client} -- Scenarii de validare pentru clientul desktop} &
+        \pageref{tab:scenarii-client} \\
+        \hline
+        \hyperref[tab:comparare-tooluri-adnotare]{Tabelul~\ref*{tab:comparare-tooluri-adnotare} -- Compararea instrumentelor de adnotare analizate} &
+        \pageref{tab:comparare-tooluri-adnotare} \\
+        \hline
+        \hyperref[tab:cerinte-hardware]{Tabelul~\ref*{tab:cerinte-hardware} -- Cerințe hardware minime și recomandate} &
+        \pageref{tab:cerinte-hardware} \\
+        \hline
+        \hyperref[tab:cerinte-software]{Tabelul~\ref*{tab:cerinte-software} -- Cerințe software pe scenarii de rulare} &
+        \pageref{tab:cerinte-software} \\
+        \hline
+        \hyperref[tab:comenzi-instalare]{Tabelul~\ref*{tab:comenzi-instalare} -- Comenzi de instalare, build și pornire} &
+        \pageref{tab:comenzi-instalare} \\
+        \hline
+    \end{tabular}
+    \label{tab:index-tabele}
 \end{table}

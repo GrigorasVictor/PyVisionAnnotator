@@ -1,5 +1,168 @@
 \chapter{Testare și validare}
 \pagestyle{fancy}
 
-{\color{blue}Împreună cu cele două capitole \textbf{precedente}  trebuie să reprezinte aproximativ 70\% din total.\\}
+Capitolul prezintă modul în care a fost validată aplicația, pornind de la fluxurile folosite direct de utilizator și continuând cu serviciile backend care susțin autentificarea, chatul și colaborarea. Testarea a urmărit în primul rând comportamentul sistemului ca întreg: imaginea este încărcată în clientul desktop, adnotările pot fi create și exportate, modelele externe pot produce rezultate editabile, iar mai mulți utilizatori pot lucra în aceeași sesiune.
 
+\section{Obiectivele testării și metodologia}
+
+Obiectivul principal al testării a fost verificarea fluxului complet de adnotare. Aplicația trebuie să permită încărcarea imaginilor, desenarea adnotărilor de tip bounding box, poligon și mască, modificarea proprietăților acestora și salvarea rezultatului în formate utile pentru seturi de date. În paralel, s-a verificat dacă funcțiile care depind de backend, precum autentificarea, chatul și colaborarea, pot fi folosite din clientul desktop fără întreruperea fluxului principal de lucru.
+
+Metodologia a combinat testarea manuală cu testele automate existente. Clientul PyQt a fost validat prin scenarii executate în interfață, deoarece interacțiunile de canvas, evenimentele mouse și worker-ele externe sunt greu de acoperit prin unit tests simple. Backend-ul are însă teste JUnit pentru servicii și scenarii de integrare, astfel că validarea tehnică este mai puternică în zona serviciilor Spring Boot.
+
+\section{Mediul de testare}
+
+Testarea a fost realizată local, pe Windows, folosind clientul \texttt{AnnotationEngine} și backend-ul din \texttt{ColaborativeServer}. Clientul este pornit din \texttt{app.py}, iar backend-ul poate fi rulat prin Docker, împreună cu Traefik, RabbitMQ și Postgres. Mediul reproduce structura reală a aplicației: client desktop, servicii separate pentru autentificare, chat și colaborare, plus procese externe pentru AutoSeg, AutoMask și LLM local.
+
+\begin{table}[H]
+    \centering
+    \small
+    \begin{tabular}{p{0.25\textwidth} p{0.60\textwidth}}
+        \hline
+        Componentă & Rol în validare \\
+        \hline
+        \texttt{AnnotationEngine} & Clientul desktop pentru adnotare, export, chat și colaborare. \\
+        \texttt{auth-service} & Înregistrare, autentificare și validare JWT. \\
+        \texttt{chat-service} & Mesaje private, istoric și prezență. \\
+        \texttt{annotation-service} & Sesiuni colaborative, snapshot, evenimente și chunking. \\
+        RabbitMQ/Postgres & Evenimente între servicii și persistența utilizatorilor. \\
+        \hline
+    \end{tabular}
+    \caption{Componentele principale din mediul de testare}
+    \label{tab:mediu-testare}
+\end{table}
+
+\section{Testarea clientului desktop}
+
+Testarea clientului desktop a urmărit scenariile obișnuite de utilizare. Primul scenariu verifică încărcarea unui folder de imagini: panoul stâng trebuie să afișeze fișierele acceptate, iar imaginea selectată trebuie să apară în canvas. Apoi au fost testate uneltele de adnotare manuală: desenarea unui dreptunghi, crearea unui poligon prin puncte succesive și editarea unei măști cu brush și eraser.
+
+Un al doilea grup de verificări a urmărit persistența și exportul. Salvarea JSON trebuie să păstreze tipul adnotărilor, etichetele și coordonatele, iar reîncărcarea fișierului trebuie să reconstruiască obiectele grafice. Exporturile YOLO și COCO au fost verificate prin generarea fișierelor rezultate și inspectarea structurii lor. A fost testat și dialogul pentru modificări nesalvate, deoarece schimbarea imaginii fără confirmare poate duce la pierderea muncii utilizatorului.
+
+\begin{table}[H]
+    \centering
+    \small
+    \begin{tabular}{p{0.42\textwidth} p{0.46\textwidth}}
+        \hline
+        Scenariu & Rezultat \\
+        \hline
+        Încărcare folder și imagine & Imaginea apare în canvas. \\
+        Creare bbox, poligon și mască & Adnotările sunt afișate și editabile. \\
+        Salvare și reîncărcare JSON & Adnotările sunt reconstruite corect. \\
+        Export YOLO/COCO & Fișierele de export sunt generate. \\
+        Schimbare imagine cu modificări nesalvate & Aplicația cere confirmare. \\
+        \hline
+    \end{tabular}
+    \caption{Scenarii de validare pentru clientul desktop}
+    \label{tab:scenarii-client}
+\end{table}
+
+\section{Testarea fluxurilor AutoSeg și AutoMask}
+
+Fluxurile AutoSeg și AutoMask au fost validate ca integrări practice cu procese externe, nu ca evaluări ale performanței modelelor AI. Pentru AutoSeg a fost realizat scriptul \texttt{yoloe.py}, iar verificarea s-a făcut prin argumentele trimise către proces: imaginea, etichetele cerute, pragul de încredere, device-ul și modul de rulare. După execuție, scriptul trebuie să returneze un JSON cu detecții care pot conține \texttt{label}, \texttt{confidence}, \texttt{box} și \texttt{coordinates}. Clientul transformă aceste câmpuri în adnotări editabile.
+
+Pentru AutoMask a fost realizat scriptul \texttt{mask2former.py}, validat în același mod, prin argumentele primite de la client: imaginea, punctul selectat pe canvas, modelul și device-ul. Utilizatorul selectează unealta, apasă pe imagine, iar coordonata punctului este transmisă către \texttt{AutoMaskWorker}. Procesul extern trebuie să returneze cel puțin cheia \texttt{coordinates}, pe baza căreia clientul construiește un \texttt{MaskItem}. Astfel, modelul concret poate fi schimbat, atât timp cât respectă contractul de input/output așteptat de aplicație.
+
+\section{Testarea backend-ului}
+
+Backend-ul a fost verificat prin scenarii apropiate de modul în care este folosit de client. Pentru autentificare au fost validate rutele \texttt{/auth/register}, \texttt{/auth/login}, \texttt{/auth/logout} și \texttt{/auth/validate}. Scenariile importante sunt înregistrarea unui utilizator nou, autentificarea cu date valide, respingerea credentialelor invalide și folosirea token-ului JWT pentru apelurile protejate.
+
+Pentru chat, validarea urmărește conectarea STOMP, trimiterea unui mesaj privat, primirea mesajului pe coada utilizatorului și cererea istoricului. Pentru colaborare, au fost verificate crearea sesiunii, listarea sesiunilor, obținerea snapshot-ului și trimiterea evenimentelor prin \texttt{/app/collab.event}. Upload-ul temporar de imagine a fost validat prin evenimentul \texttt{image.available}, care permite celorlalți clienți să descarce imaginea activă.
+
+\section{Contribuții și compararea cu alte instrumente de adnotare}
+
+Pentru poziționarea aplicației dezvoltate au fost analizate mai multe instrumente și metode de adnotare existente. Materialul studiat arată că primele contribuții importante au vizat accesibilitatea și scalarea colectării de date. LabelMe a demonstrat utilitatea adnotării online prin poligoane și a colectării deschise de imagini pentru recunoașterea obiectelor \cite{5483185}. V-RSIR a adaptat această idee la imagini satelitare, introducând colaborare prin voluntari, inspectori pentru controlul calității și integrarea mai multor surse de imagini online \cite{8746238}. Brima urmărește reducerea instalării printr-un flux de tip \textit{annotate-while-browsing}, în care imaginile pot fi etichetate direct din browser, cu păstrarea sursei prin URL \cite{9506683}. În aceeași direcție, WebAnnoCV mută procesarea în browser prin OpenCV.js, iar studiile despre image browsing arată că gruparea imaginilor similare poate reduce timpul pierdut cu parcurgerea liniară a dataset-urilor \cite{11099761,5606101}.
+
+O a doua categorie este formată din tool-uri adaptate unor domenii specializate, mai ales medicale. Annotation Web propune un instrument web pentru imagini cu ultrasunete, cu suport pentru bounding box, segmentare și landmarks \cite{9593336}. ePAD extinde adnotarea către imagini radiologice 3D, folosind interfețe bazate pe planuri anatomice și WebGL pentru explorare volumetrică \cite{7167466}. Annio adaugă ontologii medicale pentru etichetare standardizată, iar MammoApplet pune accent pe DICOM (Digital Imaging and Communications in Medicine), ajustări vizuale și desenare poligonală a leziunilor \cite{10.1109/HISB.2012.72,6399703}. Pentru imagini termice, contribuția principală este extragerea automată a temperaturii din regiunea adnotată, iar în cazul anevrismelor cerebrale modelul YOLO este introdus ca asistent pentru radiologi, nu ca înlocuitor al expertului \cite{10053084,11008399}.
+
+O direcție importantă pentru această lucrare este adnotarea semi-automată. Unele soluții folosesc tracking pentru a propaga etichete în cadre video, de exemplu prin Kernelized Correlation Filter \cite{8457958}. Alte lucrări integrează modele de detecție sau segmentare pentru pre-adnotare, cum este tool-ul pentru detecția modernă de obiecte cu YOLOv5 \cite{10579415}, SegBuilder cu SAM \cite{10943988} sau PiPo-Net pentru generarea de contururi poligonale în imagini patologice \cite{9636146}. Markup SVG (Scalable Vector Graphics) combină un strat de reprezentare bazat pe SVG cu algoritmi de segmentare și sugestii semantice, iar lucrările despre scene rutiere folosesc superpixeli, CRF (Conditional Random Field) dens și informații 3D pentru a reduce etichetarea pixel-cu-pixel \cite{5940230,7995759}. Există și metode care tratează adnotarea la nivel semantic, prin sparse coding sau prin maparea caracteristicilor low-level către concepte de domeniu \cite{6359013,4476645}.
+
+Pentru formatele și caracteristicile din tabel, XML înseamnă \textit{Extensible Markup Language}, PNG înseamnă \textit{Portable Network Graphics}, CSV înseamnă \textit{Comma-Separated Values}, TSV înseamnă \textit{Tab-Separated Values}, iar NDJSON înseamnă \textit{Newline Delimited JSON}. API (Application Programming Interface), ML (Machine Learning) și NIfTI (Neuroimaging Informatics Technology Initiative) sunt păstrate în tabel în formă prescurtată pentru a evita lățirea excesivă a coloanelor.
+
+Pentru date video și multimodale, contribuțiile urmăresc extinderea adnotării dincolo de imaginea statică. CVAT-BWV adaptează un flux de adnotare video pentru date sensibile provenite din camere purtate pe corp, integrând video, audio, text, recunoaștere vocală și control local al accesului \cite{ijcai2024p1006}. Sistemul bazat pe interfață vocală arată o altă direcție: utilizatorul poate marca evenimente temporale prin vorbire, iar sistemul extrage automat timpul, actorul și tipul evenimentului \cite{11274710}. Aceste soluții sunt relevante deoarece arată că adnotarea nu este doar desenare de forme, ci poate include sincronizare temporală, metadate și interacțiune multimodală.
+
+\begin{table}[p]
+    \centering
+    \scriptsize
+    \setlength{\tabcolsep}{1pt}
+    \renewcommand{\arraystretch}{1.45}
+    \begin{tabular}{|>{\raggedright\arraybackslash}p{0.13\textwidth}|>{\centering\arraybackslash}p{0.045\textwidth}|>{\raggedright\arraybackslash}p{0.21\textwidth}|>{\raggedright\arraybackslash}p{0.155\textwidth}|>{\centering\arraybackslash}p{0.06\textwidth}|>{\centering\arraybackslash}p{0.05\textwidth}|>{\centering\arraybackslash}p{0.065\textwidth}|>{\raggedright\arraybackslash}p{0.215\textwidth}|}
+        \hline
+        \textbf{\shortstack{Numele tool-ului\\de adnotare}} &
+        \textbf{Anul} &
+        \textbf{\shortstack{Operații de\\adnotare}} &
+        \textbf{\shortstack{Formatul\\de export}} &
+        \textbf{\shortstack{Cola-\\borativ}} &
+        \textbf{Local} &
+        \textbf{Hosted} &
+        \textbf{\shortstack{Caracteristici\\suplimentare}} \\
+        \hline
+        \shortstack[l]{PyVision\\Annotator} &
+        2026 &
+        Desenare dreptunghi, poligon, mască, brush/eraser &
+        JSON, YOLO, COCO, imagine adnotată și măști &
+        Da &
+        Da &
+        \shortstack[l]{Self-\\hosted} &
+        Aplicație desktop, necesită autentificare pentru modul colaborativ, modular. \\
+        \shortstack[l]{Roboflow\\\cite{roboflow_formats,roboflow_export_docs}} &
+        2019 &
+        Bbox, poligon, clasificare &
+        YOLO, Pascal VOC, COCO, TFRecord, XML, JSON &
+        Da &
+        Nu &
+        Cloud-only &
+        Suport colaborativ, versiune plătită și gratuită, augmentări automate, export multi-format, API. \\
+        \shortstack[l]{Labelbox\\\cite{labelbox_export_image_annotations,encord_annotation_tools_2025}} &
+        2018 &
+        Bbox, poligon, polilinie, punct, mască &
+        JSON/NDJSON; conversii către COCO/YOLO &
+        Da &
+        Nu &
+        Hosted &
+        Segmentare automată, API, platformă end-to-end. \\
+        \shortstack[l]{Encord\\\cite{encord_annotation_tools_2025,encord_export_labels_docs}} &
+        2020 &
+        Bbox, bbox rotit, poligon, polilinie, keypoints, mască, clasificare cadru &
+        JSON, COCO &
+        Da &
+        Nu &
+        Hosted &
+        Interfață no-code, modele AI pentru etichetare automată, micro-modele antrenabile pentru cazuri specifice. \\
+        \shortstack[l]{COCO\\Annotator\\\cite{coco_annotator_github,coco_annotator_usage}} &
+        2019 &
+        Bbox, mască de segmentare, keypoints &
+        COCO JSON &
+        Da &
+        Da &
+        Nu &
+        Tool web open-source, utilizatori și permisiuni, modele deep learning pentru selecție automată de obiecte. \\
+        \shortstack[l]{CVAT\\\cite{cvat_formats_docs,encord_annotation_tools_2025}} &
+        2018 &
+        Bbox, poligon, linie, punct, mască &
+        XML, JSON, COCO, YOLO &
+        Da &
+        Da &
+        Da &
+        Suport colaborativ, task-uri distribuite, versiune Docker și variantă online. \\
+        \shortstack[l]{V7\\\cite{encord_annotation_tools_2025,v7_export_docs}} &
+        2018 &
+        Bbox, keypoints, segmentare, keyframes &
+        Darwin JSON, COCO, CVAT, Darwin XML, YOLO, Pascal VOC, PNG, NIfTI &
+        Da &
+        Nu &
+        Hosted &
+        Auto-annotate, auto-track, workflow-uri de review și export versionat. \\
+        \shortstack[l]{Label\\Studio\\\cite{encord_annotation_tools_2025,labelstudio_export_docs}} &
+        2019 &
+        Bbox, poligon, cerc, keypoints, segmentare, entități, tracking &
+        JSON, COCO, Pascal VOC XML, YOLO, CSV/TSV &
+        Da &
+        Da &
+        Da &
+        Open-source, self-hosted sau cloud, ML-assisted labeling și integrare cu modele externe. \\
+        \hline
+    \end{tabular}
+    \caption{Compararea instrumentelor de adnotare analizate}
+    \label{tab:comparare-tooluri-adnotare}
+\end{table}
+
+Sinteza acestor contribuții arată că instrumentele existente se specializează, de regulă, pe una sau două direcții: acces web, domeniu medical, adnotare semi-automată, colaborare sau suport video. Proiectul dezvoltat combină într-un singur flux un client desktop PyQt, exporturi utile pentru dataset-uri, worker-e externe pentru AutoSeg și AutoMask, autentificare, chat și colaborare backend. Contribuția principală nu este propunerea unui model AI nou, ci integrarea practică a acestor componente într-un sistem de adnotare extensibil și utilizabil local, capabil să funcționeze în mod colaborativ.
