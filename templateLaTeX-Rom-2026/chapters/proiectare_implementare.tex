@@ -99,23 +99,68 @@ Interfața principală este împărțită în trei panouri și o bară de unelte
 
 \texttt{ToolbarPanel} concentrează acțiunile globale ale aplicației. De aici se pot salva adnotările în JSON, exporta datele în template COCO sau YOLO, salva o imagine cu măștile desenate, încărca un fișier JSON, deschide dialogul de cont, fereastra de chat, fereastra de chatbot și dialogul de setări. Toolbar-ul deține și logica de export, deoarece exportul este o acțiune globală asupra imaginii curente și asupra tuturor adnotărilor din \texttt{AnnotationManager}.
 
-\texttt{SettingsDialog}, deschis din toolbar, este organizat pe taburi. Un tab controlează stilul vizual al adnotărilor, cum ar fi grosimea conturului, dimensiunea fontului și înălțimea etichetei. Alt tab configurează AutoMask, prin calea către executabil, timeout, device și argumente suplimentare. Un tab separat configurează AutoSeg YOLO, prin executabil, fișierul de ponderi, pragul de confidență, device și argumente custom. Ultimul tab gestionează endpoint-urile pentru autentificare. Faptul că aceste valori sunt păstrate în \texttt{QSettings} permite aplicației să rețină configurarea între rulări.
-
-\begin{figure}[!htbp]
+\begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figs/settings_app.png}
+    \includegraphics[width=\textwidth,height=0.72\textheight,keepaspectratio]{figs/settings_app.png}
     \caption{Panoul de setări pentru AutoSeg și AutoMask (\hyperref[tab:provenienta-figuri-implementare]{Tabelul A.2})}
     \label{fig:setari-autoseg-automask}
 \end{figure}
 
+\texttt{SettingsDialog}, deschis din toolbar, este organizat pe taburi. Un tab controlează stilul vizual al adnotărilor, cum ar fi grosimea conturului, dimensiunea fontului și înălțimea etichetei. Alt tab configurează AutoMask, prin calea către executabil, timeout, device și argumente suplimentare. Un tab separat configurează AutoSeg YOLO, prin executabil, fișierul de ponderi, pragul de confidență, device și argumente custom. Ultimul tab gestionează endpoint-urile pentru autentificare. Faptul că aceste valori sunt păstrate în \texttt{QSettings} permite aplicației să rețină configurarea între rulări.
+
 \texttt{RightPanel} este panoul în care utilizatorul controlează adnotarea curentă și modul de lucru. El afișează proprietățile obiectului selectat, inclusiv identificatorul, eticheta, culoarea și coordonatele. Tot aici se află lista de adnotări, lista etichetelor existente, alegerea uneltei active și setările vizuale ale imaginii. Pentru măști există control de opacitate, iar pentru editare există brush și eraser. Panoul drept este conectat la \texttt{AnnotationManager}, astfel încât lista de adnotări și lista de etichete se actualizează atunci când se adaugă, modifică sau șterge un item.
 
-\begin{figure}[!htbp]
+\begin{figure}[p]
     \centering
-    \includegraphics[width=0.46\textwidth]{figs/right_panel.png}
+    \includegraphics[width=\textwidth,height=0.86\textheight,keepaspectratio]{figs/right_panel.png}
     \caption{Panoul de proprietăți și lista de adnotări (\hyperref[tab:provenienta-figuri-implementare]{Tabelul A.2})}
     \label{fig:panou-proprietati-adnotari}
 \end{figure}
+\clearpage
+
+Marcajele numerotate din Figura~\ref{fig:panou-proprietati-adnotari} evidențiază principalele controale ale panoului drept, prezentate în Tabelul~\ref{tab:indici-panou-drept}.
+
+\begin{table}[H]
+    \centering
+    \small
+    \renewcommand{\arraystretch}{1.12}
+    \setlength{\tabcolsep}{3pt}
+    \begin{tabular}{|>{\centering\arraybackslash}p{0.07\textwidth}|p{0.36\textwidth}|>{\centering\arraybackslash}p{0.07\textwidth}|p{0.36\textwidth}|}
+        \hline
+        \textbf{Index} & \textbf{Element reprezentat} & \textbf{Index} & \textbf{Element reprezentat} \\
+        \hline
+        1 & Câmpul \texttt{Next Label}, folosit pentru eticheta implicită a următoarei adnotări create.
+        & 10 & Unealta \texttt{Eraser}, folosită pentru ștergerea locală a zonelor dintr-o mască. \\
+        \hline
+        2 & Controlul \texttt{Next Color}, format din mostra de culoare și butonul pentru alegerea culorii implicite.
+        & 11 & Lista \texttt{Annotations}, care afișează adnotările existente, identificatorul, eticheta și coordonatele lor. \\
+        \hline
+        3 & Sliderul \texttt{Mask Opacity}, care controlează transparența măștilor afișate peste imagine.
+        & 12 & Butonul \texttt{Delete Selected}, care șterge adnotarea selectată. \\
+        \hline
+        4 & Lista \texttt{Existing Labels}, unde sunt afișate etichetele deja folosite și numărul aparițiilor lor.
+        & 13 & Butonul \texttt{Delete All}, care șterge toate adnotările asociate imaginii curente. \\
+        \hline
+        5 & Unealta \texttt{Rect}, utilizată pentru desenarea dreptunghiurilor de încadrare.
+        & 14 & Sliderul \texttt{Brightness}, folosit pentru ajustarea luminozității imaginii afișate. \\
+        \hline
+        6 & Butonul \texttt{AutoSeg}, care rulează segmentarea automată YOLO pe imaginea curentă.
+        & 15 & Sliderul \texttt{Contrast}, folosit pentru ajustarea contrastului imaginii afișate. \\
+        \hline
+        7 & Unealta \texttt{Poly}, utilizată pentru desenarea adnotărilor de tip poligon.
+        & 16 & Sliderul \texttt{Gamma}, folosit pentru corecția gamma a imaginii afișate. \\
+        \hline
+        8 & Unealta \texttt{Brush}, folosită pentru extinderea sau corectarea manuală a unei măști selectate.
+        & 17 & Butonul \texttt{Reset}, care readuce ajustările vizuale ale imaginii la valorile implicite. \\
+        \hline
+        9 & Unealta \texttt{AutoMask}, care generează o mască pe baza unui punct ales de utilizator în canvas.
+        & 18 & Opțiunea \texttt{Crosshair}, care activează sau dezactivează ghidajul vizual al cursorului pe canvas. \\
+        \hline
+    \end{tabular}
+    \caption{Explicația indicilor numerotați din panoul drept}
+    \label{tab:indici-panou-drept}
+\end{table}
+\renewcommand{\arraystretch}{1.0}
 
 Un aspect important al panourilor este că ele nu sunt simple containere vizuale. Fiecare panou deține o parte din logica de interacțiune apropiată de interfață: \texttt{LeftPanel} decide când trebuie cerută salvarea înainte de schimbarea imaginii, \texttt{ToolbarPanel} decide cum se declanșează salvarea sau exportul, iar \texttt{RightPanel} decide cum se schimbă unealta activă și cum se actualizează proprietățile unei adnotări selectate. Totuși, operațiile care afectează sistemul în ansamblu sunt propagate către \texttt{MainWindow}, canvas sau manager, păstrând o delimitare practică între UI și starea aplicației.
 
@@ -491,6 +536,13 @@ Pentru chat, serviciul folosește H2 în memorie pentru repository-ul de utiliza
 Pentru colaborare, \texttt{annotation-service} este explicit configurat ca modul in-memory. În \texttt{application.properties}, auto-configurările JDBC și JPA sunt excluse, iar starea este păstrată în obiecte Java: \texttt{sessionsById}, adnotările pe sesiune, utilizatorii prezenți, metadatele și conținutul temporar al imaginilor, plus evenimentele procesate pentru deduplicare. Sesiunile goale și inactive sunt curățate după un TTL implicit de cinci minute, imaginile temporare au TTL de patru ore, iar evenimentele procesate sunt păstrate pentru deduplicare timp de zece minute.
 
 Această alegere are un compromis clar. Pe de o parte, colaborarea live este rapidă și ușor de urmărit în cod, deoarece serverul nu trebuie să scrie fiecare mișcare într-o bază de date. Pe de altă parte, o repornire a \texttt{annotation-service} pierde sesiunile active. În contextul proiectului, acest compromis este acceptabil deoarece artefactul final nu este sesiunea live, ci exportul local realizat de client: JSON intern, COCO, YOLO sau imagine cu măști. Serverul ajută utilizatorii să lucreze împreună, dar nu înlocuiește mecanismul de export al aplicației desktop.
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=\textwidth]{figs/export_example.png}
+    \caption{Exemplu de export al unei adnotări de tip mască în format JSON intern (\hyperref[tab:provenienta-figuri-implementare]{Tabelul A.2})}
+    \label{fig:exemplu-export-json-masca}
+\end{figure}
 
 \begin{table}[!htbp]
     \centering
