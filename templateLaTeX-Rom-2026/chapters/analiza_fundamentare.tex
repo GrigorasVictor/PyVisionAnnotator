@@ -140,7 +140,7 @@ YOLOE extinde principiul YOLO către detecție și segmentare \textit{open-vocab
 Arhitectura sa combină un extractor de caracteristici, o structură de agregare multi-scală de tip PAN și capete de predicție pentru regresie, segmentare și embedding.
 Prin alinierea dintre reprezentările vizuale și cele textuale, modelul poate răspunde la cereri mai flexibile decât un detector antrenat strict pe un set închis de categorii.
 
-\begin{figure}[ht]
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=\textwidth]{figs/yoloe.jpg}
     \caption{Arhitectura YOLOE folosită ca reper pentru AutoSeg (\hyperref[tab:surse-figuri-ai]{Tabelul A.1}).}
@@ -170,7 +170,7 @@ Elementul central al Mask2Former este mecanismul de \textit{masked attention}.
 Această restrângere reduce influența fundalului și permite rafinarea progresivă a conturului.
 Pentru AutoMask, acest lucru este util deoarece un punct selectat de utilizator poate fi transformat într-o regiune coerentă, iar regiunea rezultată poate fi corectată ulterior prin instrumentele de editare.
 
-\begin{figure}[ht]
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=0.92\textwidth]{figs/mask2former_architecture.jpg}
     \caption{Arhitectura Mask2Former pentru predicția măștilor (\hyperref[tab:surse-figuri-ai]{Tabelul A.1}).}
@@ -188,7 +188,7 @@ Modelele LLM folosite de aplicație sunt bazate pe arhitectura Transformer, intr
 În modelele conversaționale moderne, varianta de tip \textit{decoder-only} este folosită frecvent pentru generare autoregresivă.
 Modelul primește istoricul conversației, calculează relații de atenție între tokeni și produce următorul token.
 
-\begin{figure}[ht]
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=0.92\textwidth]{figs/transformer_decoder_only.png}
     \caption{Structură generală de model Transformer de tip decoder-only (\hyperref[tab:surse-figuri-ai]{Tabelul A.1}).}
@@ -225,7 +225,7 @@ Structura sa este împărțită conceptual în trei părți: header, payload și
 Headerul descrie tipul tokenului și algoritmul folosit, payload-ul conține informațiile despre utilizator, iar semnătura permite verificarea integrității tokenului.
 Această structură este ilustrată în figura~\ref{fig:jwt-structure} (\hyperref[tab:surse-figuri-ai]{Tabelul A.1}).
 
-\begin{figure}[ht]
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=0.82\textwidth]{figs/jwt-diagram.png}
     \caption{Structura generală a unui token JWT (\hyperref[tab:surse-figuri-ai]{Tabelul A.1}).}

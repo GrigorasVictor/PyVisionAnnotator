@@ -33,7 +33,7 @@
 \contentsline {subsection}{\numberline {4.3.1}YOLO pentru AutoSeg}{18}{subsection.4.3.1}%
 \contentsline {subsection}{\numberline {4.3.2}Mask2Former pentru AutoMask}{19}{subsection.4.3.2}%
 \contentsline {subsection}{\numberline {4.3.3}Modele lingvistice bazate pe Transformer}{20}{subsection.4.3.3}%
-\contentsline {section}{\numberline {4.4}Protocoale utilizate}{20}{section.4.4}%
+\contentsline {section}{\numberline {4.4}Protocoale utilizate}{21}{section.4.4}%
 \contentsline {subsection}{\numberline {4.4.1}HTTP/REST}{21}{subsection.4.4.1}%
 \contentsline {subsection}{\numberline {4.4.2}WebSocket și STOMP}{22}{subsection.4.4.2}%
 \contentsline {subsection}{\numberline {4.4.3}SockJS ca fallback}{22}{subsection.4.4.3}%
@@ -44,53 +44,53 @@
 \contentsline {subsection}{\numberline {4.5.3}Java Spring Boot pentru serviciile backend}{24}{subsection.4.5.3}%
 \contentsline {subsection}{\numberline {4.5.4}Docker și orchestrarea serviciilor}{24}{subsection.4.5.4}%
 \contentsline {section}{\numberline {4.6}Modele abstracte}{24}{section.4.6}%
-\contentsline {subsection}{\numberline {4.6.1}Modelul de acces}{25}{subsection.4.6.1}%
+\contentsline {subsection}{\numberline {4.6.1}Modelul de acces}{24}{subsection.4.6.1}%
 \contentsline {subsection}{\numberline {4.6.2}Modelul de colaborare}{25}{subsection.4.6.2}%
 \contentsline {subsection}{\numberline {4.6.3}Modelul de adnotare}{25}{subsection.4.6.3}%
 \contentsline {subsection}{\numberline {4.6.4}Modelul de stocare}{25}{subsection.4.6.4}%
 \contentsline {section}{\numberline {4.7}Structura logică și funcțională a aplicației}{25}{section.4.7}%
-\contentsline {subsection}{\numberline {4.7.1}Clientul desktop}{26}{subsection.4.7.1}%
+\contentsline {subsection}{\numberline {4.7.1}Clientul desktop}{25}{subsection.4.7.1}%
 \contentsline {subsection}{\numberline {4.7.2}Worker-ele locale}{26}{subsection.4.7.2}%
 \contentsline {subsection}{\numberline {4.7.3}Serviciile backend}{26}{subsection.4.7.3}%
 \contentsline {subsection}{\numberline {4.7.4}Persistență și export}{27}{subsection.4.7.4}%
 \contentsline {subsection}{\numberline {4.7.5}Flux funcțional complet}{27}{subsection.4.7.5}%
-\contentsline {section}{\numberline {4.8}Justificarea integrării modelelor}{28}{section.4.8}%
+\contentsline {section}{\numberline {4.8}Justificarea integrării modelelor}{27}{section.4.8}%
 \contentsline {chapter}{Capitolul{} \numberline {5}Proiectare de detaliu și implementare}{29}{chapter.5}%
 \contentsline {section}{\numberline {5.1}Arhitectura generală a sistemului}{29}{section.5.1}%
 \contentsline {section}{\numberline {5.2}Structura clientului desktop PyQt}{31}{section.5.2}%
 \contentsline {subsection}{\numberline {5.2.1}Rolul clientului desktop în sistem}{31}{subsection.5.2.1}%
 \contentsline {subsection}{\numberline {5.2.2}\texttt {MainWindow} ca orchestrator al aplicației}{32}{subsection.5.2.2}%
 \contentsline {subsection}{\numberline {5.2.3}Panourile aplicației}{34}{subsection.5.2.3}%
-\contentsline {subsection}{\numberline {5.2.4}Canvasul de adnotare}{37}{subsection.5.2.4}%
-\contentsline {subsection}{\numberline {5.2.5}Obiectele grafice de adnotare}{38}{subsection.5.2.5}%
-\contentsline {subsection}{\numberline {5.2.6}Integrarea AutoSeg YOLO și AutoMask în client}{39}{subsection.5.2.6}%
-\contentsline {subsection}{\numberline {5.2.7}Worker-e și procese externe}{42}{subsection.5.2.7}%
-\contentsline {subsection}{\numberline {5.2.8}Ferestre auxiliare: chat, colaborare și chatbot local}{43}{subsection.5.2.8}%
-\contentsline {subsection}{\numberline {5.2.9}Gestionarea stării locale}{44}{subsection.5.2.9}%
-\contentsline {section}{\numberline {5.3}Autentificare și model de acces}{46}{section.5.3}%
-\contentsline {section}{\numberline {5.4}Chat în timp real și prezență}{47}{section.5.4}%
-\contentsline {section}{\numberline {5.5}Colaborarea pe adnotări}{48}{section.5.5}%
-\contentsline {subsection}{\numberline {5.5.1}Trimiterea adnotărilor mari în mai multe pachete}{50}{subsection.5.5.1}%
-\contentsline {section}{\numberline {5.6}Serviciile backend și infrastructura Docker}{52}{section.5.6}%
-\contentsline {section}{\numberline {5.7}Persistența și structura datelor}{53}{section.5.7}%
-\contentsline {section}{\numberline {5.8}Rulare și integrarea componentelor}{54}{section.5.8}%
+\contentsline {subsection}{\numberline {5.2.4}Canvasul de adnotare}{35}{subsection.5.2.4}%
+\contentsline {subsection}{\numberline {5.2.5}Obiectele grafice de adnotare}{37}{subsection.5.2.5}%
+\contentsline {subsection}{\numberline {5.2.6}Integrarea AutoSeg YOLO și AutoMask în client}{38}{subsection.5.2.6}%
+\contentsline {subsection}{\numberline {5.2.7}Worker-e și procese externe}{41}{subsection.5.2.7}%
+\contentsline {subsection}{\numberline {5.2.8}Ferestre auxiliare: chat, colaborare și chatbot local}{42}{subsection.5.2.8}%
+\contentsline {subsection}{\numberline {5.2.9}Gestionarea stării locale}{43}{subsection.5.2.9}%
+\contentsline {section}{\numberline {5.3}Autentificare și model de acces}{45}{section.5.3}%
+\contentsline {section}{\numberline {5.4}Chat în timp real și prezență}{46}{section.5.4}%
+\contentsline {section}{\numberline {5.5}Colaborarea pe adnotări}{47}{section.5.5}%
+\contentsline {subsection}{\numberline {5.5.1}Trimiterea adnotărilor mari în mai multe pachete}{49}{subsection.5.5.1}%
+\contentsline {section}{\numberline {5.6}Serviciile backend și infrastructura Docker}{51}{section.5.6}%
+\contentsline {section}{\numberline {5.7}Persistența și structura datelor}{52}{section.5.7}%
+\contentsline {section}{\numberline {5.8}Rulare și integrarea componentelor}{53}{section.5.8}%
 \contentsline {chapter}{Capitolul{} \numberline {6}Testare și validare}{56}{chapter.6}%
 \contentsline {section}{\numberline {6.1}Obiectivele testării și metodologia}{56}{section.6.1}%
 \contentsline {section}{\numberline {6.2}Mediul de testare}{56}{section.6.2}%
 \contentsline {section}{\numberline {6.3}Testarea clientului desktop}{56}{section.6.3}%
 \contentsline {section}{\numberline {6.4}Testarea fluxurilor AutoSeg și AutoMask}{57}{section.6.4}%
 \contentsline {section}{\numberline {6.5}Testarea backend-ului}{57}{section.6.5}%
-\contentsline {section}{\numberline {6.6}Contribuții și compararea cu alte instrumente de adnotare}{58}{section.6.6}%
-\contentsline {chapter}{Capitolul{} \numberline {7}Manual de instalare și utilizare}{61}{chapter.7}%
-\contentsline {section}{\numberline {7.1}Cerințe hardware}{61}{section.7.1}%
-\contentsline {section}{\numberline {7.2}Cerințe software}{61}{section.7.2}%
-\contentsline {section}{\numberline {7.3}Instalarea aplicației din executabil}{62}{section.7.3}%
-\contentsline {section}{\numberline {7.4}Împachetarea modelelor externe}{62}{section.7.4}%
-\contentsline {section}{\numberline {7.5}Instalarea din surse}{63}{section.7.5}%
-\contentsline {section}{\numberline {7.6}Pornirea backend-ului colaborativ}{63}{section.7.6}%
-\contentsline {section}{\numberline {7.7}Utilizarea aplicației}{63}{section.7.7}%
-\contentsline {section}{\numberline {7.8}Probleme frecvente}{64}{section.7.8}%
-\contentsline {chapter}{Capitolul{} \numberline {8}Concluzii}{65}{chapter.8}%
-\contentsline {chapter}{Bibliografie}{66}{chapter*.2}%
-\contentsline {chapter}{Anexa{} \numberline {A}Sursele și proveniența figurilor}{71}{chapter.A}%
-\contentsline {chapter}{Anexa{} \numberline {B}Indexul tabelelor}{72}{chapter.B}%
+\contentsline {section}{\numberline {6.6}Contribuții și compararea cu alte instrumente de adnotare}{57}{section.6.6}%
+\contentsline {chapter}{Capitolul{} \numberline {7}Manual de instalare și utilizare}{60}{chapter.7}%
+\contentsline {section}{\numberline {7.1}Cerințe hardware}{60}{section.7.1}%
+\contentsline {section}{\numberline {7.2}Cerințe software}{60}{section.7.2}%
+\contentsline {section}{\numberline {7.3}Instalarea aplicației din executabil}{60}{section.7.3}%
+\contentsline {section}{\numberline {7.4}Împachetarea modelelor externe}{61}{section.7.4}%
+\contentsline {section}{\numberline {7.5}Instalarea din surse}{61}{section.7.5}%
+\contentsline {section}{\numberline {7.6}Pornirea backend-ului colaborativ}{62}{section.7.6}%
+\contentsline {section}{\numberline {7.7}Utilizarea aplicației}{62}{section.7.7}%
+\contentsline {section}{\numberline {7.8}Probleme frecvente}{63}{section.7.8}%
+\contentsline {chapter}{Capitolul{} \numberline {8}Concluzii}{64}{chapter.8}%
+\contentsline {chapter}{Bibliografie}{65}{chapter*.2}%
+\contentsline {chapter}{Anexa{} \numberline {A}Sursele și proveniența figurilor}{70}{chapter.A}%
+\contentsline {chapter}{Anexa{} \numberline {B}Indexul tabelelor}{71}{chapter.B}%

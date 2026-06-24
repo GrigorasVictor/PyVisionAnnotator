@@ -13,7 +13,7 @@ Metodologia a combinat testarea manuală cu testele automate existente. Clientul
 
 Testarea a fost realizată local, pe Windows, folosind clientul \texttt{AnnotationEngine} și backend-ul din \texttt{ColaborativeServer}. Clientul este pornit din \texttt{app.py}, iar backend-ul poate fi rulat prin Docker, împreună cu Traefik, RabbitMQ și Postgres. Mediul reproduce structura reală a aplicației: client desktop, servicii separate pentru autentificare, chat și colaborare, plus procese externe pentru AutoSeg, AutoMask și LLM local.
 
-\begin{table}[H]
+\begin{table}[!htbp]
     \centering
     \small
     \begin{tabular}{p{0.25\textwidth} p{0.60\textwidth}}
@@ -37,7 +37,7 @@ Testarea clientului desktop a urmărit scenariile obișnuite de utilizare. Primu
 
 Un al doilea grup de verificări a urmărit persistența și exportul. Salvarea JSON trebuie să păstreze tipul adnotărilor, etichetele și coordonatele, iar reîncărcarea fișierului trebuie să reconstruiască obiectele grafice. Exporturile YOLO și COCO au fost verificate prin generarea fișierelor rezultate și inspectarea structurii lor. A fost testat și dialogul pentru modificări nesalvate, deoarece schimbarea imaginii fără confirmare poate duce la pierderea muncii utilizatorului.
 
-\begin{table}[H]
+\begin{table}[!htbp]
     \centering
     \small
     \begin{tabular}{p{0.42\textwidth} p{0.46\textwidth}}
@@ -165,4 +165,4 @@ Pentru date video și multimodale, contribuțiile urmăresc extinderea adnotări
     \label{tab:comparare-tooluri-adnotare}
 \end{table}
 
-Sinteza acestor contribuții arată că instrumentele existente se specializează, de regulă, pe una sau două direcții: acces web, domeniu medical, adnotare semi-automată, colaborare sau suport video. Proiectul dezvoltat combină într-un singur flux un client desktop PyQt, exporturi utile pentru dataset-uri, worker-e externe pentru AutoSeg și AutoMask, autentificare, chat și colaborare backend. Contribuția principală nu este propunerea unui model AI nou, ci integrarea practică a acestor componente într-un sistem de adnotare extensibil și utilizabil local, capabil să funcționeze în mod colaborativ.
+Sinteza contribuțiilor analizate arată că instrumentele existente se concentrează, de obicei, pe acces web, domenii specializate, colaborare sau adnotare semi-automată. Proiectul propus reunește într-un flux local un client desktop PyQt, exporturi pentru dataset-uri, worker-e AI externe și colaborare backend. Contribuția principală este integrarea practică a acestor componente într-un sistem extensibil.

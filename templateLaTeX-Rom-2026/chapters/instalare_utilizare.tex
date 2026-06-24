@@ -7,7 +7,7 @@ Acest capitol descrie pașii necesari pentru instalarea și utilizarea aplicați
 
 Cerințele hardware depind de scenariul de utilizare. Adnotarea manuală are cerințe reduse, dar fluxurile AutoSeg, AutoMask și chatbotul local pot consuma mai multă memorie și pot beneficia de GPU.
 
-\begin{table}[H]
+\begin{table}[!htbp]
     \centering
     \small
     \begin{tabular}{p{0.26\textwidth} p{0.30\textwidth} p{0.34\textwidth}}
@@ -29,7 +29,7 @@ Cerințele hardware depind de scenariul de utilizare. Adnotarea manuală are cer
 
 Pentru utilizatorul obișnuit, varianta recomandată este rularea aplicației din executabilul generat. În acest caz, nu este necesară instalarea separată a pachetelor Python. Pentru dezvoltare, testare sau reconstruirea aplicației sunt necesare Python și dependențele proiectului.
 
-\begin{table}[H]
+\begin{table}[!htbp]
     \centering
     \small
     \begin{tabular}{p{0.30\textwidth} p{0.58\textwidth}}
@@ -105,7 +105,7 @@ Serverul pornește Traefik, RabbitMQ, Postgres și cele trei servicii Spring Boo
 
 După pornire, clientul folosește implicit adresa \texttt{http://localhost}. Rutele principale sunt disponibile prin proxy: \texttt{/auth} pentru cont, \texttt{/ws} pentru chat și \texttt{/annotation} pentru colaborare. Dacă se schimbă hostul sau portul, adresele pot fi modificate din dialogul de setări al aplicației.
 
-\begin{table}[H]
+\begin{table}[!htbp]
     \centering
     \small
     \begin{tabular}{p{0.32\textwidth} p{0.56\textwidth}}

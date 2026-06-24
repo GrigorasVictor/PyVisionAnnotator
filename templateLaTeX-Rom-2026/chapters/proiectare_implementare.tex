@@ -1,22 +1,11 @@
 ﻿\chapter{Proiectare de detaliu și implementare}
 \pagestyle{fancy}
-\raggedbottom
 \setlength{\parskip}{0.18em}
 \setlength{\intextsep}{3pt plus 1pt minus 1pt}
 \setlength{\textfloatsep}{4pt plus 1pt minus 1pt}
 \setlength{\floatsep}{4pt plus 1pt minus 1pt}
 \setlength{\abovecaptionskip}{3pt}
 \setlength{\belowcaptionskip}{0pt}
-\makeatletter
-\@ifundefined{AtBeginEnvironment}{}{%
-    \AtBeginEnvironment{verbatim}{%
-        \setlength{\topsep}{2pt}%
-        \setlength{\partopsep}{0pt}%
-        \setlength{\parsep}{0pt}%
-    }%
-    \AtEndEnvironment{verbatim}{\vspace{-0.35\baselineskip}}%
-}
-\makeatother
 
 Capitolul de față descrie modul în care soluția propusă a fost proiectată și implementată, pornind de la arhitectura generală și coborând treptat spre componentele concrete ale aplicației. După prezentarea imaginii de ansamblu, capitolul detaliază clientul desktop, modelul intern de adnotare, mecanismele de salvare și export, integrarea worker-elor pentru modele AI, serviciile backend, comunicarea în timp real, persistența datelor și infrastructura de rulare. Scopul capitolului nu este reluarea elementelor teoretice din analiza anterioară, ci explicarea deciziilor de proiectare care leagă modulele implementate într-un sistem funcțional.
 
@@ -24,7 +13,7 @@ Capitolul de față descrie modul în care soluția propusă a fost proiectată 
 
 Sistemul este organizat în jurul unei aplicații desktop de adnotare, care comunică atât cu modele locale de inteligență artificială, cât și cu un backend împărțit în servicii specializate. La nivel conceptual, aplicația poate fi privită ca o combinație între o zonă interactivă, folosită direct de utilizator pentru încărcarea imaginilor și editarea adnotărilor, o zonă de procesare automată, responsabilă de operațiile AI, și o zonă de servicii, responsabilă de autentificare, chat, colaborare și sincronizare. Figurile din acest capitol sunt capturi și diagrame realizate pe baza proiectului implementat și sunt listate în \hyperref[tab:provenienta-figuri-implementare]{Tabelul A.2}.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=\textwidth]{figs/overview-of-the-project.png}
     \caption{Arhitectura generală a aplicației (\hyperref[tab:provenienta-figuri-implementare]{Tabelul A.2})}
@@ -61,7 +50,7 @@ Aplicația pornește din fișierul \texttt{app.py}. Acesta creează obiectul \te
 
 Din punct de vedere funcțional, \texttt{AnnotationEngine} poate fi folosit în două moduri. Primul este modul local, în care utilizatorul încarcă imagini dintr-un folder, creează adnotări manuale sau automate și exportă rezultatele în formate potrivite pentru antrenarea sau testarea unor modele. Al doilea este modul conectat, în care aplicația folosește autentificarea, chatul și colaborarea în timp real. Această dublă natură explică de ce în client există atât componente de interfață pur locale, precum canvasul și panourile de editare, cât și componente care comunică prin HTTP sau WebSocket cu serviciile din \texttt{ColaborativeServer}.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=\textwidth]{figs/PyVisionAnnotator.png}
     \caption{Interfața principală a aplicației PyVisionAnnotator (\hyperref[tab:provenienta-figuri-implementare]{Tabelul A.2})}
@@ -91,7 +80,7 @@ Fragmentul de mai sus ilustrează stilul de comunicare folosit în aplicație. P
 
 A treia metodă relevantă este \texttt{\_setup\_shortcuts()}, care definește scurtături pentru acțiunile frecvente. \texttt{Delete} șterge adnotarea selectată, \texttt{Ctrl+O} deschide un folder de imagini, iar \texttt{Ctrl+S} salvează adnotările în format JSON. Deși sunt detalii mici, aceste scurtături arată că aplicația este gândită ca instrument de lucru repetitiv, nu doar ca prototip demonstrativ.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=\textwidth]{figs/flowchart_MainWindow.png}
     \caption{Organizarea internă a ferestrei principale (\hyperref[tab:provenienta-figuri-implementare]{Tabelul A.2})}
@@ -112,7 +101,7 @@ Interfața principală este împărțită în trei panouri și o bară de unelte
 
 \texttt{SettingsDialog}, deschis din toolbar, este organizat pe taburi. Un tab controlează stilul vizual al adnotărilor, cum ar fi grosimea conturului, dimensiunea fontului și înălțimea etichetei. Alt tab configurează AutoMask, prin calea către executabil, timeout, device și argumente suplimentare. Un tab separat configurează AutoSeg YOLO, prin executabil, fișierul de ponderi, pragul de confidență, device și argumente custom. Ultimul tab gestionează endpoint-urile pentru autentificare. Faptul că aceste valori sunt păstrate în \texttt{QSettings} permite aplicației să rețină configurarea între rulări.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=\textwidth]{figs/settings_app.png}
     \caption{Panoul de setări pentru AutoSeg și AutoMask (\hyperref[tab:provenienta-figuri-implementare]{Tabelul A.2})}
@@ -121,7 +110,7 @@ Interfața principală este împărțită în trei panouri și o bară de unelte
 
 \texttt{RightPanel} este panoul în care utilizatorul controlează adnotarea curentă și modul de lucru. El afișează proprietățile obiectului selectat, inclusiv identificatorul, eticheta, culoarea și coordonatele. Tot aici se află lista de adnotări, lista etichetelor existente, alegerea uneltei active și setările vizuale ale imaginii. Pentru măști există control de opacitate, iar pentru editare există brush și eraser. Panoul drept este conectat la \texttt{AnnotationManager}, astfel încât lista de adnotări și lista de etichete se actualizează atunci când se adaugă, modifică sau șterge un item.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=0.46\textwidth]{figs/right_panel.png}
     \caption{Panoul de proprietăți și lista de adnotări (\hyperref[tab:provenienta-figuri-implementare]{Tabelul A.2})}
@@ -146,7 +135,7 @@ Coordonatele folosite în canvas sunt coordonate de scenă, iar scena este alini
 
 Canvasul gestionează interacțiuni specifice lucrului cu imagini: zoom cu rotița mouse-ului, pan cu butonul din mijloc sau cu \texttt{Space} și drag, desenare de dreptunghiuri, desenare de poligoane, editare de măști cu brush sau eraser și apelarea AutoMask prin click. Pentru ca fișierul \texttt{canvas.py} să nu devină greu de urmărit, evenimentele sunt extrase în \texttt{utils/canvas\_helpers/canvas\_events.py}, iar funcțiile de randare și ajustare vizuală sunt extrase în module separate. Clasa \texttt{AnnotationCanvas} rămâne astfel interfața publică a canvasului, în timp ce detaliile de mouse, tastatură și desenare sunt grupate pe fișiere tematice.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=\textwidth]{figs/Fluxul_de_evenimente_in_canvas.png}
     \caption{Fluxul de evenimente în canvas (\hyperref[tab:provenienta-figuri-implementare]{Tabelul A.2})}
@@ -174,7 +163,7 @@ Pentru adnotările poligonale se folosește \texttt{PolygonItem}, derivată din 
 
 Pentru măști se folosește \texttt{MaskItem}, derivată din \texttt{QGraphicsPixmapItem}. Această clasă este diferită de celelalte deoarece o mască poate conține foarte multe puncte. Pentru randare eficientă, masca este transformată într-o imagine internă, colorată cu opacitate configurabilă, iar brush-ul și eraser-ul modifică direct pixmapul asociat. Această abordare reduce costul de desenare pentru măști dense și permite utilizatorului să le editeze fluent.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=\textwidth]{figs/Clasele_principale_pentru_adnotari.png}
     \caption{Clasele principale pentru adnotări (\hyperref[tab:provenienta-figuri-implementare]{Tabelul A.2})}
@@ -187,7 +176,7 @@ Figura~\ref{fig:clase-principale-adnotari} poate fi transformată într-o diagra
 
 Modelele de segmentare sunt integrate în client prin fluxuri de interfață, nu prin apeluri directe în canvas. Pentru AutoSeg, utilizatorul pornește operația din panoul drept prin butonul \texttt{AutoSeg}. Handler-ul \texttt{on\_autoseg\_yolo\_run()} citește setările din \texttt{QSettings}, verifică existența imaginii curente, deschide dialogul \texttt{AutoSegRunDialog} pentru etichete și moduri de ieșire, apoi pornește \texttt{AutoSegWorker}. Rezultatul poate conține \texttt{box}, \texttt{coordinates} sau \texttt{mask\_coords}, iar fiecare variantă este convertită într-un tip intern: dreptunghi, poligon sau mască.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=0.78\textwidth]{figs/Fluxul_AutoSeg_YOLO_in_client.png}
     \caption{Fluxul AutoSeg YOLO în client (\hyperref[tab:provenienta-figuri-implementare]{Tabelul A.2})}
@@ -196,7 +185,7 @@ Modelele de segmentare sunt integrate în client prin fluxuri de interfață, nu
 
 Pentru AutoMask, fluxul pornește din canvas. Utilizatorul selectează unealta AutoMask, apoi face click pe obiectul de interes. Canvasul adaugă un marker vizual temporar și emite semnalul \texttt{autoseg\_requested} cu poziția în coordonate de scenă. Handler-ul citește executabilul, timeout-ul, device-ul și argumentele suplimentare, apoi pornește \texttt{AutoMaskWorker}. Dacă modelul returnează coordonate valide, acestea sunt transformate într-o mască și adăugate pe canvas.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=\textwidth]{figs/Fluxul_AutoMask_pe_baza_unui_punct_selectat.png}
     \caption{Fluxul AutoMask pe baza unui punct selectat (\hyperref[tab:provenienta-figuri-implementare]{Tabelul A.2})}
@@ -260,7 +249,7 @@ Aceeași idee se aplică și comunicării cu serviciile locale sau backend. Work
 
 Pe lângă fereastra principală, clientul poate deschide ferestre auxiliare pentru comunicare și asistență locală. \texttt{ChatWindow} este lansată din toolbar și este responsabilă pentru chatul în timp real și funcțiile colaborative. Ea nu este implementată integral într-un singur fișier, ci folosește module separate pentru construirea UI-ului, conexiune, mesaje, setări și colaborare. Această împărțire urmează aceeași idee ca la \texttt{MainWindow}: clasa principală păstrează starea și legăturile, iar detaliile operaționale sunt mutate în fișiere tematice.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=0.9\textwidth]{figs/chat_window.png}
     \caption{Fereastra de chat și colaborare (\hyperref[tab:provenienta-figuri-implementare]{Tabelul A.2})}
@@ -271,7 +260,7 @@ Pentru colaborare, \texttt{ChatWindow} se conectează la backend prin worker-e S
 
 \texttt{ChatbotWindow} oferă o interfață pentru modele conversaționale locale. Utilizatorul poate alege între Ollama și llama.cpp, poate selecta sau încărca modelul dorit și poate trimite mesaje. Pentru Ollama există un worker care listează modelele disponibile și un worker care trimite cererea de chat cu streaming de tokeni. Pentru llama.cpp, fereastra permite configurarea unui fișier \texttt{GGUF}, format folosit de llama.cpp pentru stocarea modelelor, și a unor parametri precum contextul, temperatura sau numărul maxim de tokeni. Răspunsurile sunt afișate incremental, pe măsură ce worker-ul emite tokeni.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=0.9\textwidth]{figs/chatbot.png}
     \caption{Fereastra chatbot local cu Ollama sau llama.cpp (\hyperref[tab:provenienta-figuri-implementare]{Tabelul A.2})}
@@ -286,7 +275,7 @@ O aplicație de adnotare trebuie să protejeze munca utilizatorului. În client,
 
 Fluxul de schimbare a imaginii este un exemplu bun pentru această logică. Atunci când utilizatorul selectează alt fișier în \texttt{LeftPanel}, panoul verifică dacă există modificări nesalvate. Dacă nu există, emite direct cererea de încărcare. Dacă există, utilizatorul este întrebat dacă dorește să salveze înainte de schimbare. Dacă alege salvarea, panoul nu salvează singur, ci emite \texttt{save\_before\_switch\_requested}; \texttt{MainWindow} apelează salvarea din toolbar, iar apoi confirmă sau anulează schimbarea imaginii.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=0.62\textwidth]{figs/flux_incarcare_imagine_protectie_nesalvat.png}
     \caption{Fluxul de încărcare imagine și protecția modificărilor nesalvate (\hyperref[tab:provenienta-figuri-implementare]{Tabelul A.2})}
@@ -453,7 +442,7 @@ Acest mecanism permite colaborării să suporte atât adnotări mici, precum dre
 
 Serviciile backend sunt pornite împreună prin \texttt{docker-compose.yml}. Compoziția definește un reverse proxy Traefik, un broker RabbitMQ, o bază Postgres pentru autentificare și cele trei servicii Spring Boot: \texttt{auth-service}, \texttt{chat-service} și \texttt{annotation-service}. Fiecare serviciu are propriul \texttt{Dockerfile}, iar configurarea sensibilă sau variabilă este transmisă prin fișierul \texttt{.env} și variabile de mediu.
 
-\begin{table}[H]
+\begin{table}[!htbp]
     \centering
     \small
     \begin{tabular}{p{0.24\textwidth} p{0.18\textwidth} p{0.47\textwidth}}
@@ -503,7 +492,7 @@ Pentru colaborare, \texttt{annotation-service} este explicit configurat ca modul
 
 Această alegere are un compromis clar. Pe de o parte, colaborarea live este rapidă și ușor de urmărit în cod, deoarece serverul nu trebuie să scrie fiecare mișcare într-o bază de date. Pe de altă parte, o repornire a \texttt{annotation-service} pierde sesiunile active. În contextul proiectului, acest compromis este acceptabil deoarece artefactul final nu este sesiunea live, ci exportul local realizat de client: JSON intern, COCO, YOLO sau imagine cu măști. Serverul ajută utilizatorii să lucreze împreună, dar nu înlocuiește mecanismul de export al aplicației desktop.
 
-\begin{table}[H]
+\begin{table}[!htbp]
     \centering
     \small
     \begin{tabular}{p{0.30\textwidth} p{0.58\textwidth}}
@@ -534,7 +523,7 @@ Fluxul complet începe de obicei cu înregistrarea sau autentificarea utilizator
 
 Atunci când un utilizator creează, modifică sau șterge o adnotare, \texttt{MainWindow} transformă schimbarea locală într-un payload colaborativ. Acest payload ajunge în \texttt{ChatWindow}, care îl trimite prin \texttt{CollabStompWorker}. Pentru evenimente mici, trimiterea este directă. Pentru măști și payload-uri mari, se activează mecanismul de trimitere în N pachete. Serverul aplică evenimentul, îl versionază și îl publică înapoi către toți clienții din sesiune. Clienții care primesc evenimentul îl aplică pe \texttt{AnnotationManager}, dar folosesc flag-ul \texttt{\_applying\_remote\_collab} pentru a nu retrimite aceeași modificare.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \small
     \setlength{\fboxsep}{5pt}

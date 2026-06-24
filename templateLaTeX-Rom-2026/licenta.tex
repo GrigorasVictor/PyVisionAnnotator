@@ -35,9 +35,32 @@
 \usepackage{lipsum}
 \usepackage{enumitem}
 \usepackage{array}
+\usepackage{etoolbox}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \setlist{noitemsep,nolistsep}
+\renewcommand{\topfraction}{0.92}
+\renewcommand{\bottomfraction}{0.85}
+\renewcommand{\textfraction}{0.06}
+\renewcommand{\floatpagefraction}{0.70}
+\setcounter{topnumber}{4}
+\setcounter{bottomnumber}{3}
+\setcounter{totalnumber}{6}
+\setlength{\intextsep}{6pt plus 2pt minus 2pt}
+\setlength{\textfloatsep}{6pt plus 2pt minus 2pt}
+\setlength{\floatsep}{6pt plus 2pt minus 2pt}
+\setlength{\abovecaptionskip}{4pt}
+\setlength{\belowcaptionskip}{1pt}
+\makeatletter
+\def\verbatim@font{\normalfont\ttfamily\linespread{1.12}\selectfont}
+\makeatother
+\AtBeginEnvironment{verbatim}{%
+    \vspace{0.35\baselineskip}%
+    \setlength{\topsep}{4pt plus 1pt minus 1pt}%
+    \setlength{\partopsep}{0pt}%
+    \setlength{\parsep}{0pt}%
+}
+\AfterEndEnvironment{verbatim}{\vspace{0.35\baselineskip}}
 
 
 \diplomathesis
