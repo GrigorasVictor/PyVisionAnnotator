@@ -1,8 +1,22 @@
 ﻿\chapter{Proiectare de detaliu și implementare}
 \pagestyle{fancy}
-\setlength{\parskip}{0.35em}
-\setlength{\intextsep}{10pt plus 2pt minus 2pt}
-\setlength{\textfloatsep}{10pt plus 2pt minus 2pt}
+\raggedbottom
+\setlength{\parskip}{0.18em}
+\setlength{\intextsep}{3pt plus 1pt minus 1pt}
+\setlength{\textfloatsep}{4pt plus 1pt minus 1pt}
+\setlength{\floatsep}{4pt plus 1pt minus 1pt}
+\setlength{\abovecaptionskip}{3pt}
+\setlength{\belowcaptionskip}{0pt}
+\makeatletter
+\@ifundefined{AtBeginEnvironment}{}{%
+    \AtBeginEnvironment{verbatim}{%
+        \setlength{\topsep}{2pt}%
+        \setlength{\partopsep}{0pt}%
+        \setlength{\parsep}{0pt}%
+    }%
+    \AtEndEnvironment{verbatim}{\vspace{-0.35\baselineskip}}%
+}
+\makeatother
 
 Capitolul de față descrie modul în care soluția propusă a fost proiectată și implementată, pornind de la arhitectura generală și coborând treptat spre componentele concrete ale aplicației. După prezentarea imaginii de ansamblu, capitolul detaliază clientul desktop, modelul intern de adnotare, mecanismele de salvare și export, integrarea worker-elor pentru modele AI, serviciile backend, comunicarea în timp real, persistența datelor și infrastructura de rulare. Scopul capitolului nu este reluarea elementelor teoretice din analiza anterioară, ci explicarea deciziilor de proiectare care leagă modulele implementate într-un sistem funcțional.
 
@@ -554,4 +568,6 @@ Modelele AI și chatbotul local se configurează separat de backend-ul Docker. A
 
 Prin această organizare, aplicația poate fi folosită gradual. Pentru adnotare individuală și export, utilizatorul are nevoie doar de clientul desktop și de fișierele locale. Pentru autentificare, chat și colaborare, se pornește backend-ul Docker. Pentru segmentare automată și chatbot, se configurează executabilele sau serviciile locale corespunzătoare. Sistemul nu obligă toate componentele să fie active pentru fiecare scenariu, dar le poate lega într-un flux complet atunci când utilizatorul lucrează colaborativ pe aceeași imagine.
 \setlength{\parskip}{0pt}
+\clearpage
+\flushbottom
 
