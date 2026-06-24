@@ -33,7 +33,7 @@ Componenta de inteligență artificială este integrată prin AutoSeg și AutoMa
 Contribuțiile principale constau în integrarea unui flux complet de adnotare cu suport pentru segmentare semi-automată, organizarea clară a interfeței și mecanismele de sincronizare în colaborare. Rezultatul este un instrument practic, adaptat nevoilor de etichetare din proiecte reale.
 
 \section{Arhitectură colaborativă}
-Backend-ul aplicației este separat pe servicii dedicate pentru autentificare, chat și colaborare pe adnotări. Un reverse proxy direcționează cererile către serviciul corespunzător, iar mesageria facilitează schimbul de informații între module. Această separare permite dezvoltarea și testarea componentelor în mod independent, păstrând totuși un flux unitar pentru utilizator.
+Backend-ul aplicației este separat pe servicii dedicate pentru autentificare, chat și colaborare pe adnotări. Un reverse proxy direcționează cererile către serviciul corespunzător, iar mesageria facilitează schimbul de informații între module. Această separare permite dezvoltarea și testarea componentelor în mod independent.
 
 Sincronizarea se bazează pe două tipuri de comunicație. Prin REST (Representational State Transfer), clientul listează sesiunile, obține un snapshot al stării curente și poate încărca sau descărca imagini temporare. Prin WebSocket, clienții primesc evenimente în timp real, precum crearea, actualizarea sau ștergerea adnotărilor. Când o imagine este actualizată într-o sesiune, ceilalți utilizatori primesc un eveniment de tip „image available” și sincronizează automat datele.
 

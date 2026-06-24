@@ -8,12 +8,12 @@ Capitolul de față descrie modul în care soluția propusă a fost proiectată 
 
 \section{Arhitectura generală a sistemului}
 
-Sistemul este organizat în jurul unei aplicații desktop de adnotare, care comunică atât cu modele locale de inteligență artificială, cât și cu un backend împărțit în servicii specializate. La nivel conceptual, aplicația poate fi privită ca o combinație între o zonă interactivă, folosită direct de utilizator pentru încărcarea imaginilor și editarea adnotărilor, o zonă de procesare automată, responsabilă de operațiile AI, și o zonă de servicii, responsabilă de autentificare, chat, colaborare și sincronizare.
+Sistemul este organizat în jurul unei aplicații desktop de adnotare, care comunică atât cu modele locale de inteligență artificială, cât și cu un backend împărțit în servicii specializate. La nivel conceptual, aplicația poate fi privită ca o combinație între o zonă interactivă, folosită direct de utilizator pentru încărcarea imaginilor și editarea adnotărilor, o zonă de procesare automată, responsabilă de operațiile AI, și o zonă de servicii, responsabilă de autentificare, chat, colaborare și sincronizare. Figurile din acest capitol sunt capturi și diagrame realizate pe baza proiectului implementat și sunt listate în \hyperref[tab:provenienta-figuri-implementare]{Tabelul A.2}.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{figs/overview-of-the-project.png}
-    \caption{Arhitectura generală a aplicației}
+    \caption{Arhitectura generală a aplicației (\hyperref[tab:provenienta-figuri-implementare]{Tabelul A.2})}
     \label{fig:arhitectura-generala-aplicatie}
 \end{figure}
 
@@ -50,7 +50,7 @@ Din punct de vedere funcțional, \texttt{AnnotationEngine} poate fi folosit în 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{figs/PyVisionAnnotator.png}
-    \caption{Interfața principală a aplicației PyVisionAnnotator}
+    \caption{Interfața principală a aplicației PyVisionAnnotator (\hyperref[tab:provenienta-figuri-implementare]{Tabelul A.2})}
     \label{fig:pyvisionannotator-interfata-principala}
 \end{figure}
 
@@ -80,7 +80,7 @@ A treia metodă relevantă este \texttt{\_setup\_shortcuts()}, care definește s
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{figs/flowchart_MainWindow.png}
-    \caption{Organizarea internă a ferestrei principale}
+    \caption{Organizarea internă a ferestrei principale (\hyperref[tab:provenienta-figuri-implementare]{Tabelul A.2})}
     \label{fig:organizare-mainwindow}
 \end{figure}
 
@@ -101,7 +101,7 @@ Interfața principală este împărțită în trei panouri și o bară de unelte
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{figs/settings_app.png}
-    \caption{Panoul de setări pentru AutoSeg și AutoMask}
+    \caption{Panoul de setări pentru AutoSeg și AutoMask (\hyperref[tab:provenienta-figuri-implementare]{Tabelul A.2})}
     \label{fig:setari-autoseg-automask}
 \end{figure}
 
@@ -110,7 +110,7 @@ Interfața principală este împărțită în trei panouri și o bară de unelte
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.46\textwidth]{figs/right_panel.png}
-    \caption{Panoul de proprietăți și lista de adnotări}
+    \caption{Panoul de proprietăți și lista de adnotări (\hyperref[tab:provenienta-figuri-implementare]{Tabelul A.2})}
     \label{fig:panou-proprietati-adnotari}
 \end{figure}
 
@@ -135,7 +135,7 @@ Canvasul gestionează interacțiuni specifice lucrului cu imagini: zoom cu roti�
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{figs/Fluxul_de_evenimente_in_canvas.png}
-    \caption{Fluxul de evenimente în canvas}
+    \caption{Fluxul de evenimente în canvas (\hyperref[tab:provenienta-figuri-implementare]{Tabelul A.2})}
     \label{fig:flux-evenimente-canvas}
 \end{figure}
 
@@ -163,7 +163,7 @@ Pentru măști se folosește \texttt{MaskItem}, derivată din \texttt{QGraphicsP
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{figs/Clasele_principale_pentru_adnotari.png}
-    \caption{Clasele principale pentru adnotări}
+    \caption{Clasele principale pentru adnotări (\hyperref[tab:provenienta-figuri-implementare]{Tabelul A.2})}
     \label{fig:clase-principale-adnotari}
 \end{figure}
 
@@ -176,7 +176,7 @@ Modelele de segmentare sunt integrate în client prin fluxuri de interfață, nu
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.78\textwidth]{figs/Fluxul_AutoSeg_YOLO_in_client.png}
-    \caption{Fluxul AutoSeg YOLO în client}
+    \caption{Fluxul AutoSeg YOLO în client (\hyperref[tab:provenienta-figuri-implementare]{Tabelul A.2})}
     \label{fig:flux-autoseg-yolo-client}
 \end{figure}
 
@@ -185,7 +185,7 @@ Pentru AutoMask, fluxul pornește din canvas. Utilizatorul selectează unealta A
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{figs/Fluxul_AutoMask_pe_baza_unui_punct_selectat.png}
-    \caption{Fluxul AutoMask pe baza unui punct selectat}
+    \caption{Fluxul AutoMask pe baza unui punct selectat (\hyperref[tab:provenienta-figuri-implementare]{Tabelul A.2})}
     \label{fig:flux-automask-punct-client}
 \end{figure}
 
@@ -249,7 +249,7 @@ Pe lângă fereastra principală, clientul poate deschide ferestre auxiliare pen
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.9\textwidth]{figs/chat_window.png}
-    \caption{Fereastra de chat și colaborare}
+    \caption{Fereastra de chat și colaborare (\hyperref[tab:provenienta-figuri-implementare]{Tabelul A.2})}
     \label{fig:fereastra-chat-colaborare}
 \end{figure}
 
@@ -260,7 +260,7 @@ Pentru colaborare, \texttt{ChatWindow} se conectează la backend prin worker-e S
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.9\textwidth]{figs/chatbot.png}
-    \caption{Fereastra chatbot local cu Ollama sau llama.cpp}
+    \caption{Fereastra chatbot local cu Ollama sau llama.cpp (\hyperref[tab:provenienta-figuri-implementare]{Tabelul A.2})}
     \label{fig:fereastra-chatbot-local}
 \end{figure}
 
@@ -275,7 +275,7 @@ Fluxul de schimbare a imaginii este un exemplu bun pentru această logică. Atun
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.62\textwidth]{figs/flux_incarcare_imagine_protectie_nesalvat.png}
-    \caption{Fluxul de încărcare imagine și protecția modificărilor nesalvate}
+    \caption{Fluxul de încărcare imagine și protecția modificărilor nesalvate (\hyperref[tab:provenienta-figuri-implementare]{Tabelul A.2})}
     \label{fig:flux-incarcare-protectie-nesalvat}
 \end{figure}
 
@@ -394,11 +394,17 @@ Măștile pot conține foarte multe puncte, mai ales când rezultatul vine dintr
 
 Mecanismul pornește în client, în modulul de colaborare al ferestrei de chat. Funcția care decide ruta de trimitere verifică evenimentele de tip \texttt{annotation.create}, \texttt{annotation.update} și \texttt{annotation.delete}. Pentru măști create sau actualizate, evenimentul este trimis întotdeauna chunked. Pentru celelalte adnotări, chunking-ul se activează doar dacă envelope-ul serializat depășește pragul de \texttt{2 * 1024} bytes. Dimensiunea fiecărui segment base64 este \texttt{8 * 1024} caractere, iar numărul maxim de reîncercări este 2.
 
-Pașii sunt următorii. Mai întâi, evenimentul original este serializat JSON cu \texttt{ensure\_ascii=True}. Apoi, stringul JSON este encodat base64, pentru a putea fi împărțit și reasamblat fără probleme de caractere speciale. Rezultatul base64 este tăiat în N segmente, unde N depinde de dimensiunea payload-ului:
+Pașii sunt următorii. Mai întâi, evenimentul original este serializat JSON cu \texttt{ensure\_ascii=True}. Apoi, stringul JSON este encodat base64, pentru a putea fi împărțit și reasamblat fără probleme de caractere speciale. Rezultatul base64 este tăiat în mai multe segmente, iar numărul lor depinde de dimensiunea payload-ului:
 
-\[
-N = \left\lceil \frac{\text{lungime payload base64}}{8192} \right\rceil
-\]
+\begin{equation}
+    \text{număr pachete} =
+    \left\lceil
+    \frac{\text{lungime payload base64}}{8192}
+    \right\rceil.
+    \label{eq:numar-pachete-chunking}
+\end{equation}
+
+Ecuația~\ref{eq:numar-pachete-chunking} arată cum se stabilește câte pachete sunt necesare pentru trimiterea unei adnotări mari. Lungimea payload-ului encodat base64 se împarte la dimensiunea maximă a unui segment, adică 8192 de caractere, iar rezultatul este rotunjit în sus. Rotunjirea în sus este necesară deoarece și un rest parțial trebuie transmis ca pachet separat.
 
 Fiecare segment este trimis ca un eveniment nou de tip \texttt{annotation.chunk}. Evenimentul original nu mai este trimis direct; în schimb, serverul primește toate pachetele și reconstruiește evenimentul logic inițial. Payload-ul unui pachet conține identificatorul comun al transferului, sesiunea, tipul original, indexul pachetului, numărul total, encodarea și fragmentul de date.
 
@@ -540,7 +546,7 @@ Atunci când un utilizator creează, modifică sau șterge o adnotare, \texttt{M
         \fbox{\parbox{0.86\textwidth}{\centering
         \textbf{7. Sincronizare:} versiunea nouă este publicată pe topicul sesiunii, iar ceilalți clienți aplică modificarea în \texttt{AnnotationManager}.}}
     \end{tabular}
-    \caption{Fluxul operațional al colaborării dintre utilizator, clientul desktop și backend}
+    \caption{Fluxul operațional al colaborării dintre utilizator, clientul desktop și backend (\hyperref[tab:provenienta-figuri-implementare]{Tabelul A.2})}
     \label{fig:flux-operational-colaborare}
 \end{figure}
 

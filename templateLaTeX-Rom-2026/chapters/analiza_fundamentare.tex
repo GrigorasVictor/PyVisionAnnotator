@@ -6,10 +6,13 @@
 \label{sec:model-conceptual-solutie}
 
 Sistemul propus este un instrument de adnotare asistată, în care utilizatorul controlează rezultatul final, iar componentele automate produc propuneri inițiale.
-O imagine de intrare $I$ este transformată într-o mulțime de adnotări:
-\[
-    A = \{a_1, a_2, \ldots, a_n\}.
-\]
+O imagine de intrare poate fi descrisă prin mulțimea adnotărilor asociate ei:
+\begin{equation}
+    \text{adnotari}(\text{imagine}) =
+    \{\text{adnotare}_1, \text{adnotare}_2, \ldots, \text{adnotare}_n\}.
+    \label{eq:multime-adnotari}
+\end{equation}
+Ecuația~\ref{eq:multime-adnotari} arată că pentru o imagine există o colecție de adnotări individuale, notate explicit ca \textit{adnotare 1}, \textit{adnotare 2} până la \textit{adnotare n}. Fiecare element din această colecție reprezintă un obiect sau o regiune marcată de utilizator ori propusă de un model extern.
 Fiecare adnotare conține un tip geometric, o etichetă semantică, o culoare de afișare și coordonate exprimate în sistemul imaginii originale.
 Tipurile geometrice folosite sunt: dreptunghi de încadrare, poligon și mască.
 
@@ -41,10 +44,13 @@ Pașii logici ai algoritmului sunt:
 \end{enumerate}
 
 O predicție AutoSeg poate fi reprezentată abstract prin:
-\[
-    d_i = (label_i, score_i, bbox_i, mask_i).
-\]
-Componenta $bbox_i$ localizează rapid obiectul, iar $mask_i$ descrie conturul său.
+\begin{equation}
+    \text{detectie}_i =
+    (\text{eticheta}_i, \text{scor}_i, \text{dreptunghi}_i, \text{masca}_i).
+    \label{eq:detectie-autoseg}
+\end{equation}
+Ecuația~\ref{eq:detectie-autoseg} descrie structura unei detecții generate de AutoSeg. Pentru detecția cu numărul $i$, câmpul \textit{eticheta} indică numele clasei, \textit{scor} indică nivelul de încredere, \textit{dreptunghi} localizează obiectul printr-o cutie de încadrare, iar \textit{masca} descrie conturul obiectului atunci când modelul furnizează segmentare.
+Dreptunghiul localizează rapid obiectul, iar masca descrie conturul său.
 Dacă masca nu este disponibilă, dreptunghiul de încadrare rămâne o reprezentare minimă utilă.
 Avantajul algoritmului este că poate genera mai multe adnotări într-o singură rulare.
 Limitarea sa este dependența de modelul vizual și de compatibilitatea dintre etichetele cerute și obiectele pe care modelul le poate recunoaște.
@@ -54,16 +60,22 @@ Limitarea sa este dependența de modelul vizual și de compatibilitatea dintre e
 
 AutoMask este algoritmul folosit pentru segmentare interactivă.
 Spre deosebire de AutoSeg, care caută obiecte în întreaga imagine, AutoMask pornește de la un indiciu spațial oferit de utilizator.
-Cel mai simplu indiciu este un punct $p=(x,y)$ ales în interiorul regiunii de interes.
-Modelul returnează o mască $M$ asociată acelei regiuni:
-\[
-    f(I, p) \rightarrow M.
-\]
+Cel mai simplu indiciu este un punct ales în interiorul regiunii de interes.
+Modelul returnează o mască asociată acelei regiuni:
+\begin{equation}
+    \text{AutoMask}(\text{imagine}, \text{punct selectat})
+    \rightarrow \text{masca generata}.
+    \label{eq:automask-punct}
+\end{equation}
+Ecuația~\ref{eq:automask-punct} exprimă fluxul de segmentare interactivă: utilizatorul oferă imaginea și un punct selectat pe obiect, iar modelul produce o mască pentru regiunea corespunzătoare acelui punct.
 
 În modul de segmentare completă, algoritmul poate produce mai multe măști candidate:
-\[
-    f(I) \rightarrow \{M_1, M_2, \ldots, M_m\}.
-\]
+\begin{equation}
+    \text{AutoMask}(\text{imagine})
+    \rightarrow \{\text{masca}_1, \text{masca}_2, \ldots, \text{masca}_m\}.
+    \label{eq:automask-complet}
+\end{equation}
+Ecuația~\ref{eq:automask-complet} descrie cazul în care segmentarea nu pornește de la un singur punct, ci de la întreaga imagine. Rezultatul este o listă de măști candidate, notate ca \textit{masca 1}, \textit{masca 2} până la \textit{masca m}.
 Acest mod este util când imaginea conține mai multe obiecte sau regiuni care pot fi pre-adnotate în bloc.
 
 După generarea măștii, aplicația normalizează rezultatul pentru afișare și editare.
@@ -78,9 +90,12 @@ Rolul său nu este să modifice automat adnotările, ci să explice pași, să a
 Conversația este reprezentată ca o listă de mesaje cu roluri: sistem, utilizator și asistent.
 
 Un model lingvistic autoregresiv estimează următorul token pe baza contextului deja generat:
-\[
-    P(t_n \mid t_1, t_2, \ldots, t_{n-1}).
-\]
+\begin{equation}
+    P(\text{token}_n \mid
+    \text{token}_1, \text{token}_2, \ldots, \text{token}_{n-1}).
+    \label{eq:predictie-token-llm}
+\end{equation}
+Ecuația~\ref{eq:predictie-token-llm} arată că modelul calculează probabilitatea următorului token pe baza tokenilor deja existenți în conversație. Cu alte cuvinte, răspunsul nu este generat dintr-o singură operație, ci prin alegerea repetată a următorului fragment de text.
 Răspunsul este produs iterativ, token cu token.
 Parametrii precum dimensiunea contextului, temperatura, \textit{top-p} și numărul maxim de tokeni controlează lungimea, variația și predictibilitatea răspunsului.
 În aplicație sunt folosite două moduri locale de rulare: \texttt{llama.cpp}, prin \texttt{llama-cpp-python}, și Ollama, prin client local.
@@ -91,10 +106,12 @@ Parametrii precum dimensiunea contextului, temperatura, \textit{top-p} și numă
 Pentru colaborare, aplicația tratează modificările ca evenimente.
 Crearea, actualizarea și ștergerea unei adnotări sunt reprezentate prin mesaje care modifică starea sesiunii.
 Această stare poate fi descrisă prin relația:
-\[
-    S_{v+1} = apply(S_v, e),
-\]
-unde $S_v$ este starea sesiunii la versiunea $v$, iar $e$ este evenimentul primit.
+\begin{equation}
+    \text{stare}_{v+1} =
+    \text{aplica}(\text{stare}_v, \text{eveniment primit}).
+    \label{eq:actualizare-stare-colaborativa}
+\end{equation}
+Ecuația~\ref{eq:actualizare-stare-colaborativa} explică actualizarea unei sesiuni colaborative. Starea curentă a sesiunii, notată ca \textit{stare v}, este modificată prin aplicarea unui eveniment primit, iar rezultatul devine \textit{stare v+1}, adică următoarea versiune a sesiunii.
 Versiunea incrementală ajută la ignorarea evenimentelor vechi, iar identificatorul unic al evenimentului ajută la eliminarea duplicatelor.
 
 Protocolul STOMP peste WebSocket este potrivit pentru acest flux deoarece permite modelul publicare/abonare: un client trimite un eveniment, iar ceilalți clienți abonați la aceeași sesiune îl primesc aproape în timp real.
@@ -126,11 +143,11 @@ Prin alinierea dintre reprezentările vizuale și cele textuale, modelul poate r
 \begin{figure}[ht]
     \centering
     \includegraphics[width=\textwidth]{figs/yoloe.jpg}
-    \caption{Arhitectura YOLOE folosită ca reper pentru AutoSeg}
+    \caption{Arhitectura YOLOE folosită ca reper pentru AutoSeg (\hyperref[tab:surse-figuri-ai]{Tabelul A.1}).}
     \label{fig:yoloe-architecture}
 \end{figure}
 
-În figura~\ref{fig:yoloe-architecture} se observă separarea dintre extragerea de caracteristici, agregarea multi-scală și capetele de predicție.
+În figura~\ref{fig:yoloe-architecture} (\hyperref[tab:surse-figuri-ai]{Tabelul A.1}), se observă separarea dintre extragerea de caracteristici, agregarea multi-scală și capetele de predicție.
 Pentru aplicația de adnotare, elementul relevant nu este antrenarea modelului, ci forma rezultatului: o listă de obiecte candidate care pot deveni adnotări editabile.
 YOLOE ajută proiectul prin caracterul său generalist: același tip de model poate fi folosit pentru mai multe clase și contexte vizuale, fără ca interfața de adnotare să fie proiectată pentru un singur domeniu.
 Această flexibilitate susține scopul aplicației, deoarece utilizatorul poate lucra cu imagini variate și poate folosi AutoSeg ca punct de pornire rapid, urmat de corecție manuală.
@@ -156,11 +173,11 @@ Pentru AutoMask, acest lucru este util deoarece un punct selectat de utilizator 
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.92\textwidth]{figs/mask2former_architecture.jpg}
-    \caption{Arhitectura Mask2Former pentru predicția măștilor}
+    \caption{Arhitectura Mask2Former pentru predicția măștilor (\hyperref[tab:surse-figuri-ai]{Tabelul A.1}).}
     \label{fig:mask2former-architecture}
 \end{figure}
 
-În figura~\ref{fig:mask2former-architecture}, masca nu este doar un rezultat final, ci și un element folosit în atenția modelului.
+În figura~\ref{fig:mask2former-architecture} (\hyperref[tab:surse-figuri-ai]{Tabelul A.1}), masca nu este doar un rezultat final, ci și un element folosit în atenția modelului.
 Această proprietate explică de ce Mask2Former este potrivit pentru generarea unor contururi inițiale care pot fi apoi corectate de utilizator.
 În proiect, AutoMask valorifică exact acest comportament: modelul extern produce o mască, iar aplicația o transformă într-o adnotare manipulabilă în canvas.
 
@@ -174,11 +191,11 @@ Modelul primește istoricul conversației, calculează relații de atenție înt
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.92\textwidth]{figs/transformer_decoder_only.png}
-    \caption{Structură generală de model Transformer de tip decoder-only}
+    \caption{Structură generală de model Transformer de tip decoder-only (\hyperref[tab:surse-figuri-ai]{Tabelul A.1}).}
     \label{fig:transformer-decoder-only}
 \end{figure}
 
-În figura~\ref{fig:transformer-decoder-only}, blocurile principale sunt embedding-ul pozițional, atenția mascată, normalizarea și rețeaua feed-forward.
+În figura~\ref{fig:transformer-decoder-only} (\hyperref[tab:surse-figuri-ai]{Tabelul A.1}), blocurile principale sunt embedding-ul pozițional, atenția mascată, normalizarea și rețeaua feed-forward.
 Atenția mascată împiedică modelul să folosească tokeni viitori în timpul generării, menținând caracterul autoregresiv.
 
 În proiect există două variante de rulare locală.
@@ -206,12 +223,12 @@ JWT înseamnă \textit{JSON Web Token} și reprezintă un token semnat care tran
 În proiect, el este emis după autentificare și este trimis ulterior la cererile protejate, astfel încât utilizatorul să nu retrimită parola la fiecare operație.
 Structura sa este împărțită conceptual în trei părți: header, payload și semnătură.
 Headerul descrie tipul tokenului și algoritmul folosit, payload-ul conține informațiile despre utilizator, iar semnătura permite verificarea integrității tokenului.
-Această structură este ilustrată în figura~\ref{fig:jwt-structure}.
+Această structură este ilustrată în figura~\ref{fig:jwt-structure} (\hyperref[tab:surse-figuri-ai]{Tabelul A.1}).
 
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.82\textwidth]{figs/jwt-diagram.png}
-    \caption{Structura generală a unui token JWT}
+    \caption{Structura generală a unui token JWT (\hyperref[tab:surse-figuri-ai]{Tabelul A.1}).}
     \label{fig:jwt-structure}
 \end{figure}
 
@@ -302,7 +319,7 @@ Primul este flexibilitatea: se poate schimba modelul fără modificarea canvasul
 Al doilea este izolarea erorilor: dacă modelul extern eșuează, aplicația poate afișa o eroare și poate continua să funcționeze manual.
 Pentru o aplicație de adnotare, această izolare este importantă deoarece utilizatorul nu trebuie blocat de o singură componentă AI.
 
-\subsection{Java și Spring Boot pentru serviciile backend}
+\subsection{Java Spring Boot pentru serviciile backend}
 \label{subsec:java-spring}
 
 Backend-ul este împărțit în servicii Spring Boot: autentificare, chat și adnotare colaborativă.

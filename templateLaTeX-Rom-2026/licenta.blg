@@ -3,8 +3,6 @@ Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: licenta.aux
 Reallocating 'name_of_file' (item size: 1) to 29 items.
 A level-1 auxiliary file: frontmatter/foi_de_capat.aux
-Reallocating 'name_of_file' (item size: 1) to 21 items.
-A level-1 auxiliary file: frontmatter/ghid.aux
 Reallocating 'name_of_file' (item size: 1) to 24 items.
 A level-1 auxiliary file: frontmatter/cuprins.aux
 Reallocating 'name_of_file' (item size: 1) to 25 items.
@@ -42,7 +40,7 @@ Warning--empty booktitle in 10.1145/3037697.3037698
 Done.
 You've used 60 entries,
             4087 wiz_defined-function locations,
-            1143 strings with 19535 characters,
+            1142 strings with 19515 characters,
 and the built_in function-call counts, 38843 in all, are:
 = -- 2950
 > -- 1070

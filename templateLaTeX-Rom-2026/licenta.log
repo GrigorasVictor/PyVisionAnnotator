@@ -1,10 +1,9 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.5) (preloaded format=pdflatex 2026.5.22)  3 JUN 2026 21:39
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.5) (preloaded format=pdflatex 2026.5.22)  24 JUN 2026 13:48
 entering extended mode
  restricted \write18 enabled.
- file:line:error style messages enabled.
  %&-line parsing enabled.
-**c:/Stuff/Scoala/Licienta/templateLaTeX-Rom-2026/licenta.tex
-(c:/Stuff/Scoala/Licienta/templateLaTeX-Rom-2026/licenta.tex
+**./licenta.tex
+(licenta.tex
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-03-20>
 (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/base\report.cls
@@ -24,32 +23,45 @@ File: size12.clo 2025/01/22 v1.4n Standard LaTeX file (size option)
 \abovecaptionskip=\skip49
 \belowcaptionskip=\skip50
 \bibindent=\dimen150
-) (cs.sty
+)
+(cs.sty
 \hour=\count284
 \minute=\count285
 \dow=\count286
 \leap=\count287
 \x=\count288
 \y=\count289
-) (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.sty
+)
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.sty
 Package: fontenc 2025/07/18 v2.1d Standard LaTeX package
-) (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/base\inputenc.sty
+)
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/base\inputenc.sty
 Package: inputenc 2024/02/08 v1.3d Input encoding file
 \inpenc@prehook=\toks17
 \inpenc@posthook=\toks18
-) (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/babel\babel.sty
-Package: babel 2026/04/15 v26.6 The multilingual framework for LuaLaTeX, pdfLaTeX and XeLaTeX
+)
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/babel\babel.sty
+Package: babel 2026/04/15 v26.6 The multilingual framework for LuaLaTeX, pdfLaT
+eX and XeLaTeX
 \babel@savecnt=\count290
-LaTeX Encoding Info:    Redeclaring text command \ij (encoding OT1) on input line 2078.
-LaTeX Encoding Info:    Redeclaring text command \IJ (encoding OT1) on input line 2080.
-LaTeX Encoding Info:    Redeclaring text command \ij (encoding T1) on input line 2082.
-LaTeX Encoding Info:    Redeclaring text command \IJ (encoding T1) on input line 2083.
-LaTeX Encoding Info:    Ignoring declaration for text command \ij (encoding ?) on input line 2084.
-LaTeX Encoding Info:    Ignoring declaration for text command \IJ (encoding ?) on input line 2086.
-LaTeX Encoding Info:    Ignoring declaration for text command \SS (encoding ?) on input line 2111.
+LaTeX Encoding Info:    Redeclaring text command \ij (encoding OT1) on input li
+ne 2078.
+LaTeX Encoding Info:    Redeclaring text command \IJ (encoding OT1) on input li
+ne 2080.
+LaTeX Encoding Info:    Redeclaring text command \ij (encoding T1) on input lin
+e 2082.
+LaTeX Encoding Info:    Redeclaring text command \IJ (encoding T1) on input lin
+e 2083.
+LaTeX Encoding Info:    Ignoring declaration for text command \ij (encoding ?) 
+on input line 2084.
+LaTeX Encoding Info:    Ignoring declaration for text command \IJ (encoding ?) 
+on input line 2086.
+LaTeX Encoding Info:    Ignoring declaration for text command \SS (encoding ?) 
+on input line 2111.
 \U@D=\dimen151
 \l@unhyphenated=\language79
- (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/babel\txtbabel.def)
+
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/babel\txtbabel.def)
 \bbl@readstream=\read2
 \bbl@dirlevel=\count291
 Package babel Info: Configuration files are deprecated, as
@@ -60,28 +72,42 @@ Package babel Info: Configuration files are deprecated, as
 * Local config file bblopts.cfg used
 *
 (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/arabi\bblopts.cfg
-File: bblopts.cfg 2005/09/08 v0.1 add Arabic and Farsi to "declared" options of babel
-) (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/babel/locale/ro\babel-romanian.tex)
+File: bblopts.cfg 2005/09/08 v0.1 add Arabic and Farsi to "declared" options of
+ babel
+)
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/babel/locale/ro\babe
+l-romanian.tex)
 Package babel Info: Importing font and identification data for romanian
 (babel)             from babel-ro.ini. Reported on input line 4330.
- (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/babel-romanian\romanian.ldf
+
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/babel-romanian\romania
+n.ldf
 Language: romanian 2021/04/04 v1.2m Romanian support from the babel system
-)) (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\times.sty
+))
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\times.sty
 Package: times 2020/03/25 PSNFSS-v9.3 (SPQR) 
-) (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphicx.sty
+)
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphicx.sty
 Package: graphicx 2024/12/31 v1.2e Enhanced LaTeX Graphics (DPC,SPQR)
- (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/graphics\keyval.sty
+
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/graphics\keyval.sty
 Package: keyval 2022/05/29 v1.15 key=value parser (DPC)
 \KV@toks@=\toks19
-) (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphics.sty
+)
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphics.sty
 Package: graphics 2024/08/06 v1.4g Standard LaTeX Graphics (DPC,SPQR)
- (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/graphics\trig.sty
+
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/graphics\trig.sty
 Package: trig 2023/12/02 v1.11 sin cos tan (DPC)
-) (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\graphics.cfg
+)
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\graphics.
+cfg
 File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
 )
 Package graphics Info: Driver file: pdftex.def on input line 106.
- (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def\pdftex.def
+
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def\pdftex.de
+f
 File: pdftex.def 2025/09/29 v1.2d Graphics/color driver for pdftex
 ))
 \Gin@req@height=\dimen152
@@ -98,14 +124,17 @@ Package: amsmath 2025/07/09 v2.17z AMS math features
 For additional information on amsmath, use the `?' option.
 (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amstext.sty
 Package: amstext 2024/11/17 v2.01 AMS text
- (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsgen.sty
+
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsgen.sty
 File: amsgen.sty 1999/11/30 v2.0 generic functions
 \@emptytoks=\toks20
 \ex@=\dimen154
-)) (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsbsy.sty
+))
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsbsy.sty
 Package: amsbsy 1999/11/29 v1.2d Bold Symbols
 \pmbraise@=\dimen155
-) (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsopn.sty
+)
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsopn.sty
 Package: amsopn 2022/04/08 v2.04 operator names
 )
 \inf@bad=\count292
@@ -155,16 +184,22 @@ LaTeX Info: Redefining \Relbar on input line 970.
 \mathdisplay@stack=\toks24
 LaTeX Info: Redefining \[ on input line 2950.
 LaTeX Info: Redefining \] on input line 2951.
-) (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amssymb.sty
+)
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amssymb.sty
 Package: amssymb 2013/01/14 v3.01 AMS font symbols
- (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amsfonts.sty
+
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amsfonts.sty
 Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
 \symAMSa=\mathgroup5
 \symAMSb=\mathgroup6
 LaTeX Font Info:    Redeclaring math symbol \hbar on input line 98.
 LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
 (Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
-)) (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/xypic\xy.sty (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/xypic\xy.tex Bootstrap'ing: catcodes, docmode, (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/xypic\xyrecat.tex) (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/xypic\xyidioms.tex)
+)) (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/xypic\xy.sty
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/xypic\xy.tex
+Bootstrap'ing: catcodes, docmode,
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/xypic\xyrecat.tex)
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/xypic\xyidioms.tex)
 
  Xy-pic version 3.8.9 <2013/10/06>
  Copyright (c) 1991-2013 by Kristoffer H. Rose <krisrose@tug.org> and others
@@ -210,18 +245,25 @@ Loading kernel: messages; fonts; allocations: state,
 \xywrite@=\write3
 \csp@=\count307
 \quotPTK@=\dimen190
- utility macros; pictures: \xy, positions,
+
+utility macros; pictures: \xy, positions,
 \swaptoks@@=\toks27
 \connectobjectbox@@=\box57
  objects,
 \styletoks@=\toks28
- decorations; kernel objects: directionals, circles, text; options; algorithms: directions, edges, connections;  Xy-pic loaded) (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifpdf.sty
+ decorations;
+kernel objects: directionals, circles, text; options; algorithms: directions,
+edges, connections;  Xy-pic loaded)
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifpdf.sty
 Package: ifpdf 2019/10/25 v3.4 ifpdf legacy package. Use iftex instead.
- (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty
+
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty
 Package: iftex 2024/12/12 v1.0g TeX engine tests
 ))
 Package: xy 2013/10/06 Xy-pic version 3.8.9
- (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/xypic\xymatrix.tex  Xy-pic option: Matrix feature v.3.14
+
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/xypic\xymatrix.tex
+ Xy-pic option: Matrix feature v.3.14
 \Row=\count308
 \Col=\count309
 \queue@=\toks29
@@ -229,17 +271,29 @@ Package: xy 2013/10/06 Xy-pic version 3.8.9
 \qcount@=\count310
 \qcount@@=\count311
 \matrixsize@=\count312
- loaded) (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/xypic\xyarrow.tex  Xy-pic option: Arrow and Path feature v.3.9 path, \ar, loaded) (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/xypic\xypdf.tex  Xy-pic option: PDF driver v.1.7 loaded)) (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/ae\ae.sty
+ loaded)
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/xypic\xyarrow.tex
+ Xy-pic option: Arrow and Path feature v.3.9 path, \ar, loaded)
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/xypic\xypdf.tex
+ Xy-pic option: PDF driver v.1.7 loaded))
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/ae\ae.sty
 Package: ae 2001/02/12 1.3 Almost European Computer Modern
- (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.sty
+
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.sty
 Package: fontenc 2025/07/18 v2.1d Standard LaTeX package
-LaTeX Font Info:    Trying to load font information for T1+ptm on input line 116.
- (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\t1ptm.fd
+LaTeX Font Info:    Trying to load font information for T1+ptm on input line 11
+6.
+
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\t1ptm.fd
 File: t1ptm.fd 2001/06/04 font definitions for T1/ptm.
-))) (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/ae\aecompl.sty
+)))
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/ae\aecompl.sty
 Package: aecompl 1998/07/23 0.9 T1 Complements for AE fonts (D. Roegel)
-) (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/algorithms\algorithm.sty
-Package: algorithm 2009/08/24 v0.1 Document Style `algorithm' - floating environment
+)
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/algorithms\algorithm.s
+ty
+Package: algorithm 2009/08/24 v0.1 Document Style `algorithm' - floating enviro
+nment
  (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/float\float.sty
 Package: float 2001/11/08 v1.3d Float enhancements (AL)
 \c@float@type=\count313
@@ -247,18 +301,24 @@ Package: float 2001/11/08 v1.3d Float enhancements (AL)
 \float@box=\box58
 \@float@everytoks=\toks32
 \@floatcapt=\box59
-) (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/base\ifthen.sty
+)
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/base\ifthen.sty
 Package: ifthen 2024/03/16 v1.1e Standard LaTeX ifthen package (DPC)
 )
 \@float@every@algorithm=\toks33
 \c@algorithm=\count314
-) (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/graphics\color.sty
+)
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/graphics\color.sty
 Package: color 2025/01/14 v1.3e Standard LaTeX Color (DPC)
- (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\color.cfg
+
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\color.cfg
 File: color.cfg 2016/01/02 v1.6 sample color configuration
 )
 Package color Info: Driver file: pdftex.def on input line 149.
- (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolor.ltx)) (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/titlesec\titlesec.sty
+
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolor.ltx
+))
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/titlesec\titlesec.sty
 Package: titlesec 2025/01/04 v2.17 Sectioning titles
 \ttl@box=\box60
 \beforetitleunit=\skip54
@@ -269,8 +329,10 @@ Package: titlesec 2025/01/04 v2.17 Sectioning titles
 \titlewidth=\dimen193
 \titlewidthlast=\dimen194
 \titlewidthfirst=\dimen195
-) (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/fancyhdr\fancyhdr.sty
+) (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/fancyhdr\fancyhdr.st
+y
 Package: fancyhdr 2025/02/07 v5.2 Extensive control of page headers and footers
+
 \f@nch@headwidth=\skip56
 \f@nch@offset@elh=\skip57
 \f@nch@offset@erh=\skip58
@@ -286,54 +348,80 @@ Package: fancyhdr 2025/02/07 v5.2 Extensive control of page headers and footers
 \f@nch@widthC=\skip68
 \f@nch@widthR=\skip69
 \@temptokenb=\toks35
-) (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperref.sty
+)
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperref.sty
 Package: hyperref 2026-04-24 v7.01q Hypertext links for LaTeX
- (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/kvsetkeys\kvsetkeys.sty
+
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/kvsetkeys\kvsetkeys.st
+y
 Package: kvsetkeys 2022-10-05 v1.19 Key value parser (HO)
-) (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/kvdefinekeys\kvdefinekeys.sty
+)
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/kvdefinekeys\kvdefin
+ekeys.sty
 Package: kvdefinekeys 2019-12-19 v1.6 Define keys (HO)
-) (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/pdfescape\pdfescape.sty
+)
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/pdfescape\pdfescape.
+sty
 Package: pdfescape 2019/12/09 v1.15 Implements pdfTeX's escape features (HO)
- (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/ltxcmds\ltxcmds.sty
+
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/ltxcmds\ltxcmds.sty
 Package: ltxcmds 2023-12-04 v1.26 LaTeX kernel commands for general use (HO)
-) (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/pdftexcmds\pdftexcmds.sty
-Package: pdftexcmds 2020-06-27 v0.33 Utility functions of pdfTeX for LuaTeX (HO)
- (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/infwarerr\infwarerr.sty
+)
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/pdftexcmds\pdftexcmd
+s.sty
+Package: pdftexcmds 2020-06-27 v0.33 Utility functions of pdfTeX for LuaTeX (HO
+)
+
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/infwarerr\infwarerr.
+sty
 Package: infwarerr 2019/12/03 v1.5 Providing info/warning/error messages (HO)
 )
 Package pdftexcmds Info: \pdf@primitive is available.
 Package pdftexcmds Info: \pdf@ifprimitive is available.
 Package pdftexcmds Info: \pdfdraftmode found.
-)) (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/hycolor\hycolor.sty
+))
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/hycolor\hycolor.sty
 Package: hycolor 2020-01-27 v1.10 Color options for hyperref/bookmark (HO)
-) (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\nameref.sty
+)
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\nameref.sty
 Package: nameref 2026-01-29 v2.58 Cross-referencing by name of section
- (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/refcount\refcount.sty
+
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/refcount\refcount.sty
 Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
-) (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/gettitlestring\gettitlestring.sty
+)
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/gettitlestring\getti
+tlestring.sty
 Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
- (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/kvoptions\kvoptions.sty
+
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/kvoptions\kvoptions.st
+y
 Package: kvoptions 2022-06-15 v3.15 Key value format for package options (HO)
 ))
 \c@section@level=\count315
-) (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/etoolbox\etoolbox.sty
+)
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/etoolbox\etoolbox.sty
 Package: etoolbox 2025/10/02 v2.5m e-TeX tools for LaTeX (JAW)
 \etb@tempcnta=\count316
-) (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/stringenc\stringenc.sty
-Package: stringenc 2019/11/29 v1.12 Convert strings between diff. encodings (HO)
+)
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/stringenc\stringenc.
+sty
+Package: stringenc 2019/11/29 v1.12 Convert strings between diff. encodings (HO
+)
 )
 \@linkdim=\dimen196
 \Hy@linkcounter=\count317
 \Hy@pagecounter=\count318
- (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1enc.def
+
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1enc.def
 File: pd1enc.def 2026-04-24 v7.01q Hyperref: PDFDocEncoding definition (HO)
 Now handling font encoding PD1 ...
 ... no UTF-8 mapping file for font encoding PD1
-) (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/intcalc\intcalc.sty
+)
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/intcalc\intcalc.sty
 Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
 )
 \Hy@SavedSpaceFactor=\count319
- (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\puenc.def
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\puenc.def
 File: puenc.def 2026-04-24 v7.01q Hyperref: PDF Unicode definition (HO)
 Now handling font encoding PU ...
 ... no UTF-8 mapping file for font encoding PU
@@ -346,16 +434,21 @@ Package hyperref Info: Backreferencing OFF on input line 4219.
 Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
 Package hyperref Info: Bookmarks ON on input line 4466.
 \c@Hy@tempcnt=\count320
- (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/url\url.sty
+
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/url\url.sty
 \Urlmuskip=\muskip18
 Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
 )
 LaTeX Info: Redefining \url on input line 4805.
 \XeTeXLinkMargin=\dimen197
- (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/bitset\bitset.sty
+
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/bitset\bitset.sty
 Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
- (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/bigintcalc\bigintcalc.sty
-Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO)
+
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/bigintcalc\bigintcal
+c.sty
+Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO
+)
 ))
 \Fld@menulength=\count321
 \Field@Width=\dimen198
@@ -372,21 +465,29 @@ Package hyperref Info: PDF/A mode OFF on input line 6121.
 \c@Hfootnote=\count324
 )
 Package hyperref Info: Driver (autodetected): hpdftex.
- (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hpdftex.def
+
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hpdftex.def
 File: hpdftex.def 2026-04-24 v7.01q Hyperref driver for pdfTeX
 \Fld@listcount=\count325
 \c@bookmark@seq@number=\count326
- (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/rerunfilecheck\rerunfilecheck.sty
+
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/rerunfilecheck\rerunfi
+lecheck.sty
 Package: rerunfilecheck 2025-06-21 v1.11 Rerun checks for auxiliary files (HO)
- (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/uniquecounter\uniquecounter.sty
+
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/uniquecounter\unique
+counter.sty
 Package: uniquecounter 2019/12/15 v1.4 Provide unlimited unique counter (HO)
 )
-Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 284.
+Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
+84.
 )
 \Hy@SectionHShift=\skip70
-) (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.sty
+)
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.sty
 Package: geometry 2026/03/07 v6.0 Page Geometry
- (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifvtex.sty
+
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifvtex.sty
 Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
 )
 \Gm@cnth=\count327
@@ -401,9 +502,16 @@ Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
 \Gm@layouthoffset=\dimen262
 \Gm@layoutvoffset=\dimen263
 \Gm@dimlist=\toks36
- (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.cfg)) (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/lipsum\lipsum.sty (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/l3packages/l3keys2e\l3keys2e.sty (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/l3kernel\expl3.sty
+
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.cfg)
+) (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/lipsum\lipsum.sty
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/l3packages/l3keys2e\l3
+keys2e.sty
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/l3kernel\expl3.sty
 Package: expl3 2026-03-20 L3 programming layer (loader) 
- (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdftex.def
+
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pd
+ftex.def
 File: l3backend-pdftex.def 2026-02-18 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count330
 ))
@@ -413,7 +521,10 @@ Package: lipsum 2021-09-20 v2.7 150 paragraphs of Lorem Ipsum dummy text
 \g__lipsum_par_int=\count331
 \l__lipsum_a_int=\count332
 \l__lipsum_b_int=\count333
- (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/lipsum\lipsum.ltd.tex)) (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/enumitem\enumitem.sty
+
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/lipsum\lipsum.ltd.tex)
+)
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/enumitem\enumitem.sty
 Package: enumitem 2025/02/06 v3.11 Customized lists
 \labelindent=\skip71
 \enit@outerparindent=\dimen264
@@ -431,10 +542,17 @@ Package: array 2025/09/25 v2.6n Tabular extension package (FMi)
 \backup@length=\skip73
 \ar@cellbox=\box63
 )
-LaTeX Font Info:    Trying to load font information for T1+aer on input line 58.
- (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/ae\t1aer.fd
+LaTeX Font Info:    Trying to load font information for T1+aer on input line 58
+.
+
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/ae\t1aer.fd
 File: t1aer.fd 1997/11/16 Font definitions for T1/aer.
-) (licenta.aux (frontmatter/foi_de_capat.aux) (frontmatter/ghid.aux) (frontmatter/cuprins.aux) (chapters/introducere.aux) (chapters/obiective.aux) (chapters/studiu_biblio.aux) (chapters/analiza_fundamentare.aux) (chapters/proiectare_implementare.aux) (chapters/testare_validare.aux) (chapters/instalare_utilizare.aux) (chapters/concluzii.aux) (backmatter/anexe.aux))
+)
+(licenta.aux (frontmatter/foi_de_capat.aux) (frontmatter/cuprins.aux)
+(chapters/introducere.aux) (chapters/obiective.aux) (chapters/studiu_biblio.aux
+) (chapters/analiza_fundamentare.aux) (chapters/proiectare_implementare.aux)
+(chapters/testare_validare.aux) (chapters/instalare_utilizare.aux)
+(chapters/concluzii.aux) (backmatter/anexe.aux))
 \openout1 = `licenta.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 58.
@@ -455,7 +573,9 @@ LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 58.
 LaTeX Font Info:    ... okay on input line 58.
 LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 58.
 LaTeX Font Info:    ... okay on input line 58.
- (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mkii
+
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.m
+kii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count336
 \scratchdimen=\dimen267
@@ -468,27 +588,38 @@ LaTeX Font Info:    ... okay on input line 58.
 \MPnumerator=\count340
 \makeMPintoPDFobject=\count341
 \everyMPtoPDFconversion=\toks40
-) (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-base.sty
+)
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-
+base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
-Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 485.
- (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstopdf-sys.cfg
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
+85.
+
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstopdf-sys.
+cfg
 File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 ))
-LaTeX Font Info:    Trying to load font information for U+lasy on input line 58.
+LaTeX Font Info:    Trying to load font information for U+lasy on input line 58
+.
  (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/base\ulasy.fd
 File: ulasy.fd 1998/08/17 v2.2e LaTeX symbol font definitions
 )
 LaTeX Font Info:    Trying to load font information for U+msa on input line 58.
- (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
+
+
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
 LaTeX Font Info:    Trying to load font information for U+msb on input line 58.
- (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd
+
+
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
 Package xypdf Info: Line width: 0.47998pt on input line 58.
 Package hyperref Info: Link coloring OFF on input line 58.
- (licenta.out) (licenta.out)
+
+(licenta.out) (licenta.out)
 \@outlinefile=\write4
 \openout4 = `licenta.out'.
 
@@ -530,8 +661,10 @@ Package hyperref Info: Link coloring OFF on input line 58.
 \openout2 = `frontmatter/foi_de_capat.aux'.
 
 (frontmatter/foi_de_capat.tex
-LaTeX Font Info:    Trying to load font information for T1+aess on input line 31.
- (C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/ae\t1aess.fd
+LaTeX Font Info:    Trying to load font information for T1+aess on input line 3
+1.
+
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/ae\t1aess.fd
 File: t1aess.fd 1997/11/16 Font definitions for T1/aess.
 )
 LaTeX Font Info:    Font shape `T1/aess/b/n' in size <12> not available
@@ -542,7 +675,8 @@ LaTeX Font Info:    Font shape `T1/aess/b/n' in size <6> not available
 (Font)              Font shape `T1/aess/bx/n' tried instead on input line 31.
 
 
-pdfTeX warning: pdflatex (file ./figs/AntetUTCNRom.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
+pdfTeX warning: pdflatex.exe (file ./figs/AntetUTCNRom.pdf): PDF inclusion: fou
+nd PDF version <1.7>, but at most version <1.5> allowed
 <figs/AntetUTCNRom.pdf, id=383, 2182.1525pt x 353.32pt>
 File: figs/AntetUTCNRom.pdf Graphic file (type pdf)
 <use figs/AntetUTCNRom.pdf>
@@ -558,7 +692,8 @@ Package fancyhdr Warning: \headheight is too small (70.0pt):
 [1
 
 
-{C:/Users/Victor/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map} <./figs/AntetUTCNRom.pdf>]
+{C:/Users/Victor/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map} <./figs/Ante
+tUTCNRom.pdf>]
 Overfull \hbox (31.96675pt too wide) in paragraph at lines 59--64
 [][] 
  []
@@ -591,17 +726,20 @@ Underfull \hbox (badness 10000) in paragraph at lines 105--117
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 105--117
-\T1/aer/m/n/12 nat† []i cer-ti-fi-cat† ^^Qcon-form cu ori-gi-na-lul^^Q), au-to-rul lu-cr†-rii
+\T1/aer/m/n/12 nat† []i cer-ti-fi-cat† ^^Qcon-form cu ori-gi-na-lul^^Q), au-to-
+rul lu-cr†-rii
  []
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 105--117
-\T1/aer/m/n/12 ela-bo-rat† Ón ve-de-rea sus[]inerii exa-me-nu-lui de fi-na-li-zare a stu-di-i-lor de
+\T1/aer/m/n/12 ela-bo-rat† Ón ve-de-rea sus[]inerii exa-me-nu-lui de fi-na-li-z
+are a stu-di-i-lor de
  []
 
 
 Underfull \hbox (badness 7326) in paragraph at lines 105--117
-\T1/aer/m/n/12 licen[]† la Fa-cul-ta-tea de Auto-ma-tic† []i Cal-cu-la-toare, Pro-gra-mul de stu-diu
+\T1/aer/m/n/12 licen[]† la Fa-cul-ta-tea de Auto-ma-tic† []i Cal-cu-la-toare, P
+ro-gra-mul de stu-diu
  []
 
 
@@ -621,26 +759,6 @@ Package fancyhdr Warning: \headheight is too small (70.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-22.19221pt}.
 
 [3])
-\openout2 = `frontmatter/ghid.aux'.
-
- (frontmatter/ghid.tex
-Underfull \hbox (badness 10000) in paragraph at lines 5--6
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 7--9
-
- []
-
-LaTeX Font Info:    Trying to load font information for T1+aett on input line 16.
-(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/ae\t1aett.fd
-File: t1aett.fd 1997/11/16 Font definitions for T1/aett.
-)) [4
-
-
-
-]
 \openout2 = `frontmatter/cuprins.aux'.
 
  (frontmatter/cuprins.tex (licenta.toc [1
@@ -648,17 +766,25 @@ File: t1aett.fd 1997/11/16 Font definitions for T1/aett.
 
 
 
-] [2])
+]
+LaTeX Font Info:    Trying to load font information for T1+aett on input line 6
+2.
+
+(C:\Users\Victor\AppData\Local\Programs\MiKTeX\tex/latex/ae\t1aett.fd
+File: t1aett.fd 1997/11/16 Font definitions for T1/aett.
+) [2])
 \tf@toc=\write5
 \openout5 = `licenta.toc'.
 
- [3])
+
+[3])
 \openout2 = `chapters/introducere.aux'.
 
  (chapters/introducere.tex
 Capitolul 1.
 
-pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has been already used, duplicate ignored
+pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has 
+been already used, duplicate ignored
 <to be read again> 
                    \relax 
 l.22 \section{Solu»õia propusƒÉ »ôi contribu»õii}
@@ -668,26 +794,25 @@ l.22 \section{Solu»õia propusƒÉ »ôi contribu»õii}
 
 
 ])
-pdfTeX warning (ext4): destination with the same identifier (name{page.2}) has been already used, duplicate ignored
+pdfTeX warning (ext4): destination with the same identifier (name{page.2}) has 
+been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.92 \include{chapters/introducere}
+l.91 \include{chapters/introducere}
                                     % \chapter{Introducere} [2]
-pdfTeX warning (ext4): destination with the same identifier (name{page.3}) has been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.92 \include{chapters/introducere}
-                                    % \chapter{Introducere} [3]
 \openout2 = `chapters/obiective.aux'.
 
- (chapters/obiective.tex
+
+(chapters/obiective.tex
 Capitolul 2.
 
 Overfull \hbox (0.9999pt too wide) in paragraph at lines 12--13
-[]\T1/aer/m/n/12 Gestionarea ad-no-t†-ri-lor tre-buie s† fie clar† []i pre-vi-zi-bil†, cu po-si-bi-li-ta-tea de selec[]ie,
+[]\T1/aer/m/n/12 Gestionarea ad-no-t†-ri-lor tre-buie s† fie clar† []i pre-vi-z
+i-bil†, cu po-si-bi-li-ta-tea de selec[]ie,
  []
 
-LaTeX Font Info:    Trying to load font information for TS1+aer on input line 18.
+LaTeX Font Info:    Trying to load font information for TS1+aer on input line 1
+8.
 LaTeX Font Info:    No file TS1aer.fd. on input line 18.
 
 LaTeX Font Warning: Font shape `TS1/aer/m/n' undefined
@@ -695,123 +820,153 @@ LaTeX Font Warning: Font shape `TS1/aer/m/n' undefined
 (Font)              for symbol `textbullet' on input line 18.
 
 
-pdfTeX warning (ext4): destination with the same identifier (name{page.4}) has been already used, duplicate ignored
+pdfTeX warning (ext4): destination with the same identifier (name{page.3}) has 
+been already used, duplicate ignored
 <to be read again> 
                    \relax 
 l.22 	\item \textbf
-                   {Modularizarea execu»õiei AI.} Rularea modelelor ca aplic... [4
+                   {Modularizarea execu»õiei AI.} Rularea modelelor ca aplic...
+[3
 
 
 
 
 ]
 Overfull \hbox (4.03397pt too wide) in paragraph at lines 34--35
-[]\T1/aer/b/n/12 Benchmarking pen-tru mo-dele al-ter-na-tive. \T1/aer/m/n/12 Ana-li-za-rea unor mo-dele open-vocabulary
+[]\T1/aer/b/n/12 Benchmarking pen-tru mo-dele al-ter-na-tive. \T1/aer/m/n/12 An
+a-li-za-rea unor mo-dele open-vocabulary
  []
 
-[5]
+[4]
 Underfull \hbox (badness 1424) in paragraph at lines 75--76
 []|\T1/aer/m/n/12 Set†ri vi-zu-ale per-sis-tente []i con-fir-mare la Ón-chi-
  []
 
-) [6]
+) [5]
 \openout2 = `chapters/studiu_biblio.aux'.
 
  (chapters/studiu_biblio.tex
 Capitolul 3.
 
 Overfull \hbox (7.34093pt too wide) in paragraph at lines 11--12
-[]\T1/aer/m/n/12 Œn ra-por-tul teh-nic din 2017 al lui Bre-i-ten-feld []i Muller-Birn se re-a-li-zeaz† o compara[]ie
+[]\T1/aer/m/n/12 Œn ra-por-tul teh-nic din 2017 al lui Bre-i-ten-feld []i Mulle
+r-Birn se re-a-li-zeaz† o compara[]ie
  []
 
-[7
+[6
 
 
 
 
-] [8]
+] [7]
 Overfull \hbox (16.78426pt too wide) in paragraph at lines 42--43
-[]\T1/aer/m/n/12 Modelele vizual-lingvistice au schim-bat pa-ra-digma ad-no-t†-rii prin eli-mi-na-rea necesit†[]ii
+[]\T1/aer/m/n/12 Modelele vizual-lingvistice au schim-bat pa-ra-digma ad-no-t†-
+rii prin eli-mi-na-rea necesit†[]ii
  []
 
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [9] [10]
+ [8]
+[9]
 Overfull \hbox (12.19824pt too wide) in paragraph at lines 52--53
-[]\T1/aer/m/n/12 DistilBERT re-duce di-men-siu-nea mo-de-lu-lui BERT cu 40% prin dis-ti-la-rea cuno[]tin[]elor
+[]\T1/aer/m/n/12 DistilBERT re-duce di-men-siu-nea mo-de-lu-lui BERT cu 40% pri
+n dis-ti-la-rea cuno[]tin[]elor
  []
 
 
 Overfull \hbox (4.50836pt too wide) in paragraph at lines 57--58
-[]\T1/aer/m/n/12 Adnotarea asis-tat† com-bin† inferen[]a auto-mat† a mo-de-le-lor cu ve-ri-fi-ca-rea []i corec[]ia
+[]\T1/aer/m/n/12 Adnotarea asis-tat† com-bin† inferen[]a auto-mat† a mo-de-le-l
+or cu ve-ri-fi-ca-rea []i corec[]ia
  []
 
-[11] [12]
+[10] [11]
 Overfull \hbox (1.58865pt too wide) in paragraph at lines 72--73
-\T1/aer/m/n/12 consisten[]a re-zul-ta-te-lor []i ca-pa-ci-ta-tea sis-te-mu-lui de a in-te-gra asisten[]a auto-mat†. Evolu[]ia
+\T1/aer/m/n/12 consisten[]a re-zul-ta-te-lor []i ca-pa-ci-ta-tea sis-te-mu-lui 
+de a in-te-gra asisten[]a auto-mat†. Evolu[]ia
  []
 
-[13] [14])
-Overfull \hbox (4.96417pt too wide) in paragraph at lines 105--96
-[]\T1/aer/m/n/12 Lucrarea ^^RPrivacy-Preserving Co-l-la-bo-ra-tive Lear-ning" pro-pune o schem† de Ónv†[]are
+[12] [13])
+Overfull \hbox (4.96417pt too wide) in paragraph at lines 105--95
+[]\T1/aer/m/n/12 Lucrarea ^^RPrivacy-Preserving Co-l-la-bo-ra-tive Lear-ning" p
+ro-pune o schem† de Ónv†[]are
  []
 
-[15] [16]
+[14] [15]
 \openout2 = `chapters/analiza_fundamentare.aux'.
 
  (chapters/analiza_fundamentare.tex
 Capitolul 4.
-[17
+[16
 
 
 
 
-] [18]
-<figs/yoloe.jpg, id=675, 451.02281pt x 163.87645pt>
+] [17]
+<figs/yoloe.jpg, id=670, 451.02281pt x 163.87645pt>
 File: figs/yoloe.jpg Graphic file (type jpg)
 <use figs/yoloe.jpg>
-Package pdftex.def Info: figs/yoloe.jpg  used on input line 128.
+Package pdftex.def Info: figs/yoloe.jpg  used on input line 145.
 (pdftex.def)             Requested size: 452.96786pt x 164.58868pt.
- [19 <./figs/yoloe.jpg>]
-<figs/mask2former_architecture.jpg, id=683, 2083.785pt x 1421.31pt>
+ [18]
+<figs/mask2former_architecture.jpg, id=682, 2083.785pt x 1421.31pt>
 File: figs/mask2former_architecture.jpg Graphic file (type jpg)
 <use figs/mask2former_architecture.jpg>
-Package pdftex.def Info: figs/mask2former_architecture.jpg  used on input line 158.
+Package pdftex.def Info: figs/mask2former_architecture.jpg  used on input line 
+175.
 (pdftex.def)             Requested size: 416.7296pt x 284.23528pt.
-<figs/transformer_decoder_only.png, id=686, 819.06pt x 393.47pt>
+
+Underfull \vbox (badness 3735) has occurred while \output is active []
+
+ [19 <./figs/yoloe.jpg>]
+<figs/transformer_decoder_only.png, id=693, 819.06pt x 393.47pt>
 File: figs/transformer_decoder_only.png Graphic file (type png)
 <use figs/transformer_decoder_only.png>
-Package pdftex.def Info: figs/transformer_decoder_only.png  used on input line 176.
+Package pdftex.def Info: figs/transformer_decoder_only.png  used on input line 
+193.
 (pdftex.def)             Requested size: 416.7296pt x 200.19873pt.
 
-Overfull \hbox (8.15623pt too wide) in paragraph at lines 192--197
-[]\T1/aer/m/n/12 Aplica[]ia folose[]te pro-to-coale di-fe-rite pen-tru ti-puri di-fe-rite de co-mu-ni-care. Opera[]iile
+Overfull \hbox (8.15623pt too wide) in paragraph at lines 209--214
+[]\T1/aer/m/n/12 Aplica[]ia folose[]te pro-to-coale di-fe-rite pen-tru ti-puri 
+di-fe-rite de co-mu-ni-care. Opera[]iile
  []
 
-[20]
-<figs/jwt-diagram.png, id=701, 697.60625pt x 346.29375pt>
+
+Underfull \vbox (badness 4429) has occurred while \output is active []
+
+ [20 <./figs/mask2former_architecture.jpg>]
+<figs/jwt-diagram.png, id=710, 697.60625pt x 346.29375pt>
 File: figs/jwt-diagram.png Graphic file (type png)
 <use figs/jwt-diagram.png>
-Package pdftex.def Info: figs/jwt-diagram.png  used on input line 213.
+Package pdftex.def Info: figs/jwt-diagram.png  used on input line 230.
 (pdftex.def)             Requested size: 371.43697pt x 184.38025pt.
- [21 <./figs/mask2former_architecture.jpg>] [22 <./figs/transformer_decoder_only.png> <./figs/jwt-diagram.png>] [23] [24] [25]
-Underfull \vbox (badness 2073) has occurred while \output is active []
 
- [26] [27]
-Overfull \hbox (3.63626pt too wide) in paragraph at lines 502--505
-\T1/aer/m/n/12 sus[]ine co-la-bo-ra-rea de-o-a-rece ad-no-ta-to-rii pot dis-cuta des-pre eti-chete, corec[]ii sau neclarit†[]i
+Underfull \vbox (badness 1033) has occurred while \output is active []
+
+ [21 <./figs/transformer_decoder_only.png> <./figs/jwt-diagram.png>] [22] [23]
+Underfull \vbox (badness 4859) has occurred while \output is active []
+
+ [24]
+[25] [26]
+Overfull \hbox (3.63626pt too wide) in paragraph at lines 519--522
+\T1/aer/m/n/12 sus[]ine co-la-bo-ra-rea de-o-a-rece ad-no-ta-to-rii pot dis-cut
+a des-pre eti-chete, corec[]ii sau neclarit†[]i
  []
 
-) [28]
+
+Underfull \vbox (badness 1831) has occurred while \output is active []
+
+ [27])
+[28]
 \openout2 = `chapters/proiectare_implementare.aux'.
 
  (chapters/proiectare_implementare.tex
 Capitolul 5.
-<figs/overview-of-the-project.png, id=739, 587.94656pt x 395.97937pt>
+<figs/overview-of-the-project.png, id=750, 587.94656pt x 395.97937pt>
 File: figs/overview-of-the-project.png Graphic file (type png)
 <use figs/overview-of-the-project.png>
-Package pdftex.def Info: figs/overview-of-the-project.png  used on input line 15.
+Package pdftex.def Info: figs/overview-of-the-project.png  used on input line 1
+5.
 (pdftex.def)             Requested size: 452.96786pt x 305.07423pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
@@ -821,14 +976,14 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 
- <./figs/overview-of-the-project.png>]
-Underfull \vbox (badness 10000) has occurred while \output is active []
+]
+Underfull \vbox (badness 6348) has occurred while \output is active []
 
- [30]
+ [30 <./figs/overview-of-the-project.png>]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [31]
-<figs/PyVisionAnnotator.png, id=756, 1127.71312pt x 659.46375pt>
+<figs/PyVisionAnnotator.png, id=769, 1127.71312pt x 659.46375pt>
 File: figs/PyVisionAnnotator.png Graphic file (type png)
 <use figs/PyVisionAnnotator.png>
 Package pdftex.def Info: figs/PyVisionAnnotator.png  used on input line 52.
@@ -836,22 +991,26 @@ Package pdftex.def Info: figs/PyVisionAnnotator.png  used on input line 52.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [32 <./figs/PyVisionAnnotator.png>]
-<figs/flowchart_MainWindow.png, id=764, 871.00406pt x 268.00125pt>
+ [32]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [33 <./figs/PyVisionAnnotator.png>]
+<figs/flowchart_MainWindow.png, id=782, 871.00406pt x 268.00125pt>
 File: figs/flowchart_MainWindow.png Graphic file (type png)
 <use figs/flowchart_MainWindow.png>
 Package pdftex.def Info: figs/flowchart_MainWindow.png  used on input line 82.
 (pdftex.def)             Requested size: 452.96786pt x 139.3737pt.
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [33] [34 <./figs/flowchart_MainWindow.png>]
-<figs/settings_app.png, id=776, 1123.19624pt x 660.21657pt>
+ [34 <./figs/flowchart_MainWindow.png>]
+<figs/settings_app.png, id=791, 1123.19624pt x 660.21657pt>
 File: figs/settings_app.png Graphic file (type png)
 <use figs/settings_app.png>
 Package pdftex.def Info: figs/settings_app.png  used on input line 103.
 (pdftex.def)             Requested size: 452.96786pt x 266.24786pt.
-<figs/right_panel.png, id=777, 277.78781pt x 717.43031pt>
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [35]
+<figs/right_panel.png, id=797, 277.78781pt x 717.43031pt>
 File: figs/right_panel.png Graphic file (type png)
 <use figs/right_panel.png>
 Package pdftex.def Info: figs/right_panel.png  used on input line 112.
@@ -859,111 +1018,128 @@ Package pdftex.def Info: figs/right_panel.png  used on input line 112.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [35 <./figs/settings_app.png>]
+ [36 <./figs/settings_app.png>]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [36 <./figs/right_panel.png>]
-<figs/Fluxul_de_evenimente_in_canvas.png, id=791, 728.7225pt x 294.34969pt>
+ [37 <./figs/right_panel.png>]
+<figs/Fluxul_de_evenimente_in_canvas.png, id=812, 728.7225pt x 294.34969pt>
 File: figs/Fluxul_de_evenimente_in_canvas.png Graphic file (type png)
 <use figs/Fluxul_de_evenimente_in_canvas.png>
-Package pdftex.def Info: figs/Fluxul_de_evenimente_in_canvas.png  used on input line 137.
+Package pdftex.def Info: figs/Fluxul_de_evenimente_in_canvas.png  used on input
+ line 137.
 (pdftex.def)             Requested size: 452.96786pt x 182.962pt.
- [37 <./figs/Fluxul_de_evenimente_in_canvas.png>]
-<figs/Clasele_principale_pentru_adnotari.png, id=798, 749.04843pt x 474.27188pt>
+ [38 <./figs/Fluxul_de_evenimente_in_canvas.png>]
+<figs/Clasele_principale_pentru_adnotari.png, id=820, 749.04843pt x 474.27188pt
+>
 File: figs/Clasele_principale_pentru_adnotari.png Graphic file (type png)
 <use figs/Clasele_principale_pentru_adnotari.png>
-Package pdftex.def Info: figs/Clasele_principale_pentru_adnotari.png  used on input line 165.
+Package pdftex.def Info: figs/Clasele_principale_pentru_adnotari.png  used on i
+nput line 165.
 (pdftex.def)             Requested size: 452.96786pt x 286.80873pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [38]
-<figs/Fluxul_AutoSeg_YOLO_in_client.png, id=804, 487.8225pt x 552.56438pt>
+ [39]
+<figs/Fluxul_AutoSeg_YOLO_in_client.png, id=827, 487.8225pt x 552.56438pt>
 File: figs/Fluxul_AutoSeg_YOLO_in_client.png Graphic file (type png)
 <use figs/Fluxul_AutoSeg_YOLO_in_client.png>
-Package pdftex.def Info: figs/Fluxul_AutoSeg_YOLO_in_client.png  used on input line 178.
+Package pdftex.def Info: figs/Fluxul_AutoSeg_YOLO_in_client.png  used on input 
+line 178.
 (pdftex.def)             Requested size: 353.31438pt x 400.20685pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [39 <./figs/Clasele_principale_pentru_adnotari.png>]
-<figs/Fluxul_AutoMask_pe_baza_unui_punct_selectat.png, id=811, 683.55376pt x 246.9225pt>
-File: figs/Fluxul_AutoMask_pe_baza_unui_punct_selectat.png Graphic file (type png)
+ [40 <./figs/Clasele_principale_pentru_adnotari.png>]
+<figs/Fluxul_AutoMask_pe_baza_unui_punct_selectat.png, id=835, 683.55376pt x 24
+6.9225pt>
+File: figs/Fluxul_AutoMask_pe_baza_unui_punct_selectat.png Graphic file (type p
+ng)
 <use figs/Fluxul_AutoMask_pe_baza_unui_punct_selectat.png>
-Package pdftex.def Info: figs/Fluxul_AutoMask_pe_baza_unui_punct_selectat.png  used on input line 187.
+Package pdftex.def Info: figs/Fluxul_AutoMask_pe_baza_unui_punct_selectat.png  
+used on input line 187.
 (pdftex.def)             Requested size: 452.96786pt x 163.6287pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [40 <./figs/Fluxul_AutoSeg_YOLO_in_client.png>]
+ [41 <./figs/Fluxul_AutoSeg_YOLO_in_client.png>]
 Overfull \hbox (1.12486pt too wide) in paragraph at lines 194--195
-[]\T1/aer/m/n/12 Logica fo-lo-sit† Ón zona de cer-ce-tare arat† c† mo-de-lul con-cret nu este par-tea esen[]ial†
+[]\T1/aer/m/n/12 Logica fo-lo-sit† Ón zona de cer-ce-tare arat† c† mo-de-lul co
+n-cret nu este par-tea esen[]ial†
  []
 
 
 Overfull \hbox (77.49605pt too wide) in paragraph at lines 194--195
-\T1/aer/m/n/12 a in-te-gr†-rii, ci con-trac-tul de in-trare []i ie[]ire res-pec-tat de pro-ce-sul ex-tern. Œn \T1/aett/m/n/12 re-search/others/yoloe.py\T1/aer/m/n/12 ,
+\T1/aer/m/n/12 a in-te-gr†-rii, ci con-trac-tul de in-trare []i ie[]ire res-pec
+-tat de pro-ce-sul ex-tern. Œn \T1/aett/m/n/12 re-search/others/yoloe.py\T1/aer
+/m/n/12 ,
  []
 
-[41 <./figs/Fluxul_AutoMask_pe_baza_unui_punct_selectat.png>]
+[42 <./figs/Fluxul_AutoMask_pe_baza_unui_punct_selectat.png>]
 Overfull \hbox (10.35506pt too wide) in paragraph at lines 241--242
-[]\T1/aer/m/n/12 Pentru anu-lare, \T1/aett/m/n/12 Su-b-pro-ces-sHan-d-ler \T1/aer/m/n/12 folose[]te o clas† \T1/aett/m/n/12 Ma-na-ge-d-Pro-cess\T1/aer/m/n/12 , care Ónvele[]te
+[]\T1/aer/m/n/12 Pentru anu-lare, \T1/aett/m/n/12 Su-b-pro-ces-sHan-d-ler \T1/a
+er/m/n/12 folose[]te o clas† \T1/aett/m/n/12 Ma-na-ge-d-Pro-cess\T1/aer/m/n/12 
+, care Ónvele[]te
  []
 
-[42]
-<figs/chat_window.png, id=829, 584.93532pt x 440.39531pt>
+[43]
+<figs/chat_window.png, id=854, 584.93532pt x 440.39531pt>
 File: figs/chat_window.png Graphic file (type png)
 <use figs/chat_window.png>
 Package pdftex.def Info: figs/chat_window.png  used on input line 251.
 (pdftex.def)             Requested size: 407.6683pt x 306.94408pt.
- [43 <./figs/chat_window.png>]
-<figs/chatbot.png, id=836, 563.85657pt x 443.40656pt>
+ [44 <./figs/chat_window.png>]
+<figs/chatbot.png, id=862, 563.85657pt x 443.40656pt>
 File: figs/chatbot.png Graphic file (type png)
 <use figs/chatbot.png>
 Package pdftex.def Info: figs/chatbot.png  used on input line 262.
 (pdftex.def)             Requested size: 407.6683pt x 320.58534pt.
- [44 <./figs/chatbot.png>]
-<figs/flux_incarcare_imagine_protectie_nesalvat.png, id=843, 362.10281pt x 557.08125pt>
-File: figs/flux_incarcare_imagine_protectie_nesalvat.png Graphic file (type png)
+ [45 <./figs/chatbot.png>]
+<figs/flux_incarcare_imagine_protectie_nesalvat.png, id=870, 362.10281pt x 557.
+08125pt>
+File: figs/flux_incarcare_imagine_protectie_nesalvat.png Graphic file (type png
+)
 <use figs/flux_incarcare_imagine_protectie_nesalvat.png>
-Package pdftex.def Info: figs/flux_incarcare_imagine_protectie_nesalvat.png  used on input line 277.
+Package pdftex.def Info: figs/flux_incarcare_imagine_protectie_nesalvat.png  us
+ed on input line 277.
 (pdftex.def)             Requested size: 280.83786pt x 432.06502pt.
 
 Overfull \hbox (64.2045pt too wide) in paragraph at lines 282--283
-\T1/aer/m/n/12 re-con-strui obiec-tele gra-fice prin \T1/aett/m/n/12 An-no-ta-tion-Ma-na-ger.load_annotations()\T1/aer/m/n/12 . Fi[]ierul \T1/aett/m/n/12 dirty_state.py
+\T1/aer/m/n/12 re-con-strui obiec-tele gra-fice prin \T1/aett/m/n/12 An-no-ta-t
+ion-Ma-na-ger.load_annotations()\T1/aer/m/n/12 . Fi[]ierul \T1/aett/m/n/12 dirt
+y_state.py
  []
 
 
-Underfull \vbox (badness 1184) has occurred while \output is active []
+Underfull \vbox (badness 1097) has occurred while \output is active []
 
- [45 <./figs/flux_incarcare_imagine_protectie_nesalvat.png>]
+ [46 <./figs/flux_incarcare_imagine_protectie_nesalvat.png>]
 Overfull \hbox (2.85237pt too wide) in paragraph at lines 284--285
-[]\T1/aer/m/n/12 Gestionarea st†-rii lo-cale este im-por-tant† []i pen-tru co-la-bo-rare. Atunci c‚nd aplica[]ia
+[]\T1/aer/m/n/12 Gestionarea st†-rii lo-cale este im-por-tant† []i pen-tru co-l
+a-bo-rare. Atunci c‚nd aplica[]ia
  []
 
-[46]
+[47]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [47]
+ [48]
 Overfull \hbox (17.26476pt too wide) in paragraph at lines 331--332
-[]\T1/aer/m/n/12 Trimiterea unui me-saj pri-vat Ón-cepe Ón cli-ent prin \T1/aett/m/n/12 Chat-Sto-m-pWor-ker.send_private()\T1/aer/m/n/12 .
+[]\T1/aer/m/n/12 Trimiterea unui me-saj pri-vat Ón-cepe Ón cli-ent prin \T1/aet
+t/m/n/12 Chat-Sto-m-pWor-ker.send_private()\T1/aer/m/n/12 .
  []
 
-[48] [49] [50] [51]
+[49] [50] [51] [52] [53] [54]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [52] [53]
+ [55]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [54]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [55]) [56]
+ [56])
+[57]
 \openout2 = `chapters/testare_validare.aux'.
 
  (chapters/testare_validare.tex
 Capitolul 6.
-[57
+[58
 
 
 
@@ -971,10 +1147,11 @@ Capitolul 6.
 ]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [58])
+ [59])
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [59] [60] [61]
+ [60]
+[61] [62]
 \openout2 = `chapters/instalare_utilizare.aux'.
 
  (chapters/instalare_utilizare.tex
@@ -986,54 +1163,61 @@ Underfull \hbox (badness 1642) in paragraph at lines 17--17
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 39--40
-[]|\T1/aer/m/n/10.95 Windows 64-bit []i fol-de-rul ge-ne-rat \T1/aett/m/n/10.95 bu-
+[]|\T1/aer/m/n/10.95 Windows 64-bit []i fol-de-rul ge-ne-rat \T1/aett/m/n/10.95
+ bu-
  []
 
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [62
+ [63
 
 
 
 
 ]
 Overfull \hbox (88.99995pt too wide) in paragraph at lines 53--54
-[]\T1/aer/m/n/12 Pentru dis-tri-bu-i-rea aplica[]iei des-k-top se folose[]te scrip-tul \T1/aett/m/n/12 An-no-ta-tio-nEn-gine/utils/build_exe.py\T1/aer/m/n/12 .
+[]\T1/aer/m/n/12 Pentru dis-tri-bu-i-rea aplica[]iei des-k-top se folose[]te sc
+rip-tul \T1/aett/m/n/12 An-no-ta-tio-nEn-gine/utils/build_exe.py\T1/aer/m/n/12 
+.
  []
 
 
 Overfull \hbox (8.82423pt too wide) in paragraph at lines 66--67
-[]\T1/aer/m/n/12 Scriptul de bu-ild co-pi-az† []i fi[]ierele au-xi-li-are dis-po-ni-bile, pre-cum \T1/aett/m/n/12 requ-i-re-ments.txt\T1/aer/m/n/12 .
+[]\T1/aer/m/n/12 Scriptul de bu-ild co-pi-az† []i fi[]ierele au-xi-li-are dis-p
+o-ni-bile, pre-cum \T1/aett/m/n/12 requ-i-re-ments.txt\T1/aer/m/n/12 .
  []
 
-[63] [64]) [65]
+[64] [65]) [66]
 \openout2 = `chapters/concluzii.aux'.
 
  (chapters/concluzii.tex
 Capitolul 8.
 
 Overfull \hbox (9.70027pt too wide) in paragraph at lines 6--7
-[]\T1/aer/m/n/12 Din punct de ve-dere func[]ional, sis-te-mul re-zul-tat per-mite lu-crul lo-cal f†r† dependen[]†
+[]\T1/aer/m/n/12 Din punct de ve-dere func[]ional, sis-te-mul re-zul-tat per-mi
+te lu-crul lo-cal f†r† dependen[]†
  []
 
-) [66
+) [67
 
 
 
 
-] (licenta.bbl [67
+] (licenta.bbl [68
 
 
 
-] [68] [69]
+] [69] [70]
 Underfull \hbox (badness 10000) in paragraph at lines 345--348
-[]\T1/aer/m/n/12 ------, ``Ex-port a Da-ta-set Ver-sion,'' []$https : / / docs . robo^^]ow . com / datasets /
+[]\T1/aer/m/n/12 ------, ``Ex-port a Da-ta-set Ver-sion,'' []$https : / / docs 
+. robo^^]ow . com / datasets /
  []
 
 
 Underfull \hbox (badness 3746) in paragraph at lines 350--352
-[]\T1/aer/m/n/12 Labelbox, ``Ex-port Image An-no-ta-tions,'' []$https : / / docs . labelbox . com / reference /
+[]\T1/aer/m/n/12 Labelbox, ``Ex-port Image An-no-ta-tions,'' []$https : / / doc
+s . labelbox . com / reference /
  []
 
 
@@ -1043,32 +1227,39 @@ Underfull \hbox (badness 10000) in paragraph at lines 354--358
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 354--358
-\T1/aer/m/n/12 pu-ter Vi-sion [Upda-ted 2025],'' []$https : / / encord . com / blog /
+\T1/aer/m/n/12 pu-ter Vi-sion [Upda-ted 2025],'' []$https : / / encord . com / 
+blog /
  []
 
-[70]
+[71]
 Underfull \hbox (badness 4913) in paragraph at lines 373--375
-[]\T1/aer/m/n/12 CVAT.ai Cor-po-ra-tion, ``Da-ta-set For-mats,'' []$https : / / docs . cvat . ai / docs / dataset _
+[]\T1/aer/m/n/12 CVAT.ai Cor-po-ra-tion, ``Da-ta-set For-mats,'' []$https : / /
+ docs . cvat . ai / docs / dataset _
  []
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 377--379
-[]\T1/aer/m/n/12 V7 Labs, ``Cre-ate an Ex-port Ver-sion,'' []$https : / / docs . v7labs . com / docs /
+[]\T1/aer/m/n/12 V7 Labs, ``Cre-ate an Ex-port Ver-sion,'' []$https : / / docs 
+. v7labs . com / docs /
  []
 
-) [71]
+) [72]
 \openout2 = `backmatter/anexe.aux'.
 
  (backmatter/anexe.tex
 Anexa A.
-[72
+[73
 
 
 ]
 Anexa B.
-) [73
+) [74
 
-] (licenta.aux (frontmatter/foi_de_capat.aux) (frontmatter/ghid.aux) (frontmatter/cuprins.aux) (chapters/introducere.aux) (chapters/obiective.aux) (chapters/studiu_biblio.aux) (chapters/analiza_fundamentare.aux) (chapters/proiectare_implementare.aux) (chapters/testare_validare.aux) (chapters/instalare_utilizare.aux) (chapters/concluzii.aux) (backmatter/anexe.aux))
+] (licenta.aux (frontmatter/foi_de_capat.aux) (frontmatter/cuprins.aux)
+(chapters/introducere.aux) (chapters/obiective.aux) (chapters/studiu_biblio.aux
+) (chapters/analiza_fundamentare.aux) (chapters/proiectare_implementare.aux)
+(chapters/testare_validare.aux) (chapters/instalare_utilizare.aux)
+(chapters/concluzii.aux) (backmatter/anexe.aux))
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-03-20>
@@ -1078,20 +1269,41 @@ L3 programming layer <2026-03-20>
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
 Package rerunfilecheck Info: File `licenta.out' has not changed.
-(rerunfilecheck)             Checksum: 305E21CD67E708383E5F9B9B7BA316A5;19733.
+(rerunfilecheck)             Checksum: FEFD680BCA9C7FE422C5C97C887B4015;19513.
  ) 
 Here is how much of TeX's memory you used:
- 15929 strings out of 467691
- 260290 string characters out of 5414503
- 808581 words of memory out of 5000000
- 44280 multiletter control sequences out of 15000+600000
- 708723 words of font info for 202 fonts, out of 8000000 for 9000
+ 15905 strings out of 467691
+ 259426 string characters out of 5414503
+ 809459 words of memory out of 5000000
+ 44268 multiletter control sequences out of 15000+600000
+ 705915 words of font info for 197 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,20n,86p,1723b,603s stack positions out of 10000i,1000n,20000p,200000b,200000s
- <C:\Users\Victor\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1200.pk><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmb10.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr5.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr6.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsl12.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsl8.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmssbx10.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti12.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti7.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt10.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on licenta.pdf (80 pages, 2837789 bytes).
+ 75i,20n,86p,1677b,661s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ <C:\Users\Victor\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcr
+m1200.pk><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsf
+onts/cm/cmb10.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/pu
+blic/amsfonts/cm/cmex10.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/font
+s/type1/public/amsfonts/cm/cmmi12.pfb><C:/Users/Victor/AppData/Local/Programs/M
+iKTeX/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Users/Victor/AppData/Local/P
+rograms/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/Victor/AppDat
+a/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/Vict
+or/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr5.pfb><C:/Us
+ers/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr6.pf
+b><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm
+/cmr8.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/ams
+fonts/cm/cmsl12.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/
+public/amsfonts/cm/cmsl8.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fon
+ts/type1/public/amsfonts/cm/cmssbx10.pfb><C:/Users/Victor/AppData/Local/Program
+s/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/Victor/AppData/Loc
+al/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Users/Victor/Ap
+pData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti12.pfb><C:/Users
+/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti7.pfb>
+<C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/c
+mtt10.pfb><C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/type1/public/ams
+fonts/cm/cmtt12.pfb>
+Output written on licenta.pdf (80 pages, 2831584 bytes).
 PDF statistics:
- 1291 PDF objects out of 1440 (max. 8388607)
- 278 named destinations out of 1000 (max. 500000)
+ 1319 PDF objects out of 1440 (max. 8388607)
+ 280 named destinations out of 1000 (max. 500000)
  846 words of extra memory for PDF output out of 10000 (max. 10000000)
 
