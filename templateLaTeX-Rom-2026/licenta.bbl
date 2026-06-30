@@ -25,6 +25,31 @@
 A.~Breitenfeld and C.~Muller-Birn, ``A state-of-the-art review of semantic
   annotation tools,'' http://dx.doi.org/10.17169/refubium-25139, 2017.
 
+\bibitem{5483185}
+A.~Torralba, B.~C. Russell, and J.~Yuen, ``Labelme: Online image annotation and
+  applications,'' \emph{Proceedings of the IEEE}, vol.~98, no.~8, pp.
+  1467--1484, 2010.
+
+\bibitem{chen2020scribbleboxinteractiveannotationframework}
+\BIBentryALTinterwordspacing
+B.~Chen, H.~Ling, X.~Zeng, G.~Jun, Z.~Xu, and S.~Fidler, ``Scribblebox:
+  Interactive annotation framework for video object segmentation,'' 2020.
+  [Online]. Available: \url{https://arxiv.org/abs/2008.09721}
+\BIBentrySTDinterwordspacing
+
+\bibitem{cvat2025}
+\BIBentryALTinterwordspacing
+C.~contributors, ``Cvat: Computer vision annotation tool,'' GitHub repository,
+  2025. [Online]. Available: \url{https://github.com/cvat-ai/cvat}
+\BIBentrySTDinterwordspacing
+
+\bibitem{wang2025yoloerealtimeseeing}
+\BIBentryALTinterwordspacing
+A.~Wang, L.~Liu, H.~Chen, Z.~Lin, J.~Han, and G.~Ding, ``Yoloe: Real-time
+  seeing anything,'' 2025. [Online]. Available:
+  \url{https://arxiv.org/abs/2503.07465}
+\BIBentrySTDinterwordspacing
+
 \bibitem{10.1007/s11263-009-0275-4}
 \BIBentryALTinterwordspacing
 M.~Everingham, L.~Gool, C.~K. Williams, J.~Winn, and A.~Zisserman, ``The pascal
@@ -88,13 +113,6 @@ F.~Liang, B.~Wu, X.~Dai, K.~Li, Y.~Zhao, H.~Zhang, P.~Zhang, P.~Vajda, and
   clip,'' 2023. [Online]. Available: \url{https://arxiv.org/abs/2210.04150}
 \BIBentrySTDinterwordspacing
 
-\bibitem{wang2025yoloerealtimeseeing}
-\BIBentryALTinterwordspacing
-A.~Wang, L.~Liu, H.~Chen, Z.~Lin, J.~Han, and G.~Ding, ``Yoloe: Real-time
-  seeing anything,'' 2025. [Online]. Available:
-  \url{https://arxiv.org/abs/2503.07465}
-\BIBentrySTDinterwordspacing
-
 \bibitem{liu2023visualinstructiontuning}
 \BIBentryALTinterwordspacing
 H.~Liu, C.~Li, Q.~Wu, and Y.~J. Lee, ``Visual instruction tuning,'' 2023.
@@ -133,24 +151,6 @@ L.~Castrejon, K.~Kundu, R.~Urtasun, and S.~Fidler, ``Annotating object
 K.-K. Maninis, S.~Caelles, J.~Pont-Tuset, and L.~V. Gool, ``Deep extreme cut:
   From extreme points to object segmentation,'' 2018. [Online]. Available:
   \url{https://arxiv.org/abs/1711.09081}
-\BIBentrySTDinterwordspacing
-
-\bibitem{chen2020scribbleboxinteractiveannotationframework}
-\BIBentryALTinterwordspacing
-B.~Chen, H.~Ling, X.~Zeng, G.~Jun, Z.~Xu, and S.~Fidler, ``Scribblebox:
-  Interactive annotation framework for video object segmentation,'' 2020.
-  [Online]. Available: \url{https://arxiv.org/abs/2008.09721}
-\BIBentrySTDinterwordspacing
-
-\bibitem{5483185}
-A.~Torralba, B.~C. Russell, and J.~Yuen, ``Labelme: Online image annotation and
-  applications,'' \emph{Proceedings of the IEEE}, vol.~98, no.~8, pp.
-  1467--1484, 2010.
-
-\bibitem{cvat2025}
-\BIBentryALTinterwordspacing
-C.~contributors, ``Cvat: Computer vision annotation tool,'' GitHub repository,
-  2025. [Online]. Available: \url{https://github.com/cvat-ai/cvat}
 \BIBentrySTDinterwordspacing
 
 \bibitem{Sun2020OTCRDT}

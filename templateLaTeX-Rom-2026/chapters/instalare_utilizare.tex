@@ -36,11 +36,11 @@ Pentru utilizatorul obișnuit, varianta recomandată este rularea aplicației di
         \hline
         Scenariu & Software necesar \\
         \hline
-        Rulare din executabil & Windows 64-bit și folderul generat \texttt{build\_output/PyVisionAnnotator}. \\
-        Rulare din surse & Python 3, pip, mediul virtual și pachetele \texttt{PyQt6}, \texttt{websocket-client}, \texttt{ollama}, \texttt{llama-cpp-python}. \\
-        Build aplicație desktop & PyInstaller, instalat automat de \texttt{utils/build\_exe.py} dacă lipsește. \\
-        Build modele externe & PyInstaller și scriptul \texttt{research/others/exporter.py}. \\
-        Backend colaborativ & Docker Desktop, Docker Compose și fișierul \texttt{.env} din \texttt{ColaborativeServer}. \\
+        Rulare din executabil & Windows 64-bit și folderul generat build\_output/PyVisionAnnotator. \\
+        Rulare din surse & Python 3, pip, mediul virtual și pachetele PyQt6, websocket-client, ollama, llama-cpp-python. \\
+        Build aplicație desktop & PyInstaller, instalat automat de utils/build\_exe.py dacă lipsește. \\
+        Build modele externe & PyInstaller și scriptul research/others/exporter.py. \\
+        Backend colaborativ & Docker Desktop, Docker Compose și fișierul .env din ColaborativeServer. \\
         Chatbot local & Ollama instalat și pornit, dacă se folosește backend-ul Ollama. \\
         \hline
     \end{tabular}
@@ -50,7 +50,7 @@ Pentru utilizatorul obișnuit, varianta recomandată este rularea aplicației di
 
 \section{Instalarea aplicației din executabil}
 
-Pentru distribuirea aplicației desktop se folosește scriptul \texttt{AnnotationEngine/utils/build\_exe.py}. Acesta pornește PyInstaller, construiește aplicația în modul \texttt{onedir} și creează un pachet complet în directorul \texttt{AnnotationEngine/build\_output}. La final, executabilul principal se găsește în subdirectorul \texttt{PyVisionAnnotator}.
+Pentru distribuirea aplicației desktop se folosește scriptul AnnotationEngine/\allowbreak utils/\allowbreak build\_exe.py. Acesta pornește PyInstaller, construiește aplicația în modul onedir și creează un pachet complet în directorul AnnotationEngine/\allowbreak build\_output. La final, executabilul principal se găsește în subdirectorul PyVisionAnnotator.
 
 \begin{verbatim}
 cd AnnotationEngine
@@ -63,20 +63,20 @@ După rularea comenzii, aplicația se pornește prin deschiderea fișierului:
 AnnotationEngine/build_output/PyVisionAnnotator/PyVisionAnnotator.exe
 \end{verbatim}
 
-Scriptul de build copiază și fișierele auxiliare disponibile, precum \texttt{requirements.txt}. Dacă directorul \texttt{research/others/dist} există, acesta este copiat în aplicația împachetată sub numele \texttt{inference\_backends}. La prima pornire, aplicația caută automat în acest folder executabilele pentru AutoMask și AutoSeg, precum și fișierele de weights cu extensia \texttt{.pt}. Dacă aceste fișiere sunt găsite, căile sunt salvate automat în setările aplicației.
+Scriptul de build copiază și fișierele auxiliare disponibile, precum requirements.txt. Dacă directorul research/others/dist există, acesta este copiat în aplicația împachetată sub numele inference\_backends. La prima pornire, aplicația caută automat în acest folder executabilele pentru AutoMask și AutoSeg, precum și fișierele de weights cu extensia .pt. Dacă aceste fișiere sunt găsite, căile sunt salvate automat în setările aplicației.
 
 \section{Împachetarea modelelor externe}
 
-Fluxurile AutoSeg și AutoMask pot rula scripturi Python sau executabile. Pentru a distribui mai ușor modelele externe, în directorul \texttt{research/others} există scriptul \texttt{exporter.py}. Acesta folosește PyInstaller cu opțiunile \texttt{--onedir}, \texttt{--clean} și \texttt{--noupx}, iar rezultatul este creat în folderul \texttt{dist}.
+Fluxurile AutoSeg și AutoMask pot rula scripturi Python sau executabile. Pentru a distribui mai ușor modelele externe, în directorul research/others există scriptul exporter.py. Acesta folosește PyInstaller cu opțiunile --onedir, --clean și --noupx, iar rezultatul este creat în folderul dist.
 
-Înainte de rulare, variabila \texttt{TARGET\_SCRIPT} din \texttt{exporter.py} trebuie setată la scriptul dorit, de exemplu \texttt{mask2former.py} sau \texttt{yoloe.py}. Apoi se rulează:
+Înainte de rulare, variabila TARGET\_SCRIPT din exporter.py trebuie setată la scriptul dorit, de exemplu mask2former.py sau yoloe.py. Apoi se rulează:
 
 \begin{verbatim}
 cd research/others
 python exporter.py
 \end{verbatim}
 
-Executabilul generat poate fi folosit direct din setările aplicației. Pentru un pachet complet, folderul \texttt{dist} rezultat trebuie să existe înainte de rularea \texttt{utils/build\_exe.py}, astfel încât builder-ul aplicației să îl copieze automat în \texttt{inference\_backends}. Dacă se preferă configurarea manuală, utilizatorul poate deschide dialogul de setări și poate selecta căile către executabilul AutoMask, executabilul AutoSeg și weights-ul YOLO.
+Executabilul generat poate fi folosit direct din setările aplicației. Pentru un pachet complet, folderul dist rezultat trebuie să existe înainte de rularea utils/build\_exe.py, astfel încât builder-ul aplicației să îl copieze automat în inference\_backends. Dacă se preferă configurarea manuală, utilizatorul poate deschide dialogul de setări și poate selecta căile către executabilul AutoMask, executabilul AutoSeg și weights-ul YOLO.
 
 \section{Instalarea din surse}
 
@@ -90,20 +90,20 @@ python -m pip install -r requirements.txt
 python app.py
 \end{verbatim}
 
-Aplicația pornește fereastra principală PyVisionAnnotator. Dacă se folosesc AutoSeg, AutoMask sau chatbot local, trebuie instalate și dependințele necesare modelelor respective în mediul în care rulează scripturile externe. Pentru Ollama, aplicația are nevoie de pachetul Python \texttt{ollama}, dar și de serviciul Ollama pornit separat pe sistem.
+Aplicația pornește fereastra principală PyVisionAnnotator. Dacă se folosesc AutoSeg, AutoMask sau chatbot local, trebuie instalate și dependințele necesare modelelor respective în mediul în care rulează scripturile externe. Pentru Ollama, aplicația are nevoie de pachetul Python ollama, dar și de serviciul Ollama pornit separat pe sistem.
 
 \section{Pornirea backend-ului colaborativ}
 
-Adnotarea locală și exportul fișierelor pot fi folosite fără backend. Pentru autentificare, chat și colaborare în timp real este necesar serverul din \texttt{ColaborativeServer}. Acesta se pornește prin Docker Compose:
+Adnotarea locală și exportul fișierelor pot fi folosite fără backend. Pentru autentificare, chat și colaborare în timp real este necesar serverul din ColaborativeServer. Acesta se pornește prin Docker Compose:
 
 \begin{verbatim}
 cd ColaborativeServer
 docker compose up --build
 \end{verbatim}
 
-Serverul pornește Traefik, RabbitMQ, Postgres și cele trei servicii Spring Boot: autentificare, chat și annotation. Fișierul \texttt{.env} trebuie să existe în directorul \texttt{ColaborativeServer} și să conțină valorile pentru utilizatorii și parolele serviciilor, portul serviciului de autentificare și secretul JWT.
+Serverul pornește Traefik, RabbitMQ, Postgres și cele trei servicii Spring Boot: autentificare, chat și annotation. Fișierul .env trebuie să existe în directorul ColaborativeServer și să conțină valorile pentru utilizatorii și parolele serviciilor, portul serviciului de autentificare și secretul JWT.
 
-După pornire, clientul folosește implicit adresa \texttt{http://localhost}. Rutele principale sunt disponibile prin proxy: \texttt{/auth} pentru cont, \texttt{/ws} pentru chat și \texttt{/annotation} pentru colaborare. Dacă se schimbă hostul sau portul, adresele pot fi modificate din dialogul de setări al aplicației.
+După pornire, clientul folosește implicit adresa http://localhost. Rutele principale sunt disponibile prin proxy: /auth pentru cont, /ws pentru chat și /annotation pentru colaborare. Dacă se schimbă hostul sau portul, adresele pot fi modificate din dialogul de setări al aplicației.
 
 \begin{table}[!htbp]
     \centering
@@ -112,10 +112,10 @@ După pornire, clientul folosește implicit adresa \texttt{http://localhost}. Ru
         \hline
         Comandă & Rol \\
         \hline
-        \texttt{python utils/build\_exe.py} & Construiește aplicația desktop în \texttt{build\_output}. \\
-        \texttt{python exporter.py} & Construiește executabilul pentru scriptul extern ales în \texttt{TARGET\_SCRIPT}. \\
-        \texttt{python app.py} & Pornește aplicația din surse. \\
-        \texttt{docker compose up --build} & Pornește backend-ul colaborativ. \\
+        python utils/build\_exe.py & Construiește aplicația desktop în build\_output. \\
+        python exporter.py & Construiește executabilul pentru scriptul extern ales în TARGET\_SCRIPT. \\
+        python app.py & Pornește aplicația din surse. \\
+        docker compose up --build & Pornește backend-ul colaborativ. \\
         \hline
     \end{tabular}
     \caption{Comenzi de instalare, build și pornire}
@@ -128,4 +128,4 @@ La pornire, aplicația deschide fereastra principală, formată din lista de ima
 
 Adnotările se creează din panoul de unelte: dreptunghi pentru bounding box, poligon prin puncte succesive și mască prin AutoMask, brush sau eraser. Elementul selectat poate fi redenumit, recolorat sau șters din panoul de proprietăți. Salvarea internă se face în JSON, iar exporturile disponibile includ formatele COCO și YOLO. Dacă există modificări nesalvate la schimbarea imaginii sau la închiderea aplicației, utilizatorul primește un dialog de confirmare.
 
-AutoSeg, AutoMask și endpoint-urile de cont se configurează din fereastra de setări. Pentru AutoSeg se selectează executabilul YOLO și fișierul de weights \texttt{.pt}, iar pentru AutoMask se selectează executabilul sau scriptul de segmentare pe punct. Pentru colaborare, utilizatorul se autentifică din butonul de cont, deschide fereastra de chat și creează sau accesează o sesiune comună. Chatbotul local poate fi folosit separat prin Ollama sau llama.cpp, cu condiția ca modelul local ales să fie disponibil.
+AutoSeg, AutoMask și endpoint-urile de cont se configurează din fereastra de setări. Pentru AutoSeg se selectează executabilul YOLO folosit pentru detecții/contururi și fișierul de weights .pt, iar pentru AutoMask se selectează executabilul sau scriptul de segmentare pe punct. Pentru colaborare, utilizatorul se autentifică din butonul de cont, deschide fereastra de chat și creează sau accesează o sesiune comună. Chatbotul local poate fi folosit separat prin Ollama sau llama.cpp, cu condiția ca modelul local ales să fie disponibil.

@@ -15,7 +15,7 @@ Domeniul ales include și administrarea etichetelor și a adnotărilor, astfel �
 
 Datele rezultate sunt salvate într-un format intern bazat pe JSON (JavaScript Object Notation) și pot fi exportate în formate standard, precum COCO (Common Objects in Context) și YOLO (You Only Look Once). Astfel, seturile de date pot fi folosite ușor în fluxuri de antrenare, fără pași suplimentari de conversie. Structura de export este gândită pentru a păstra separarea între tipurile de adnotări și pentru a face reutilizarea cât mai simplă.
 
-Tema este delimitată la un instrument desktop de adnotare, care integrează metode semi-automate prin apelarea unor modele externe. Modelul nu este antrenat în cadrul lucrării, ci este folosit ca suport pentru propunerea contururilor. Pentru segmentare asistată este folosit un model de tip Mask2Former, iar pentru detecție și segmentare completă se folosește un model de tip YOLOE.
+Tema este delimitată la un instrument desktop de adnotare, care integrează metode semi-automate prin apelarea unor modele externe. Modelul nu este antrenat în cadrul lucrării, ci este folosit ca suport pentru propunerea contururilor. Pentru măști și segmentare asistată este folosit un model de tip Mask2Former, iar pentru pre-adnotare prin detecții și contururi/poligoane se folosește un model de tip YOLOE.
 
 Nu sunt urmărite subiecte precum optimizarea arhitecturilor de rețele neuronale, compararea extensivă a modelelor sau dezvoltarea unui serviciu cloud pentru adnotare. Accentul este pe realizarea unui instrument practic, ușor de folosit, local, care reduce efortul de etichetare și permite colaborarea eficientă între membri ai aceleiași echipe.
 

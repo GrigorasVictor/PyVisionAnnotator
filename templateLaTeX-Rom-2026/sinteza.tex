@@ -15,14 +15,14 @@
     a4paper,
     left=1.35cm,
     right=1.35cm,
-    top=1.25cm,
-    bottom=1.25cm
+    top=1.2cm,
+    bottom=1.2cm
 }
 
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{0.18em}
+\setlength{\parskip}{0.14em}
 \setlist{nosep,leftmargin=*}
-\renewcommand{\arraystretch}{1.12}
+\renewcommand{\arraystretch}{1.08}
 \pagestyle{empty}
 
 \begin{document}
@@ -30,64 +30,95 @@
 \begin{center}
     {\Large\bfseries TOOL COLABORATIV SEMI-AUTOMAT DE}\\[-1pt]
     {\Large\bfseries ADNOTARE}\\[-1pt]
-    {\small Student: Grigoras Victor-Andrei}
+    {\small Student: Grigoraș Victor-Andrei}
 \end{center}
 
 \section*{Introducere}
 
-Adnotarea imaginilor este o etapă esențială pentru construirea seturilor de date folosite în detecție, segmentare și evaluare vizuală. Procesul devine costisitor atunci când obiectele au contururi complexe, când este nevoie de corecții repetate sau când mai mulți utilizatori trebuie să lucreze pe aceeași imagine. Proiectul PyVisionAnnotator propune un instrument desktop care păstrează controlul manual al utilizatorului, dar introduce asistență automată prin modele de segmentare și detecție, inclusiv YOLOE~\cite{yoloe} pentru AutoSeg și Mask2Former~\cite{mask2former} pentru generarea de măști, în raport cu instrumente consacrate precum CVAT~\cite{cvat} și LabelMe~\cite{labelme}.
+Adnotarea imaginilor este o etapă esențială pentru construirea seturilor de date folosite în detecție, segmentare și evaluare vizuală. Procesul devine costisitor atunci când obiectele au contururi complexe, când apar corecții repetate sau când mai mulți utilizatori trebuie să lucreze pe aceeași imagine. Proiectul PyVisionAnnotator propune o aplicație desktop care păstrează controlul manual al utilizatorului, dar adaugă asistență AI și colaborare realtime. În raport cu instrumente consacrate precum CVAT~\cite{cvat}, soluția urmărește un flux local și extensibil, în care YOLOE~\cite{yoloe} este folosit pentru detecții și contururi AutoSeg, iar Mask2Former~\cite{mask2former} pentru generarea de măști AutoMask.
 
 \section*{Obiective}
 
 \begin{center}
 \small
-\begin{tabular}{|p{0.96\textwidth}|}
+\begin{tabular}{|p{0.47\textwidth}|p{0.47\textwidth}|}
     \hline
-    Oferirea unui flux de adnotare manuală pentru dreptunghiuri, poligoane și măști. \\
+    \textbf{Obiective principale} & \textbf{Obiective secundare} \\
     \hline
-    Integrarea unor mecanisme AI pentru pre-adnotare și pentru generarea rapidă de măști. \\
-    \hline
-    Susținerea lucrului colaborativ prin autentificare, sesiuni partajate și chat. \\
-    \hline
-    Exportul datelor în formate utile pentru dataseturi și fluxuri de antrenare. \\
+    \begin{minipage}[t]{0.45\textwidth}
+    \begin{itemize}
+        \item adnotare manuală cu dreptunghiuri, poligoane și măști;
+        \item asistență AI pentru pre-adnotare și măști;
+        \item colaborare prin autentificare, sesiuni și chat;
+        \item export în formate utile pentru dataseturi.
+    \end{itemize}
+    \end{minipage}
+    &
+    \begin{minipage}[t]{0.45\textwidth}
+    \begin{itemize}
+        \item interfață clară, cu panouri și setări persistente;
+        \item execuție asincronă pentru modele externe;
+        \item suport pentru chatbot local;
+        \item validare prin teste, scenarii manuale și Postman.
+    \end{itemize}
+    \end{minipage} \\
     \hline
 \end{tabular}
 \end{center}
 
 \section*{Soluția propusă}
 
-\subsection*{Front-end desktop}
+\hspace*{2em}Proiectul propune o aplicație completă pentru adnotarea imaginilor, formată dintr-un client desktop, un backend colaborativ și module AI executate separat. Utilizatorul poate încărca imagini, crea și corecta adnotări, primi sugestii automate, lucra în sesiuni comune și exporta rezultatele în formate populare pentru dataseturi. Arhitectura este gândită modular, astfel încât interfața, modelele AI și serviciile backend să poată evolua independent.
 
-Clientul desktop \texttt{AnnotationEngine} este implementat în Python cu PyQt și reprezintă zona în care utilizatorul lucrează efectiv cu imaginile. Interfața este împărțită în canvas, panou de navigare, panou de proprietăți și toolbar. Canvasul permite desenarea și selectarea adnotărilor, iar panoul drept oferă control pentru etichetă, culoare, listă de obiecte, unelte active și ajustări vizuale precum luminozitate, contrast sau gamma. Astfel, utilizatorul poate crea bounding box-uri, poligoane și măști, poate corecta rezultatele și poate păstra controlul asupra fiecărei adnotări.
+\subsection*{1. Front-end desktop}
 
-Starea adnotărilor este ținută într-un manager central care le indexează după identificator și le transformă în structuri serializabile. Același model intern este folosit pentru desenare, salvare, export și sincronizare colaborativă. În acest mod, obiectivele legate de adnotare manuală și export sunt atinse fără duplicarea logicii între interfață și formatul de date.
+\hspace*{2em}Front-end-ul reprezintă zona de lucru directă a utilizatorului și este implementat în Python cu PyQt. Interfața include un canvas pentru dreptunghiuri, poligoane și măști, panouri pentru imagini, clase și proprietăți, precum și controale pentru ajustări vizuale, precum zoom, pan și modificarea clarității imaginii. Utilizatorul poate alterna între adnotare manuală și corectarea rezultatelor automate fără a părăsi fereastra principală. Pentru lucrul pe imagini dificile, ajustările de luminozitate, contrast și opacitate ajută la observarea contururilor fără modificarea imaginii originale. Procesele asincrone sunt tratate prin worker-e, astfel încât interfața să rămână receptivă în timpul inferenței sau al comunicării cu serverul. Structura modulară permite reutilizarea clientului cu alte modele AI sau cu alt backend, fără schimbarea fluxului principal de adnotare.
 
-\subsection*{Back-end colaborativ}
+\subsection*{2. Back-end colaborativ}
 
-Partea de colaborare este susținută de un backend Spring Boot organizat pe servicii. Modulul de autentificare gestionează utilizatorii și token-urile JWT, serviciul de chat permite comunicarea între utilizatori, iar serviciul de adnotare păstrează starea sesiunilor active. Comunicarea live folosește WebSocket/STOMP, astfel încât modificările produse de un client pot fi transmise către ceilalți participanți fără reîncărcarea întregului proiect.
+\hspace*{2em}Back-end-ul susține lucrul în echipă și separă responsabilitățile în microservicii Spring Boot pentru autentificare, chat și adnotări. Cererile punctuale sunt tratate prin REST, iar evenimentele live sunt transmise prin WebSocket/STOMP către utilizatorii din aceeași sesiune. Fiecare sesiune păstrează starea curentă a imaginii și a adnotărilor, astfel încât modificările făcute de un utilizator să fie propagate rapid către ceilalți participanți. La conectare, clientul poate prelua un snapshot al sesiunii, iar apoi primește doar evenimentele noi, ceea ce reduce traficul și evită reîncărcarea completă a proiectului. Autentificarea cu JWT controlează accesul la resurse, iar reverse proxy-ul direcționează cererile către serviciul potrivit. Separarea serviciilor face mai simplă testarea, izolarea erorilor și extinderea componentelor. Pentru adnotări mari, cum sunt măștile sau payload-urile complexe, sistemul folosește chunk-uri, astfel încât sincronizarea colaborativă să rămână stabilă și predictibilă.
 
-Această separare ajută aplicația să funcționeze atât local, cât și colaborativ. Un utilizator poate adnota și exporta date fără server, iar atunci când are nevoie de lucru în echipă poate porni backend-ul și poate folosi camere de lucru, prezență, chat și sincronizare de adnotări.
+\subsection*{3. Integrare AI}
 
-\subsection*{Worker-e și integrare AI}
+\hspace*{2em}Componenta AI este tratată ca un set de module externe, apelate prin worker-e asincrone, pentru a păstra aplicația extensibilă. AutoSeg folosește YOLOE pentru detecții și contururi/poligoane, iar AutoMask folosește Mask2Former pentru generarea de măști editabile. Rezultatele generate automat nu sunt considerate finale, ci devin puncte de plecare pe care utilizatorul le poate verifica, ajusta și salva. Această abordare păstrează principiul human-in-the-loop: modelul accelerează etichetarea, dar decizia finală rămâne la utilizator. Modelele bazate pe embedding-uri transformă imaginea și clasele căutate în reprezentări numerice comparabile, ceea ce permite identificarea unor obiecte similare chiar dacă nu au fost antrenate explicit pentru fiecare categorie. Astfel, aplicația poate oferi sugestii utile în scenarii variate, iar chatbotul local, rulat prin Ollama sau llama.cpp, poate explica pași de lucru și poate ajuta la interpretarea erorilor fără a depinde de servicii cloud.
 
-Operațiile costisitoare sunt mutate în worker-e pentru a nu bloca interfața. AutoSeg folosește YOLOE~\cite{yoloe} pentru detecție și segmentare la nivelul imaginii, iar AutoMask generează o mască pornind de la un punct selectat de utilizator. Rezultatele sunt convertite în obiecte editabile, deci AI-ul propune, iar utilizatorul validează și corectează. Această idee urmărește aceeași direcție generală ca metodele moderne de segmentare, inclusiv Mask2Former~\cite{mask2former}.
-
-Aplicația include și worker-e pentru autentificare, chat, colaborare și chatbot local. Chatbotul poate folosi modele locale prin Ollama sau \texttt{llama.cpp}, fiind tratat ca o fereastră auxiliară de suport, nu ca o dependență obligatorie. Prin această arhitectură, proiectul combină editarea manuală, asistența AI, colaborarea și exportul într-un flux unic.
+\newpage
 
 \begin{figure}[!htbp]
     \centering
-    \includegraphics[width=1\textwidth,height=1\textheight,keepaspectratio]{figs/overview-of-the-project.png}
-    \caption{Privire de ansamblu asupra componentelor: client desktop, modele AI locale și backend colaborativ.}
+    \includegraphics[width=1\textwidth,height=0.39\textheight,keepaspectratio]{figs/colab.png}
+    \caption{Exemplu de flux colaborativ în aplicație: sesiune comună, sincronizare și lucru pe adnotări.}
 \end{figure}
+
+\section*{Contribuții}
+
+Contribuțiile proiectului constau în reunirea adnotării manuale, a asistenței AI și a colaborării într-un instrument coerent. Implementarea nu depinde de un singur model sau de un singur serviciu, ci oferă o structură care poate fi extinsă ulterior.
+
+\begin{center}
+\small
+\begin{tabular}{|p{0.22\textwidth}|p{0.7\textwidth}|}
+    \hline
+    \textbf{Direcție} & \textbf{Contribuție} \\
+    \hline
+    Front-end extensibil & Interfață PyQt modulară, cu canvas, panouri și manager de adnotări separate logic. Structura permite conectarea la alte modele AI sau la alt backend fără schimbarea fluxului principal de lucru. \\
+    \hline
+    AI semi-automat & Integrare AutoSeg și AutoMask prin worker-e asincrone. Avantajul modelelor bazate pe embedding-uri este că pot generaliza peste imagini și pot identifica particularități vizuale utile pentru pre-adnotare. Rezultatele rămân editabile și validate de utilizator. \\
+    \hline
+    Back-end colaborativ & Backend pe microservicii pentru autentificare, chat și sesiuni de adnotare, cu sincronizare prin WebSocket/STOMP. Pentru mesaje mari au fost introduse chunk-uri, utile mai ales la măști și payload-uri complexe. \\
+    \hline
+    Export și validare & Salvare și export în formate populare, precum JSON, COCO și YOLO, astfel încât rezultatele pot fi folosite în pipeline-uri ML. Funcționalitățile au fost verificate prin testare manuală, JUnit, integrare și Postman. \\
+    \hline
+\end{tabular}
+\end{center}
 
 \section*{Comparație funcțională}
 
 \begin{center}
-\small
+\scriptsize
 \setlength{\tabcolsep}{2pt}
-\begin{tabular}{|p{0.43\textwidth}|>{\centering\arraybackslash}p{0.18\textwidth}|>{\centering\arraybackslash}p{0.16\textwidth}|>{\centering\arraybackslash}p{0.16\textwidth}|}
+\begin{tabular}{|p{0.42\textwidth}|>{\centering\arraybackslash}p{0.18\textwidth}|>{\centering\arraybackslash}p{0.16\textwidth}|>{\centering\arraybackslash}p{0.16\textwidth}|}
     \hline
-    \textbf{Funcționalitate} & \textbf{PyVisionAnnotator} & \textbf{CVAT} & \textbf{LabelMe (local)} \\
+    \textbf{Funcționalitate} & \textbf{PyVisionAnnotator} & \textbf{CVAT} & \textbf{LabelMe} \\
     \hline
     Dreptunghi / poligon & \checkmark & \checkmark & \checkmark \\
     \hline
@@ -99,27 +130,18 @@ Aplicația include și worker-e pentru autentificare, chat, colaborare și chatb
     \hline
     Colaborare / proiecte partajate & \checkmark & \checkmark & -- \\
     \hline
-    Chat integrat & \checkmark & -- & -- \\
-    \hline
-    Chatbot local / LLM & \checkmark & -- & -- \\
+    Chat integrat sau chatbot local & \checkmark & -- & -- \\
     \hline
 \end{tabular}
 \end{center}
 
-\begin{thebibliography}{4}
+\begin{thebibliography}{3}
 \footnotesize
-
-\bibitem{cvat}
-CVAT.ai contributors, \textit{CVAT: Computer Vision Annotation Tool}, GitHub repository, 2025. Disponibil: \url{https://github.com/cvat-ai/cvat}.
-
-\bibitem{labelme}
-A. Torralba, B. C. Russell și J. Yuen, ``LabelMe: Online Image Annotation and Applications,'' \textit{Proceedings of the IEEE}, vol. 98, nr. 8, pp. 1467--1484, 2010.
-
-\bibitem{mask2former}
-B. Cheng, I. Misra, A. G. Schwing, A. Kirillov și R. Girdhar, ``Masked-attention Mask Transformer for Universal Image Segmentation,'' arXiv:2112.01527, 2022.
-
-\bibitem{yoloe}
-A. Wang, L. Liu, H. Chen, Z. Lin, J. Han și G. Ding, ``YOLOE: Real-Time Seeing Anything,'' arXiv:2503.07465, 2025.
+\setlength{\itemsep}{0pt}
+\setlength{\parskip}{0pt}
+\bibitem{cvat} CVAT.ai contributors, \textit{CVAT: Computer Vision Annotation Tool}, GitHub repository, 2025. Disponibil: \url{https://github.com/cvat-ai/cvat}.
+\bibitem{mask2former} B. Cheng, I. Misra, A. G. Schwing, A. Kirillov și R. Girdhar, ``Masked-attention Mask Transformer for Universal Image Segmentation,'' arXiv:2112.01527, 2022.
+\bibitem{yoloe} A. Wang, L. Liu, H. Chen, Z. Lin, J. Han și G. Ding, ``YOLOE: Real-Time Seeing Anything,'' arXiv:2503.07465, 2025.
 \end{thebibliography}
 
 \end{document}

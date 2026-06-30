@@ -30,28 +30,28 @@ Această secțiune descrie rolul lor la nivel înalt, fără a intra în detalii
 \subsection{Algoritmul AutoSeg}
 \label{subsec:algoritm-autoseg}
 
-AutoSeg este algoritmul folosit pentru detecție și segmentare automată la nivelul întregii imagini.
+AutoSeg este algoritmul folosit pentru detecție și generare de contururi/poligoane la nivelul întregii imagini.
 Intrările sale sunt imaginea curentă, lista de clase urmărite și un prag minim de încredere.
-Ieșirea este o listă de obiecte candidate, fiecare obiect putând conține o etichetă, un scor, o cutie de încadrare și un contur de segmentare.
+Ieșirea este o listă de obiecte candidate, fiecare obiect putând conține o etichetă, un scor, o cutie de încadrare și un contur folosit ca poligon editabil.
 
 Pașii logici ai algoritmului sunt:
 \begin{enumerate}
     \item utilizatorul alege clasele sau etichetele de interes;
     \item imaginea este analizată de modelul extern;
     \item predicțiile cu scor sub pragul ales sunt eliminate;
-    \item pentru fiecare predicție validă se extrage dreptunghiul de încadrare și, dacă există, masca obiectului;
+    \item pentru fiecare predicție validă se extrage dreptunghiul de încadrare și, dacă există, conturul obiectului;
     \item rezultatul este convertit într-o adnotare editabilă.
 \end{enumerate}
 
 O predicție AutoSeg poate fi reprezentată abstract prin:
 \begin{equation}
     \text{detectie}_i =
-    (\text{eticheta}_i, \text{scor}_i, \text{dreptunghi}_i, \text{masca}_i).
+    (\text{eticheta}_i, \text{scor}_i, \text{dreptunghi}_i, \text{contur}_i).
     \label{eq:detectie-autoseg}
 \end{equation}
-Ecuația~\ref{eq:detectie-autoseg} descrie structura unei detecții generate de AutoSeg. Pentru detecția cu numărul $i$, câmpul \textit{eticheta} indică numele clasei, \textit{scor} indică nivelul de încredere, \textit{dreptunghi} localizează obiectul printr-o cutie de încadrare, iar \textit{masca} descrie conturul obiectului atunci când modelul furnizează segmentare.
-Dreptunghiul localizează rapid obiectul, iar masca descrie conturul său.
-Dacă masca nu este disponibilă, dreptunghiul de încadrare rămâne o reprezentare minimă utilă.
+Ecuația~\ref{eq:detectie-autoseg} descrie structura unei detecții generate de AutoSeg. Pentru detecția cu numărul $i$, câmpul \textit{eticheta} indică numele clasei, \textit{scor} indică nivelul de încredere, \textit{dreptunghi} localizează obiectul printr-o cutie de încadrare, iar \textit{contur} descrie punctele care pot fi transformate într-un poligon editabil.
+Dreptunghiul localizează rapid obiectul, iar conturul descrie forma sa aproximativă.
+Dacă un contur nu este disponibil, dreptunghiul de încadrare rămâne o reprezentare minimă utilă.
 Avantajul algoritmului este că poate genera mai multe adnotări într-o singură rulare.
 Limitarea sa este dependența de modelul vizual și de compatibilitatea dintre etichetele cerute și obiectele pe care modelul le poate recunoaște.
 
@@ -69,7 +69,7 @@ Modelul returnează o mască asociată acelei regiuni:
 \end{equation}
 Ecuația~\ref{eq:automask-punct} exprimă fluxul de segmentare interactivă: utilizatorul oferă imaginea și un punct selectat pe obiect, iar modelul produce o mască pentru regiunea corespunzătoare acelui punct.
 
-În modul de segmentare completă, algoritmul poate produce mai multe măști candidate:
+În modul de segmentare pe întreaga imagine, algoritmul poate produce mai multe măști candidate:
 \begin{equation}
     \text{AutoMask}(\text{imagine})
     \rightarrow \{\text{masca}_1, \text{masca}_2, \ldots, \text{masca}_m\}.
@@ -98,7 +98,7 @@ Un model lingvistic autoregresiv estimează următorul token pe baza contextului
 Ecuația~\ref{eq:predictie-token-llm} arată că modelul calculează probabilitatea următorului token pe baza tokenilor deja existenți în conversație. Cu alte cuvinte, răspunsul nu este generat dintr-o singură operație, ci prin alegerea repetată a următorului fragment de text.
 Răspunsul este produs iterativ, token cu token.
 Parametrii precum dimensiunea contextului, temperatura, \textit{top-p} și numărul maxim de tokeni controlează lungimea, variația și predictibilitatea răspunsului.
-În aplicație sunt folosite două moduri locale de rulare: \texttt{llama.cpp}, prin \texttt{llama-cpp-python}, și Ollama, prin client local.
+În aplicație sunt folosite două moduri locale de rulare: llama.cpp, prin llama-cpp-python, și Ollama, prin client local.
 
 \subsection{Algoritmul de sincronizare colaborativă}
 \label{subsec:algoritm-colaborativ}
@@ -120,7 +120,7 @@ Prin această abordare, adnotările manuale și cele generate de AutoSeg sau Aut
 \section{Modele de inteligență artificială folosite}
 \label{sec:modele-ai-folosite}
 
-Algoritmii descriși anterior sunt susținuți de trei familii de modele: YOLO pentru detecție și segmentare, Mask2Former pentru segmentare externă și modele lingvistice bazate pe Transformer pentru asistența locală.
+Algoritmii descriși anterior sunt susținuți de trei familii de modele: YOLO pentru detecție și propuneri de contur, Mask2Former pentru segmentare externă și modele lingvistice bazate pe Transformer pentru asistența locală.
 
 \subsection{YOLO pentru AutoSeg}
 \label{subsec:model-yolo-autoseg}
@@ -133,12 +133,13 @@ Pentru o aplicație de adnotare, această abordare este utilă deoarece reduce t
 
 În AutoSeg, modelul YOLO este folosit ca mecanism de pre-adnotare.
 Utilizatorul indică etichetele urmărite, iar modelul analizează întreaga imagine și întoarce o listă de obiecte candidate.
-Fiecare rezultat poate fi transformat fie într-un dreptunghi de încadrare, fie într-un poligon sau mască, în funcție de informațiile disponibile.
+În implementarea proiectului, fiecare rezultat YOLOE este consumat ca dreptunghi de încadrare sau ca poligon.
 Astfel, modelul nu este tratat ca un modul care decide definitiv adnotarea, ci ca un generator de propuneri care accelerează munca utilizatorului.
 
 YOLOE extinde principiul YOLO către detecție și segmentare \textit{open-vocabulary}, adică permite lucrul cu clase descrise prin prompturi textuale sau vizuale, nu doar cu o listă fixă de clase~\cite{wang2025yoloerealtimeseeing}.
 Arhitectura sa combină un extractor de caracteristici, o structură de agregare multi-scală de tip PAN și capete de predicție pentru regresie, segmentare și embedding.
 Prin alinierea dintre reprezentările vizuale și cele textuale, modelul poate răspunde la cereri mai flexibile decât un detector antrenat strict pe un set închis de categorii.
+Această capacitate teoretică de segmentare nu înseamnă că fluxul AutoSeg din proiect creează direct măști; scriptul curent produce box-uri și coordonate de contur, iar clientul le transformă în BoundingBoxItem sau PolygonItem.
 
 \begin{figure}[!htbp]
     \centering
@@ -199,7 +200,7 @@ Modelul primește istoricul conversației, calculează relații de atenție înt
 Atenția mascată împiedică modelul să folosească tokeni viitori în timpul generării, menținând caracterul autoregresiv.
 
 În proiect există două variante de rulare locală.
-\texttt{llama.cpp} permite încărcarea directă a unui model local și controlul parametrilor de inferență~\cite{llamacpp2026}.
+llama.cpp permite încărcarea directă a unui model local și controlul parametrilor de inferență~\cite{llamacpp2026}.
 Ollama oferă un serviciu local care gestionează modelele disponibile și expune o interfață simplă pentru conversație~\cite{ollama2026}.
 Ambele variante susțin aceeași decizie arhitecturală: asistența conversațională rulează local, fără a trimite datele aplicației către un serviciu cloud.
 
@@ -223,12 +224,12 @@ JWT înseamnă \textit{JSON Web Token} și reprezintă un token semnat care tran
 În proiect, el este emis după autentificare și este trimis ulterior la cererile protejate, astfel încât utilizatorul să nu retrimită parola la fiecare operație.
 Structura sa este împărțită conceptual în trei părți: header, payload și semnătură.
 Headerul descrie tipul tokenului și algoritmul folosit, payload-ul conține informațiile despre utilizator, iar semnătura permite verificarea integrității tokenului.
-Această structură este ilustrată în figura~\ref{fig:jwt-structure} (\hyperref[tab:surse-figuri-ai]{Tabelul A.1}).
+Fluxul este ilustrată în figura~\ref{fig:jwt-structure} (\hyperref[tab:surse-figuri-ai]{Tabelul A.1}).
 
 \begin{figure}[!htbp]
     \centering
     \includegraphics[width=0.82\textwidth]{figs/jwt-diagram.png}
-    \caption{Structura generală a unui token JWT (\hyperref[tab:surse-figuri-ai]{Tabelul A.1}).}
+    \caption{Fluxul de autentificare și propagare a tokenului JWT (\hyperref[tab:surse-figuri-ai]{Tabelul A.1}).}
     \label{fig:jwt-structure}
 \end{figure}
 
@@ -300,11 +301,13 @@ Canvasul este zona centrală a aplicației și permite încărcarea imaginii, zo
 
 Python are rol de orchestrare locală: leagă interfața grafică, fișierele locale, serializarea adnotărilor, apelurile REST, conexiunile WebSocket și procesele externe.
 AutoSeg și AutoMask pot fi executabile sau scripturi separate, iar clientul le transmite argumentele necesare și interpretează răspunsul JSON ca adnotări editabile.
-Aceeași structură este folosită și pentru LLM-uri: Ollama și \texttt{llama.cpp} sunt apelate local, iar răspunsurile lor sunt livrate în interfață prin worker-e.
+Pentru AutoSeg, rezultatul înseamnă box-uri și poligoane.
+Pentru AutoMask, rezultatul înseamnă măști editabile.
+Aceeași structură este folosită și pentru LLM-uri: Ollama și llama.cpp sunt apelate local, iar răspunsurile lor sunt livrate în interfață prin worker-e.
 
 PyQt6 permite separarea operațiilor lente în worker-e care emit semnale la finalizare, la eroare sau la primirea unui fragment de răspuns.
 Modelele AutoSeg, AutoMask, autentificarea, conexiunile STOMP și LLM-urile nu rulează direct în threadul interfeței.
-Această decizie păstrează aplicația responsivă chiar și când un model extern sau o cerere de rețea durează mai mult.
+Această decizie păstrează aplicația receptivă chiar și când un model extern sau o cerere de rețea durează mai mult.
 
 \subsection{PyTorch pentru modelele externe}
 \label{subsec:pytorch-modele}
@@ -346,7 +349,7 @@ Toate aceste componente sunt conectate într-o rețea comună, iar dependențele
 
 Reverse proxy-ul oferă un punct de intrare unic pentru client.
 În loc ca aplicația desktop să cunoască porturile interne ale fiecărui serviciu, proxy-ul poate direcționa cererile către serviciul potrivit pe baza rutei.
-De exemplu, rutele de adnotare sunt expuse sub prefixul public \texttt{/annotation}, în timp ce serviciile interne rulează pe porturi separate.
+De exemplu, rutele de adnotare sunt expuse sub prefixul public /annotation, în timp ce serviciile interne rulează pe porturi separate.
 
 Postgres este folosit pentru persistența conturilor din serviciul de autentificare.
 RabbitMQ este folosit pentru evenimentele dintre servicii.
@@ -436,7 +439,7 @@ Astfel se evită buclele de sincronizare și se păstrează coerența dintre par
 
 Worker-ele sunt componente locale care execută operații potențial lente.
 Ele separă logica de fundal de interfața grafică.
-În proiect există worker-e pentru autentificare, chat STOMP, colaborare STOMP, AutoSeg, AutoMask, Ollama și \texttt{llama.cpp}.
+În proiect există worker-e pentru autentificare, chat STOMP, colaborare STOMP, AutoSeg, AutoMask, Ollama și llama.cpp.
 
 Worker-ele AutoSeg și AutoMask pornesc procese externe.
 Ele construiesc lista de argumente, pornesc executabilul sau scriptul configurat și așteaptă rezultatul.
@@ -508,7 +511,7 @@ După autentificare, utilizatorul poate lucra local sau poate intra într-o sesi
 În modul local, utilizatorul deschide un folder de imagini, selectează o imagine și creează adnotări.
 Poate folosi manual dreptunghiuri, poligoane sau măști.
 Poate porni AutoSeg pentru a obține propuneri pe baza etichetelor.
-Poate folosi AutoMask pentru o regiune indicată prin click sau pentru segmentare completă.
+Poate folosi AutoMask pentru o regiune indicată prin click sau pentru segmentare pe întreaga imagine.
 Rezultatele automate devin obiecte editabile și pot fi corectate exact ca adnotările manuale.
 
 În modul colaborativ, utilizatorul creează sau se alătură unei sesiuni.
@@ -523,17 +526,3 @@ Această funcționalitate susține colaborarea deoarece adnotatorii pot discuta 
 La final, utilizatorul salvează sau exportă datele.
 Exportul poate fi folosit ca dataset pentru antrenare sau evaluare.
 În acest fel, aplicația acoperă întregul traseu: încărcare imagine, adnotare manuală, asistență AI, colaborare, comunicare și export.
-
-\section{Justificarea integrării modelelor}
-\label{sec:justificare-integrare-modele}
-
-AutoSeg și AutoMask sunt complementare.
-AutoSeg este eficient pentru pre-adnotarea mai multor obiecte pe baza unei liste de clase, în timp ce AutoMask este mai potrivit pentru situațiile în care utilizatorul poate indica direct regiunea dorită.
-Prin combinarea lor, aplicația nu depinde de un singur mod de interacțiune cu modelul vizual.
-
-Modelele LLM completează fluxul vizual prin suport conversațional.
-Ele nu produc automat date de antrenare și nu decid asupra calității adnotărilor, ci asistă utilizatorul în folosirea aplicației.
-Separarea dintre modelele vizuale, modelele lingvistice și mecanismul colaborativ reduce cuplarea sistemului: fiecare componentă poate fi schimbată fără a modifica modelul conceptual al adnotării.
-
-În ansamblu, soluția folosește modelele AI ca instrumente de accelerare, nu ca înlocuitor al validării umane.
-Această abordare este potrivită pentru o aplicație de adnotare, unde scopul principal este producerea unor date coerente, verificabile și ușor de corectat.
