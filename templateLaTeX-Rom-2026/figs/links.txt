@@ -1,3 +1,0 @@
-yoloe: https://docs.ultralytics.com/models/yoloe#architecture-overview
-mask2former: https://huggingface.co/docs/transformers/model_doc/mask2former
-transformer_decoder_only: https://substack-post-media.s3.amazonaws.com/public/images/f6133c18-bfaf-4578-8c5a-e5ac7809f65b_1632x784.png
