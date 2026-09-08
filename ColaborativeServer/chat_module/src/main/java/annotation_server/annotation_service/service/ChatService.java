@@ -31,6 +31,9 @@ public class ChatService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PresenceService presenceService;
+
     public ChatMessageDTO sendPrivateMessage(String senderId, String receiverId, String text) {
         if (senderId == null || senderId.isBlank() || receiverId == null || receiverId.isBlank()) {
             throw new IllegalArgumentException("Sender and receiver are required");
@@ -45,6 +48,11 @@ public class ChatService {
         String normalizedSender = senderId.trim().toLowerCase();
         String normalizedReceiver = receiverId.trim().toLowerCase();
 
+        ensureUserExists(normalizedSender);
+        if (userRepository.findByEmail(normalizedReceiver).isEmpty()
+                && presenceService.getOnlineUsers().contains(normalizedReceiver)) {
+            ensureUserExists(normalizedReceiver);
+        }
         if (userRepository.findByEmail(normalizedReceiver).isEmpty()) {
             throw new IllegalArgumentException("Receiver does not exist");
         }
@@ -107,5 +115,18 @@ public class ChatService {
         return email.substring(0, separator);
     }
 
-}
+    public User ensureUserExists(String email) {
+        if (email == null || email.isBlank()) {
+            throw new IllegalArgumentException("User email is required");
+        }
 
+        String normalizedEmail = email.trim().toLowerCase();
+        User user = userRepository.findByEmail(normalizedEmail).orElseGet(User::new);
+        user.setEmail(normalizedEmail);
+        if (user.getUsername() == null || user.getUsername().isBlank()) {
+            user.setUsername(deriveUsername(normalizedEmail));
+        }
+        return userRepository.save(user);
+    }
+
+}

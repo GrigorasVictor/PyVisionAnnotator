@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1782822177.94872 "c:/Stuff/Scoala/Licienta/templateLaTeX-Rom-2026/sinteza.tex" "sinteza.pdf" "sinteza" 1782822178.93314 0
+["pdflatex"] 1783765837.03437 "c:/Stuff/Scoala/Licienta/templateLaTeX-Rom-2026/sinteza.tex" "sinteza.pdf" "sinteza" 1783765837.98109 0
   "C:/Users/Victor/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1780496742 83358 a8328cf182cf32ae8c92cd2e930e6977 ""
   "C:/Users/Victor/AppData/Local/MiKTeX/miktex/data/le/pdftex/pdflatex.fmt" 1779457061 13350756 b9de3c0ee5124976ec1b48d9bb94ad09 ""
   "C:/Users/Victor/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/base/8r.enc" 1458473887 4993 80dc9bab7f31fb78a000ccfed0e27cab ""
@@ -102,11 +102,12 @@
   "C:/Users/Victor/AppData/Local/Programs/MiKTeX/tex/latex/rerunfilecheck/rerunfilecheck.sty" 1751104012 9684 a33a14b82ce60d6e77cb9be689d79ee6 ""
   "C:/Users/Victor/AppData/Local/Programs/MiKTeX/tex/latex/tools/array.sty" 1761901070 15651 9d7c62df82cb29a555c00550babfe364 ""
   "C:/Users/Victor/AppData/Local/Programs/MiKTeX/tex/latex/url/url.sty" 1388490452 12796 8edb7d69a20b857904dd0ea757c14ec9 ""
-  "c:/Stuff/Scoala/Licienta/templateLaTeX-Rom-2026/sinteza.tex" 1782822177 7831 05d92e2c18d78893b8ce016fe25ebfeb ""
-  "figs/colab.png" 1782821968 545677 404d30ca59fc3f1cf2bced144db72d65 ""
-  "sinteza.aux" 1782822178 607 30c16206cdc4899ad9b6ce5db1a25e6b "pdflatex"
-  "sinteza.out" 1782822178 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
-  "sinteza.tex" 1782822177 7831 05d92e2c18d78893b8ce016fe25ebfeb ""
+  "c:/Stuff/Scoala/Licienta/templateLaTeX-Rom-2026/sinteza.tex" 1783765836 9653 403c83c848778d5aac6f3c57fca052f1 ""
+  "figs/colab.png" 1782828946 549948 28c2057f704eab535020df7cb07f6e3e ""
+  "figs/utcn.jpg" 1783765456 9894 165bc22c23217bc121a44560765ba88f ""
+  "sinteza.aux" 1783765837 607 30c16206cdc4899ad9b6ce5db1a25e6b "pdflatex"
+  "sinteza.out" 1783765837 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
+  "sinteza.tex" 1783765836 9653 403c83c848778d5aac6f3c57fca052f1 ""
   (generated)
   "sinteza.aux"
   "sinteza.log"

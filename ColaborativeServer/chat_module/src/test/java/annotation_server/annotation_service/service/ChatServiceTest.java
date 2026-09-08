@@ -12,6 +12,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -28,6 +29,9 @@ class ChatServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private PresenceService presenceService;
 
     @InjectMocks
     private ChatService chatService;
@@ -76,7 +80,12 @@ class ChatServiceTest {
 
     @Test
     void sendPrivateMessageFailsWhenReceiverDoesNotExist() {
+        User sender = new User();
+        sender.setEmail("alice@example.com");
+        sender.setUsername("alice");
+        when(userRepository.findByEmail("alice@example.com")).thenReturn(Optional.of(sender));
         when(userRepository.findByEmail("ghost@example.com")).thenReturn(Optional.empty());
+        when(presenceService.getOnlineUsers()).thenReturn(Set.of());
 
         assertThrows(IllegalArgumentException.class,
                 () -> chatService.sendPrivateMessage("alice@example.com", "ghost@example.com", "Salut"));

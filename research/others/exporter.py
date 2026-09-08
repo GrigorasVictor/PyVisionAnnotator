@@ -1,5 +1,6 @@
 import os
 import subprocess
+import sys
 
 # Change this variable to the name of the python script you want to convert to an executable
 TARGET_SCRIPT = "mask2former.py"
@@ -19,10 +20,14 @@ def create_executable(script_name):
     # Note: Switching from --onefile to --onedir (folder output) would significantly improve startup time further
     # Note: Removed --optimize 2 because 'transformers' library requires docstrings to function correctly.
     command = [
-        "pyinstaller",
+        sys.executable,
+        "-m",
+        "PyInstaller",
         "--onedir",
         "--clean",
         "--noupx",
+        "--collect-data",
+        "clip",
         script_name
     ]
 
@@ -41,5 +46,6 @@ def create_executable(script_name):
 if __name__ == "__main__":
     current_dir = os.path.dirname(os.path.abspath(__file__))
     os.chdir(current_dir)
-    
-    create_executable(TARGET_SCRIPT)
+
+    target_script = sys.argv[1] if len(sys.argv) > 1 else TARGET_SCRIPT
+    create_executable(target_script)

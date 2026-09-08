@@ -127,14 +127,14 @@ class AutoSegSettingsDialog(QDialog):
         if success or (not success and data):
             QMessageBox.information(
                 self,
-                "Test Passed ✅",
+                "Test Passed",
                 f"The process started successfully.\n\n"
                 f"stdout (truncated):\n{str(data)[:300]}",
             )
         else:
             QMessageBox.critical(
                 self,
-                "Test Failed ❌",
+                "Test Failed",
                 f"The process could not be started.\n\nError:\n{error}",
             )
 

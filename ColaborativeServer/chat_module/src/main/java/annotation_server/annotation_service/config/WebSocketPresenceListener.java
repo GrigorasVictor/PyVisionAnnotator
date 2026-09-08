@@ -1,6 +1,7 @@
 package annotation_server.annotation_service.config;
 
 import annotation_server.annotation_service.dto.PresenceEvent;
+import annotation_server.annotation_service.service.ChatService;
 import annotation_server.annotation_service.service.PresenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
@@ -22,6 +23,9 @@ public class WebSocketPresenceListener {
     private PresenceService presenceService;
 
     @Autowired
+    private ChatService chatService;
+
+    @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
     @EventListener
@@ -34,6 +38,7 @@ public class WebSocketPresenceListener {
         }
 
         String userId = principal.getName().trim().toLowerCase();
+        chatService.ensureUserExists(userId);
         presenceService.markOnline(userId);
 
         PresenceEvent update = new PresenceEvent("ONLINE", userId, presenceService.getOnlineUsers());

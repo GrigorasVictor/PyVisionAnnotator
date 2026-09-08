@@ -34,17 +34,6 @@ from core.annotation import BoundingBoxItem, PolygonItem, MaskItem
 
 
 class RightPanel(QWidget):
-    """Right sidebar panel — fully self-contained business logic.
-
-    Outward signals (for MainWindow status bar / canvas crosshair):
-        status_message(str)      — request to update status bar.
-        tool_changed(str)        — new tool mode string ("rectangle"/"polygon"/"sam").
-        crosshair_toggled(bool)  — crosshair enable state changed.
-        canvas_brightness(int)   — set canvas brightness.
-        canvas_contrast(float)   — set canvas contrast.
-        canvas_gamma(float)      — set canvas gamma.
-    """
-
     status_message = pyqtSignal(str)
     tool_changed = pyqtSignal(str)
     brush_size_changed = pyqtSignal(int)

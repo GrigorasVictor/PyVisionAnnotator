@@ -12,6 +12,12 @@ import java.security.Principal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Listens to WebSocket connect/disconnect events and manages user presence broadcast.
+ * onConnected() validates Principal, marks user ONLINE via PresenceService, broadcasts to /topic/presence.
+ * onDisconnected() marks user OFFLINE and broadcasts update; rejects events missing/invalid Principal.
+ * Thread-safe async listener; uses SimpMessagingTemplate for pub/sub presence updates across clients.
+ */
 @Component
 public class WebSocketPresenceListener {
 

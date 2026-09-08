@@ -1,1 +1,0 @@
-https://stomp.github.io/stomp-specification-1.2.html

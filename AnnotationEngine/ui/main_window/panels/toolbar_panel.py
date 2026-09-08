@@ -287,15 +287,6 @@ class SettingsDialog(QDialog):
 
 
 class ToolbarPanel(QToolBar):
-    """Top application toolbar — owns all save/load/help/settings logic.
-
-    Outward signals:
-        status_message(str)          — update the status bar.
-        settings_applied(w, f, h)    — new pen/font/height values (MainWindow applies to manager).
-        unsaved_cleared()            — a successful save cleared the dirty flag.
-        annotations_loaded(img, lst) — finished loading: image path + annotation list.
-        auth_requested()             — request auth flow (MainWindow handles popup + HTTP).
-    """
 
     status_message = pyqtSignal(str)
     settings_applied = pyqtSignal(int, int, int)   # pen_width, font_size, label_height

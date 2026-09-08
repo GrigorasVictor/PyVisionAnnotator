@@ -26,6 +26,28 @@ def _copy_inference_backends(project_root: Path, app_folder: Path) -> Path | Non
     print(f"  ✓ Copied inference backends: {src} -> {dst}")
     return dst
 
+
+def _copy_llama_cpp_lib(app_folder: Path) -> Path | None:
+    """Copy llama-cpp-python native DLL folder into PyInstaller's internal tree."""
+    try:
+        import llama_cpp
+    except Exception as exc:
+        print(f"  - llama_cpp not importable (skip native DLL copy): {exc}")
+        return None
+
+    src = Path(llama_cpp.__file__).resolve().parent / "lib"
+    if not src.exists() or not src.is_dir():
+        print(f"  - llama_cpp native lib folder not found (skip): {src}")
+        return None
+
+    dst = app_folder / "_internal" / "llama_cpp" / "lib"
+    if dst.exists():
+        shutil.rmtree(dst)
+    shutil.copytree(src, dst)
+    print(f"  ✓ Copied llama_cpp native DLLs: {src} -> {dst}")
+    return dst
+
+
 def build():
     # 1. Identify paths
     current_dir = Path(__file__).resolve().parent
@@ -93,9 +115,14 @@ def build():
         "websocket._core",
         "websocket._socket",
         "ollama",
+        "llama_cpp",
+        "llama_cpp.llama_cpp",
+        "llama_cpp._ctypes_extensions",
     ]
     for mod in hidden:
         cmd.extend(["--hidden-import", mod])
+
+    cmd.extend(["--collect-binaries", "llama_cpp"])
 
     # Pre-build sanity checks for runtime dependencies that are imported dynamically.
     try:
@@ -146,6 +173,10 @@ def build():
         # 6b. Copy external model/runtime backends (mask2former / yoloe dist)
         print("\nCopying external inference backends...")
         backends_path = _copy_inference_backends(project_root, app_folder)
+
+        # 6c. Copy llama-cpp-python native DLLs.
+        print("\nCopying llama_cpp native runtime files...")
+        llama_cpp_lib_path = _copy_llama_cpp_lib(app_folder)
 
         # 7. Create a README for the installation
         readme_content = """# PyVisionAnnotator - Installation
@@ -202,6 +233,8 @@ For more help, see the feature documentation file.
         print(f"✓ Executable:         {exe_path}")
         if backends_path is not None:
             print(f"✓ Backends folder:    {backends_path}")
+        if llama_cpp_lib_path is not None:
+            print(f"✓ llama_cpp DLLs:     {llama_cpp_lib_path}")
         print(f"\nTo run the application:")
         print(f"  1. Open: {installation_dir}")
         print(f"  2. Open: PyVisionAnnotator folder")

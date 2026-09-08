@@ -174,6 +174,8 @@ class SubprocessHandler:
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 text=True,
+                encoding="utf-8",
+                errors="replace",
                 cwd=cwd,
                 env=process_env,
                 shell=False,

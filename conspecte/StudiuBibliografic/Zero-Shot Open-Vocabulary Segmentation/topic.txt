@@ -1,8 +1,0 @@
-În practică, zero-shot / open-vocabulary segmentation înseamnă că un model poate să “decupeze” dintr-o imagine obiecte descrise prin text (ex: „bicicletă roșie”, „dronă”, „semn de stop”), chiar dacă nu a fost antrenat explicit pe acele clase, folosind învățare din modele pre-antrenate precum CLIP pentru a potrivi textul cu regiunile din imagine și a produce măști la nivel de pixel.
-
-Areas:
-
-Robotică & AI embodied
-Autonom driving (mașini autonome)
-Medical imaging
-AR / VR (augmented reality)

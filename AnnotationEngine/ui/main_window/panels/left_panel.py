@@ -26,14 +26,6 @@ IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp", ".tif", ".tiff", ".webp"}
 
 
 class LeftPanel(QWidget):
-    """Left sidebar: folder browser and image file list.
-
-    Signals:
-        folder_opened(folder_path)   — a new folder was loaded.
-        image_load_requested(path)   — MainWindow should call canvas.load_image(path).
-        save_before_switch_requested — panel needs MainWindow to save before it can switch;
-                                       MainWindow calls confirm_switch() or cancel_switch().
-    """
 
     folder_opened = pyqtSignal(str)
     image_load_requested = pyqtSignal(str)   # path to load
@@ -45,11 +37,7 @@ class LeftPanel(QWidget):
         unsaved_fn: Callable[[], bool],
         parent: Optional[QWidget] = None,
     ) -> None:
-        """
-        Args:
-            current_image_path_fn: zero-arg callable returning manager.image_path.
-            unsaved_fn:            zero-arg callable returning _unsaved_changes bool.
-        """
+
         super().__init__(parent)
         self._get_current_path = current_image_path_fn
         self._is_unsaved = unsaved_fn

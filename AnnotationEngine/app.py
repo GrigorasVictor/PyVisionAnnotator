@@ -12,7 +12,7 @@ import sys
 # ---------------------------------------------------------
 try:
     import llama_cpp
-except ImportError:
+except Exception:
     pass
 
 from pathlib import Path

@@ -15,3 +15,6 @@ venv/
 *.ts
 AnnotationEngine/yoloe-26m-seg.pt
 AnnotationEngine/mobileclip2_b.ts
+
+.agents/
+templateLaTeX-Rom-2026/
