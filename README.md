@@ -162,11 +162,3 @@ python utils/build_exe.py
 ```
 
 The resulting application is placed under `AnnotationEngine/build_output/PyVisionAnnotator/`. If `Research/others/dist` contains packaged inference backends, the build helper copies them into the distribution and the application attempts to discover suitable AutoMask, AutoSeg, and YOLO weights on its first launch.
-
-## Figures
-
-Additional project diagrams and screenshots are available in [Others/figs](Others/figs), including AI annotation flows, the settings window, the collaboration/chat interface, and canvas event diagrams.
-
-## License
-
-No license file is currently included. Add an explicit license before redistributing or accepting external contributions.
